@@ -1,0 +1,9 @@
+services:
+  grafana:
+    image: docker.io/grafana/grafana-oss:12.0.0
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+     - '3000:3000'
+    # volumes:
+    #   - '$PWD/data:/var/lib/grafana'

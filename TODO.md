@@ -1,8 +1,5 @@
 # TODOs
 
-- general
-    - use global vars for client instance?
-
 - folders
     - remove all permissions when creating a new folder
 

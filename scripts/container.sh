@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+# VARIABLES
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+ROOT_DIR="${SCRIPT_DIR}"
+
+
+# HELPERS
+
+function requireCommand() {
+  command="$1"
+  if ! command -v ${command} &> /dev/null; then
+    echo "This script requires the command \"${command}\" to be available / installed. Terminating!"
+    exit 1
+  fi
+}
+
+function usage() {
+  echo -e "Requirements:"
+  echo -e "  - podman"
+  echo -e "  - podman-compose"
+  echo -e "\nUsage: ${0} <PARAM>"
+  echo -e "\n  start"
+  echo -e "\twill start the compose stack"
+  echo -e "\n  stop"
+  echo -e "\twill stop compose stack"
+  echo -e "\n  logs"
+  echo -e "\twill follow the logs of all containers of the compose stack"
+  echo -e "\n"
+}
+
+# VALIDATION
+
+## Requires
+requireCommand "podman"
+requireCommand "podman-compose"
+
+
+case "${1}" in
+  "start")
+    cd ${SCRIPT_DIR} && podman compose up -d
+    ;;
+  "stop")
+    cd ${SCRIPT_DIR} && podman compose down
+    ;;
+  "logs")
+    cd ${SCRIPT_DIR} && podman compose logs -f
+    ;;
+  *)
+    usage
+    ;;
+esac

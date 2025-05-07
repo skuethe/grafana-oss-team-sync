@@ -1,45 +1,75 @@
 package grafana
 
 import (
-	"log"
+	"log/slog"
 
 	goapi "github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-func doesUserExist(c *goapi.GrafanaHTTPAPI, login string) bool {
-	_, err := c.Users.GetUserByLoginOrEmail(login)
+type UserType struct {
+	client *goapi.GrafanaHTTPAPI
+	log    slog.Logger
+	form   models.AdminCreateUserForm
+}
+
+func (u *UserType) doesUserExist() bool {
+	_, err := u.client.Users.GetUserByLoginOrEmail(u.form.Login)
 	return err == nil
 }
 
-func createUser(c *goapi.GrafanaHTTPAPI, user models.AdminCreateUserForm) {
-	_, err := c.AdminUsers.AdminCreateUser(&models.AdminCreateUserForm{
-		Email:    user.Email,
-		Login:    user.Login,
-		Name:     user.Name,
-		Password: user.Password,
+func (u *UserType) createUser() {
+	_, err := u.client.AdminUsers.AdminCreateUser(&models.AdminCreateUserForm{
+		Email:    u.form.Email,
+		Login:    u.form.Login,
+		Name:     u.form.Name,
+		Password: u.form.Password,
 	})
 	if err != nil {
-		log.Fatal(err)
+		u.log.Error("Could not create User", "error", err)
 	} else {
-		log.Printf("  Created: \"%v\" (%v)", user.Login, user.Email)
+		u.log.Info(
+			"Created User",
+			slog.Group("user",
+				slog.String("login", u.form.Login),
+				slog.String("email", u.form.Email),
+			),
+		)
 	}
 }
 
 func ProcessUsers(c *goapi.GrafanaHTTPAPI, userList []models.AdminCreateUserForm) {
-	log.SetPrefix("[Grafana.Users] ")
-	log.Println("Processing ...")
+	usersLog := slog.With(slog.String("package", "grafana.users"))
+	usersLog.Info("Processing Users")
 
 	countSkipped := 0
 	countCreated := 0
 
 	for _, user := range userList {
-		if doesUserExist(c, user.Login) {
+		u := UserType{
+			client: c,
+			log:    *usersLog,
+			form:   user,
+		}
+		if u.doesUserExist() {
 			countSkipped++
+			usersLog.Debug(
+				"Skipped User",
+				slog.Group("user",
+					slog.String("login", user.Login),
+					slog.String("email", user.Email),
+				),
+			)
 		} else {
-			createUser(c, user)
+			u.createUser()
 			countCreated++
 		}
 	}
-	log.Printf("Created: %v; Skipped: %v", countCreated, countSkipped)
+	usersLog.Info(
+		"Finished Users",
+		slog.Group("stats",
+			slog.Int("created", countCreated),
+			slog.Int("skipped", countSkipped),
+		),
+	)
 }

@@ -1,46 +1,77 @@
 package grafana
 
 import (
-	"log"
+	"log/slog"
 
 	goapi "github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-func doesFolderExist(c *goapi.GrafanaHTTPAPI, uid string) bool {
-	_, err := c.Folders.GetFolderByUID(uid)
+type FolderType struct {
+	client *goapi.GrafanaHTTPAPI
+	log    slog.Logger
+	form   models.CreateFolderCommand
+}
+
+func (f *FolderType) doesFolderExist() bool {
+	_, err := f.client.Folders.GetFolderByUID(f.form.UID)
 	return err == nil
 }
 
-func createFolder(c *goapi.GrafanaHTTPAPI, folder models.CreateFolderCommand) {
-	_, err := c.Folders.CreateFolder(&models.CreateFolderCommand{
-		Title:       folder.Title,
-		Description: folder.Description,
-		UID:         folder.UID,
-		ParentUID:   folder.ParentUID,
+func (f *FolderType) createFolder() {
+	_, err := f.client.Folders.CreateFolder(&models.CreateFolderCommand{
+		Title:       f.form.Title,
+		Description: f.form.Description,
+		UID:         f.form.UID,
+		ParentUID:   f.form.ParentUID,
 	})
 	if err != nil {
-		log.Println("Whoops")
-		log.Fatal(err)
+		f.log.Error(err.Error())
 	} else {
-		log.Printf("  Created: \"%v\"", folder.UID)
+		f.log.Info(
+			"Created Folder",
+			slog.Group("folder",
+				slog.String("uid", f.form.UID),
+				slog.String("title", f.form.Title),
+				slog.String("description", f.form.Description),
+			),
+		)
 	}
 }
 
 func ProcessFolders(c *goapi.GrafanaHTTPAPI, folderList []models.CreateFolderCommand) {
-	log.SetPrefix("[Grafana.Folders] ")
-	log.Println("Processing ...")
+	foldersLog := slog.With(slog.String("package", "grafana.folders"))
+	foldersLog.Info("Processing Folders")
 
 	countSkipped := 0
 	countCreated := 0
 
 	for _, folder := range folderList {
-		if doesFolderExist(c, folder.UID) {
+		f := FolderType{
+			client: c,
+			log:    *foldersLog,
+			form:   folder,
+		}
+		if f.doesFolderExist() {
 			countSkipped++
+			foldersLog.Debug(
+				"Skipped Folder",
+				slog.Group("user",
+					slog.String("uid", folder.UID),
+					slog.String("title", folder.Title),
+					slog.String("description", folder.Description),
+				),
+			)
 		} else {
-			createFolder(c, folder)
+			f.createFolder()
 			countCreated++
 		}
 	}
-	log.Printf("Created: %v; Skipped: %v", countCreated, countSkipped)
+	foldersLog.Info(
+		"Finished Folders",
+		slog.Group("stats",
+			slog.Int("created", countCreated),
+			slog.Int("skipped", countSkipped),
+		),
+	)
 }

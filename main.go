@@ -1,31 +1,29 @@
 package main
 
 import (
-	"log"
+	"log/slog"
+	"os"
 	"strings"
 
 	"github.com/grafana/grafana-openapi-client-go/models"
-	"github.com/skuethe/grafana-team-sync/internal/grafana"
+	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 )
 
 // ref:
 // https://github.com/grafana/grafana-foundation-sdk/blob/main/examples/go/grafana-openapi-client-go/main.go
 
-// create user:
-// https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/admin_users#Client.AdminCreateUser
-
-// create team:
-// https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.CreateTeam
-
 // add team member:
 // https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.AddTeamMember
 
 func main() {
-	log.SetFlags(log.Ldate + log.Ltime + log.Lmsgprefix)
-	log.Println("Running Grafana Team Sync")
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}))
+	slog.SetDefault(logger)
+	// log.SetFlags(log.Ldate + log.Ltime + log.Lmsgprefix)
+	slog.Info("Running Grafana Team Sync")
 
-	api := grafana.InitClient()
-
+	// Temporary data inputs
 	teamList := []models.CreateTeamCommand{
 		{
 			Name: strings.ToLower("testTeam"),
@@ -35,7 +33,6 @@ func main() {
 			Email: "test2@test.com",
 		},
 	}
-
 	userList := []models.AdminCreateUserForm{
 		{
 			Email:    strings.ToLower("test@test.com"),
@@ -50,7 +47,6 @@ func main() {
 			Password: "secondPassword",
 		},
 	}
-
 	folderList := []models.CreateFolderCommand{
 		{
 			UID:         strings.ToLower("testFolder"),
@@ -68,6 +64,8 @@ func main() {
 			Description: "A third folder to test things",
 		},
 	}
+
+	api := grafana.InitClient()
 
 	grafana.ProcessUsers(api, userList)
 	grafana.ProcessTeams(api, teamList)

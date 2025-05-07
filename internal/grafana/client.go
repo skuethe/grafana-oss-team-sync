@@ -1,7 +1,9 @@
 package grafana
 
 import (
+	"log/slog"
 	"net/url"
+	"os"
 
 	"github.com/go-openapi/strfmt"
 	goapi "github.com/grafana/grafana-openapi-client-go/client"
@@ -18,6 +20,13 @@ func InitClient() *goapi.GrafanaHTTPAPI {
 		// BasicAuth is optional basic auth credentials.
 		BasicAuth: url.UserPassword("admin", "admin"),
 	}
-	// return goapi.NewHTTPClientWithConfig(strfmt.Default, cfg)
-	return goapi.NewHTTPClientWithConfig(strfmt.Default, &cfg)
+
+	api := goapi.NewHTTPClientWithConfig(strfmt.Default, &cfg)
+
+	_, err := api.Health.GetHealth()
+	if err != nil {
+		slog.Error("Grafana instance not healthy", "error", err)
+		os.Exit(1)
+	}
+	return api
 }

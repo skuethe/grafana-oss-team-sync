@@ -2,8 +2,6 @@
 
 - general
     - use global vars for client instance?
-    - add improved logging module
-        - eval `https://pkg.go.dev/github.com/go-logr/logr`
 
 - folders
     - remove all permissions when creating a new folder

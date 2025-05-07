@@ -1,4 +1,4 @@
-module github.com/skuethe/grafana-team-sync
+module github.com/skuethe/grafana-oss-team-sync
 
 go 1.24.2
 

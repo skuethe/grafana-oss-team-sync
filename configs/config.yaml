@@ -1,0 +1,6 @@
+# Define log level
+# 0:  INFO
+# 1:  WARN
+# 2:  ERROR
+# 99: DEBUG
+loglevel: 0

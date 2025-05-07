@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 )
 
@@ -16,12 +17,23 @@ import (
 // https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.AddTeamMember
 
 func main() {
+	// Initialize logger
+	loggerLevel := new(slog.LevelVar)
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
+		Level: loggerLevel,
 	}))
 	slog.SetDefault(logger)
-	// log.SetFlags(log.Ldate + log.Ltime + log.Lmsgprefix)
 	slog.Info("Running Grafana Team Sync")
+
+	// Initialize config
+	config.Start()
+
+	// Further configure logger
+	configLogLevel := config.GetLogLevel()
+	loggerLevel.Set(configLogLevel)
+	// slog.Info("loglevel:", "lvl", configLogLevel)
+	slog.SetLogLoggerLevel(configLogLevel)
+	slog.SetDefault(logger)
 
 	// Temporary data inputs
 	teamList := []models.CreateTeamCommand{
@@ -65,5 +77,6 @@ func main() {
 		},
 	}
 
+	// Run Grafana related packages
 	grafana.Start(&userList, &teamList, &folderList)
 }

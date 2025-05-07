@@ -3,12 +3,12 @@ package grafana
 import (
 	"log/slog"
 
-	goapi "github.com/grafana/grafana-openapi-client-go/client"
+	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
 type FolderType struct {
-	client *goapi.GrafanaHTTPAPI
+	client *client.GrafanaHTTPAPI
 	log    slog.Logger
 	form   models.CreateFolderCommand
 }
@@ -29,7 +29,7 @@ func (f *FolderType) createFolder() {
 		f.log.Error(err.Error())
 	} else {
 		f.log.Info(
-			"Created Folder",
+			"Created Grafana Folder",
 			slog.Group("folder",
 				slog.String("uid", f.form.UID),
 				slog.String("title", f.form.Title),
@@ -41,7 +41,7 @@ func (f *FolderType) createFolder() {
 
 func (g *GrafanaInstance) ProcessFolders(folderList *[]models.CreateFolderCommand) {
 	foldersLog := slog.With(slog.String("package", "grafana.folders"))
-	foldersLog.Info("Processing Folders")
+	foldersLog.Info("Processing Grafana Folders")
 
 	countSkipped := 0
 	countCreated := 0
@@ -55,7 +55,7 @@ func (g *GrafanaInstance) ProcessFolders(folderList *[]models.CreateFolderComman
 		if f.doesFolderExist() {
 			countSkipped++
 			foldersLog.Debug(
-				"Skipped Folder",
+				"Skipped Grafana Folder",
 				slog.Group("user",
 					slog.String("uid", folder.UID),
 					slog.String("title", folder.Title),
@@ -68,7 +68,7 @@ func (g *GrafanaInstance) ProcessFolders(folderList *[]models.CreateFolderComman
 		}
 	}
 	foldersLog.Info(
-		"Finished Folders",
+		"Finished Grafana Folders",
 		slog.Group("stats",
 			slog.Int("created", countCreated),
 			slog.Int("skipped", countSkipped),

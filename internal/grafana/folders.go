@@ -39,16 +39,16 @@ func (f *FolderType) createFolder() {
 	}
 }
 
-func ProcessFolders(c *goapi.GrafanaHTTPAPI, folderList []models.CreateFolderCommand) {
+func (g *GrafanaInstance) ProcessFolders(folderList *[]models.CreateFolderCommand) {
 	foldersLog := slog.With(slog.String("package", "grafana.folders"))
 	foldersLog.Info("Processing Folders")
 
 	countSkipped := 0
 	countCreated := 0
 
-	for _, folder := range folderList {
+	for _, folder := range *folderList {
 		f := FolderType{
-			client: c,
+			client: g.api,
 			log:    *foldersLog,
 			form:   folder,
 		}

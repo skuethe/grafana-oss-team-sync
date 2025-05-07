@@ -6,11 +6,16 @@ import (
 	"os"
 
 	"github.com/go-openapi/strfmt"
-	goapi "github.com/grafana/grafana-openapi-client-go/client"
+	"github.com/grafana/grafana-openapi-client-go/client"
+	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-func InitClient() *goapi.GrafanaHTTPAPI {
-	cfg := goapi.TransportConfig{
+type GrafanaInstance struct {
+	api *client.GrafanaHTTPAPI
+}
+
+func Start(userList *[]models.AdminCreateUserForm, teamList *[]models.CreateTeamCommand, folderList *[]models.CreateFolderCommand) {
+	cfg := client.TransportConfig{
 		// Host is the doman name or IP address of the host that serves the API.
 		Host: "localhost:3000",
 		// BasePath is the URL prefix for all API paths, relative to the host root.
@@ -21,12 +26,17 @@ func InitClient() *goapi.GrafanaHTTPAPI {
 		BasicAuth: url.UserPassword("admin", "admin"),
 	}
 
-	api := goapi.NewHTTPClientWithConfig(strfmt.Default, &cfg)
+	grafana := GrafanaInstance{
+		api: client.NewHTTPClientWithConfig(strfmt.Default, &cfg),
+	}
 
-	_, err := api.Health.GetHealth()
+	_, err := grafana.api.Health.GetHealth()
 	if err != nil {
 		slog.Error("Grafana instance not healthy", "error", err)
 		os.Exit(1)
 	}
-	return api
+
+	grafana.ProcessUsers(userList)
+	grafana.ProcessTeams(teamList)
+	grafana.ProcessFolders(folderList)
 }

@@ -38,16 +38,16 @@ func (u *UserType) createUser() {
 	}
 }
 
-func ProcessUsers(c *goapi.GrafanaHTTPAPI, userList []models.AdminCreateUserForm) {
+func (g *GrafanaInstance) ProcessUsers(userList *[]models.AdminCreateUserForm) {
 	usersLog := slog.With(slog.String("package", "grafana.users"))
 	usersLog.Info("Processing Users")
 
 	countSkipped := 0
 	countCreated := 0
 
-	for _, user := range userList {
+	for _, user := range *userList {
 		u := UserType{
-			client: c,
+			client: g.api,
 			log:    *usersLog,
 			form:   user,
 		}

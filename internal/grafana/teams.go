@@ -43,16 +43,16 @@ func (t *TeamType) createTeam() {
 	}
 }
 
-func ProcessTeams(c *goapi.GrafanaHTTPAPI, teamList []models.CreateTeamCommand) {
+func (g *GrafanaInstance) ProcessTeams(teamList *[]models.CreateTeamCommand) {
 	teamsLog := slog.With(slog.String("package", "grafana.teams"))
 	teamsLog.Info("Processing Teams")
 
 	countSkipped := 0
 	countCreated := 0
 
-	for _, team := range teamList {
+	for _, team := range *teamList {
 		t := TeamType{
-			client: c,
+			client: g.api,
 			log:    *teamsLog,
 			form:   team,
 		}

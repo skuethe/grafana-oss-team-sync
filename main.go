@@ -65,10 +65,5 @@ func main() {
 		},
 	}
 
-	api := grafana.InitClient()
-
-	grafana.ProcessUsers(api, userList)
-	grafana.ProcessTeams(api, teamList)
-	grafana.ProcessFolders(api, folderList)
-
+	grafana.Start(&userList, &teamList, &folderList)
 }

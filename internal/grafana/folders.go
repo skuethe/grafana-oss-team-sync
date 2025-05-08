@@ -26,7 +26,7 @@ func (f *FolderType) createFolder() {
 		ParentUID:   f.form.ParentUID,
 	})
 	if err != nil {
-		f.log.Error(err.Error())
+		f.log.Error("Could not create Grafana Folder", "error", err)
 	} else {
 		f.log.Info(
 			"Created Grafana Folder",
@@ -56,7 +56,7 @@ func (g *GrafanaInstance) ProcessFolders(folderList *[]models.CreateFolderComman
 			countSkipped++
 			foldersLog.Debug(
 				"Skipped Grafana Folder",
-				slog.Group("user",
+				slog.Group("folder",
 					slog.String("uid", folder.UID),
 					slog.String("title", folder.Title),
 					slog.String("description", folder.Description),

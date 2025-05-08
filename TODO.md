@@ -10,3 +10,6 @@
     - add golang specific github actions
     - add badges
         - `https://goreportcard.com/`
+
+- features
+    - allow team permissions to add individual users

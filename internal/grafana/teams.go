@@ -23,6 +23,7 @@ func (t *TeamType) doesTeamExist() bool {
 		t.log.Error("Could not search for Grafana Team", "error", err)
 		os.Exit(1)
 	}
+	t.log.Debug("Team search results", "search", "Name: "+t.form.Name, "result", result)
 	return len(result.Payload.Teams) > 0
 }
 

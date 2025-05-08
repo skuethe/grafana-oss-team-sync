@@ -1,6 +1,74 @@
+#
 # Define log level
-# 0:  INFO
-# 1:  WARN
-# 2:  ERROR
-# 99: DEBUG
+#
+# Possible values:
+#   0: INFO
+#   1: WARN
+#   2: ERROR
+#  99: DEBUG
+#
+
 loglevel: 0
+
+
+
+#
+# Teams you want to sync to Grafana
+#
+# WARNING:
+# Team names are case sensitive!
+#
+
+teams:
+  testteam: ""
+  test2team:
+    email: "test2@test.com"
+
+
+
+#
+# Folders you want to create in Grafana
+#
+# WARNINGS:
+# - Folder entries are converted to lowercase and used as the folders UID
+# - Every folder in this list will have it's default viewer and editor roles removed!
+#
+# For each folder you can pass the following input:
+#   - title (required)
+#   - description (optional)
+#   - permissions
+#
+# The permission block can reference teams and can be set to one of the following access rights:
+#   - viewer (0)
+#   - editor (1)
+#   - admin  (2)
+#
+#
+# Example:
+#
+# folders:
+#   folderid:
+#     title: "My Folder Title"
+#     description: "A folder to test things"
+#     permissions:
+#       team:
+#         team1: 0
+#         team2: 1
+#
+
+folders:
+  testfolder:
+    title: "testFolder"
+    description: "A folder to test things"
+    permissions:
+      team:
+        testteam: 0
+        test2team: 0
+  testfolder2:
+    title: "TestFolder2"
+    description: "A second folder"
+    permissions:
+      team:
+        testteam: 1
+      user:
+        testuser2: 2

@@ -29,22 +29,25 @@ func main() {
 	config.Start()
 
 	// Further configure logger
-	configLogLevel := config.GetLogLevel()
-	loggerLevel.Set(configLogLevel)
-	// slog.Info("loglevel:", "lvl", configLogLevel)
-	slog.SetLogLoggerLevel(configLogLevel)
+	logLevelFromConfig := config.GetLogLevel()
+	loggerLevel.Set(logLevelFromConfig)
 	slog.SetDefault(logger)
 
+	//
+	//
 	// Temporary data inputs
-	teamList := []models.CreateTeamCommand{
-		{
-			Name: strings.ToLower("testTeam"),
-		},
-		{
-			Name:  strings.ToLower("testTeam2"),
-			Email: "test2@test.com",
-		},
+	//
+	//
+
+	var teamList []models.CreateTeamCommand
+	teams := config.K.MapKeys("teams")
+	for _, teamName := range teams {
+		teamList = append(teamList, models.CreateTeamCommand{
+			Name:  teamName,
+			Email: strings.ToLower(config.K.String("teams." + teamName + ".email")),
+		})
 	}
+
 	userList := []models.AdminCreateUserForm{
 		{
 			Email:    strings.ToLower("test@test.com"),
@@ -59,23 +62,21 @@ func main() {
 			Password: "secondPassword",
 		},
 	}
-	folderList := []models.CreateFolderCommand{
-		{
-			UID:         strings.ToLower("testFolder"),
-			Title:       "testFolder",
-			Description: "A folder to test things",
-		},
-		{
-			UID:         "testFolder",
-			Title:       "secondTest",
-			Description: "A second folder to test things",
-		},
-		{
-			UID:         "testfolder",
-			Title:       "thirdTest",
-			Description: "A third folder to test things",
-		},
+
+	var folderList []models.CreateFolderCommand
+	folders := config.K.MapKeys("folders")
+	for _, folderName := range folders {
+		folderList = append(folderList, models.CreateFolderCommand{
+			UID:         strings.ToLower(folderName),
+			Title:       config.K.MustString("folders." + folderName + ".title"),
+			Description: config.K.String("folders." + folderName + ".description"),
+		})
 	}
+
+	//
+	//
+	//
+	//
 
 	// Run Grafana related packages
 	grafana.Start(&userList, &teamList, &folderList)

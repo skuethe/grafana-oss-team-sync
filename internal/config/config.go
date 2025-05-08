@@ -43,14 +43,12 @@ func Start() {
 	configLog.Info("Initializing Config")
 
 	// Load YAML config
-	configLog.Info("Loading YAML Config")
 	if err := K.Load(file.Provider("configs/config.yaml"), yaml.Parser()); err != nil {
 		configLog.Error("Could not load Config", "error", err)
 		os.Exit(1)
 	}
 
 	// Load env vars and merge (override) config
-	configLog.Info("Loading ENV Config")
 	K.Load(env.Provider("GOTS_", ".", func(s string) string {
 		return strings.Replace(strings.ToLower(
 			strings.TrimPrefix(s, "GOTS_")), "_", ".", -1)

@@ -1,7 +1,7 @@
 # TODOs
 
 - folders
-    - remove all permissions when creating a new folder
+    - validate permission input
 
 - config input
     - yaml schema validation?

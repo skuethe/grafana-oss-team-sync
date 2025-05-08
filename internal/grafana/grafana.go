@@ -12,7 +12,7 @@ type GrafanaInstance struct {
 	api *client.GrafanaHTTPAPI
 }
 
-func Start(userList *[]models.AdminCreateUserForm, teamList *[]models.CreateTeamCommand, folderList *[]models.CreateFolderCommand) {
+func Start(userList *[]models.AdminCreateUserForm, teamList *[]models.CreateTeamCommand) {
 	grafanaLog := slog.With(slog.String("package", "grafana"))
 	grafanaLog.Info("Initializing Grafana")
 
@@ -29,5 +29,5 @@ func Start(userList *[]models.AdminCreateUserForm, teamList *[]models.CreateTeam
 
 	instance.ProcessUsers(userList)
 	instance.ProcessTeams(teamList)
-	instance.ProcessFolders(folderList)
+	instance.ProcessFolders()
 }

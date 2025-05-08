@@ -63,21 +63,11 @@ func main() {
 		},
 	}
 
-	var folderList []models.CreateFolderCommand
-	folders := config.K.MapKeys("folders")
-	for _, folderName := range folders {
-		folderList = append(folderList, models.CreateFolderCommand{
-			UID:         strings.ToLower(folderName),
-			Title:       config.K.MustString("folders." + folderName + ".title"),
-			Description: config.K.String("folders." + folderName + ".description"),
-		})
-	}
-
 	//
 	//
 	//
 	//
 
 	// Run Grafana related packages
-	grafana.Start(&userList, &teamList, &folderList)
+	grafana.Start(&userList, &teamList)
 }

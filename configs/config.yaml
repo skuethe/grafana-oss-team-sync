@@ -38,10 +38,10 @@ teams:
 #   - description (optional)
 #   - permissions
 #
-# The permission block can reference teams and can be set to one of the following access rights:
-#   - viewer (0)
-#   - editor (1)
-#   - admin  (2)
+# The permission block can reference teams and can be set to one of the following permission level:
+#   - view  (1)
+#   - edit  (2)
+#   - admin (4)
 #
 #
 # Example:
@@ -51,9 +51,9 @@ teams:
 #     title: "My Folder Title"
 #     description: "A folder to test things"
 #     permissions:
-#       team:
-#         team1: 0
-#         team2: 1
+#       teams:
+#         team1: 1
+#         team2: 2
 #
 
 folders:
@@ -61,14 +61,12 @@ folders:
     title: "testFolder"
     description: "A folder to test things"
     permissions:
-      team:
-        testteam: 0
-        test2team: 0
+      teams:
+        testteam: 4
+        test2team: 1
   testfolder2:
     title: "TestFolder2"
     description: "A second folder"
     permissions:
-      team:
+      teams:
         testteam: 1
-      user:
-        testuser2: 2

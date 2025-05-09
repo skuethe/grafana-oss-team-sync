@@ -9,13 +9,13 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-type TeamType struct {
+type team struct {
 	client *client.GrafanaHTTPAPI
 	log    slog.Logger
 	form   models.CreateTeamCommand
 }
 
-func (t *TeamType) doesTeamExist() bool {
+func (t *team) doesTeamExist() bool {
 	result, err := t.client.Teams.SearchTeams(&teams.SearchTeamsParams{
 		Name: &t.form.Name,
 	})
@@ -27,7 +27,7 @@ func (t *TeamType) doesTeamExist() bool {
 	return len(result.Payload.Teams) > 0
 }
 
-func (t *TeamType) createTeam() {
+func (t *team) createTeam() {
 	_, err := t.client.Teams.CreateTeam(&models.CreateTeamCommand{
 		Name:  t.form.Name,
 		Email: t.form.Email,
@@ -35,36 +35,34 @@ func (t *TeamType) createTeam() {
 	if err != nil {
 		t.log.Error("Could not create Grafana Team", "error", err)
 	} else {
-		t.log.Info(
-			"Created Grafana Team",
-			slog.Group("team",
-				slog.String("name", t.form.Name),
-			),
-		)
+		t.log.Info("Created Grafana Team")
 	}
 }
 
 func (g *GrafanaInstance) processTeams(teamList *[]models.CreateTeamCommand) {
 	teamsLog := slog.With(slog.String("package", "grafana.teams"))
-	teamsLog.Info("Processing Grafana Teams")
+	teamsLog.Info("Initializing Grafana Teams")
 
 	countSkipped := 0
 	countCreated := 0
 
-	for _, team := range *teamList {
-		t := TeamType{
+	for _, instance := range *teamList {
+
+		teamLog := slog.With(
+			slog.Group("team",
+				slog.String("name", instance.Name),
+			),
+		)
+		teamLog.Info("Processing Grafana Team")
+
+		t := team{
 			client: g.api,
-			log:    *teamsLog,
-			form:   team,
+			log:    *teamLog,
+			form:   instance,
 		}
 		if t.doesTeamExist() {
 			countSkipped++
-			teamsLog.Debug(
-				"Skipped Grafana Team",
-				slog.Group("team",
-					slog.String("name", team.Name),
-				),
-			)
+			teamLog.Debug("Skipped Grafana Team")
 		} else {
 			t.createTeam()
 			countCreated++

@@ -7,18 +7,18 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-type UserType struct {
+type user struct {
 	client *client.GrafanaHTTPAPI
 	log    slog.Logger
 	form   models.AdminCreateUserForm
 }
 
-func (u *UserType) doesUserExist() bool {
+func (u *user) doesUserExist() bool {
 	_, err := u.client.Users.GetUserByLoginOrEmail(u.form.Login)
 	return err == nil
 }
 
-func (u *UserType) createUser() {
+func (u *user) createUser() {
 	_, err := u.client.AdminUsers.AdminCreateUser(&models.AdminCreateUserForm{
 		Email:    u.form.Email,
 		Login:    u.form.Login,
@@ -28,13 +28,7 @@ func (u *UserType) createUser() {
 	if err != nil {
 		u.log.Error("Could not create User", "error", err)
 	} else {
-		u.log.Info(
-			"Created Grafana User",
-			slog.Group("user",
-				slog.String("login", u.form.Login),
-				slog.String("email", u.form.Email),
-			),
-		)
+		u.log.Info("Created Grafana User")
 	}
 }
 
@@ -45,20 +39,25 @@ func (g *GrafanaInstance) processUsers(userList *[]models.AdminCreateUserForm) {
 	countSkipped := 0
 	countCreated := 0
 
-	for _, user := range *userList {
-		u := UserType{
+	for _, instance := range *userList {
+
+		userLog := slog.With(
+			slog.Group("user",
+				slog.String("login", instance.Login),
+				slog.String("email", instance.Email),
+			),
+		)
+		userLog.Info("Processing Grafana User")
+
+		u := user{
 			client: g.api,
-			log:    *usersLog,
-			form:   user,
+			log:    *userLog,
+			form:   instance,
 		}
 		if u.doesUserExist() {
 			countSkipped++
-			usersLog.Debug(
+			userLog.Debug(
 				"Skipped Grafana User",
-				slog.Group("user",
-					slog.String("login", user.Login),
-					slog.String("email", user.Email),
-				),
 			)
 		} else {
 			u.createUser()

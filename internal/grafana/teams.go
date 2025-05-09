@@ -44,7 +44,7 @@ func (t *TeamType) createTeam() {
 	}
 }
 
-func (g *GrafanaInstance) ProcessTeams(teamList *[]models.CreateTeamCommand) {
+func (g *GrafanaInstance) processTeams(teamList *[]models.CreateTeamCommand) {
 	teamsLog := slog.With(slog.String("package", "grafana.teams"))
 	teamsLog.Info("Processing Grafana Teams")
 

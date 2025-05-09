@@ -14,7 +14,7 @@ type ConfigFolderSchema struct {
 	Title       string `koanf:"title"`
 	Description string `koanf:"description"`
 	Permissions struct {
-		Teams map[string]int `koanf:"teams"`
+		Teams map[string]permissionsAllowed `koanf:"teams"`
 	} `koanf:"permissions"`
 }
 
@@ -24,6 +24,14 @@ type Folder struct {
 	Input  ConfigFolderSchema
 	Model  models.CreateFolderCommand
 }
+
+type permissionsAllowed int64
+
+const (
+	PermissionViewer permissionsAllowed = 1 << iota
+	PermissionEditor
+	PermissionAdmin
+)
 
 func (f *Folder) doesFolderExist() bool {
 	_, err := f.Client.Folders.GetFolderByUID(f.Model.UID)
@@ -54,17 +62,27 @@ func (f *Folder) manageFolderPermissions() {
 		})
 		if err != nil {
 			f.Log.Error("Could not search for specific team - skipping", "error", err)
-			break
+			continue
 		}
-
 		if len(team.Payload.Teams) == 0 {
-			f.Log.Warn("Specified folder permission team does not exist - skipping")
-			break
+			f.Log.Warn("Specified Team for folder permissions does not exist - skipping")
+			continue
 		}
 
-		// converted, _ := strconv.ParseInt(val, 10, 64)
-		helper := int64(val)
-		var permissionType models.PermissionType = models.PermissionType(helper)
+		switch val {
+		case PermissionViewer, PermissionEditor, PermissionAdmin:
+		default:
+			f.Log.Warn("Permission not allowed - skipping", "wrong.permission", val)
+			continue
+		}
+
+		var permissionType models.PermissionType = models.PermissionType(val)
+
+		// validationError := permissionType.Validate(strfmt.Default)
+		// if validationError != nil {
+		// 	slog.Error("Could not validate permission input", "input", val, "error", validationError)
+		// 	break
+		// }
 
 		permissionList = append(permissionList, &models.DashboardACLUpdateItem{
 			Permission: permissionType,
@@ -82,10 +100,10 @@ func (f *Folder) manageFolderPermissions() {
 	}
 }
 
-func (g *GrafanaInstance) ProcessFolders() {
+func (g *GrafanaInstance) processFolders() {
 
 	foldersLog := slog.With(slog.String("package", "grafana.folders"))
-	foldersLog.Info("Processing Grafana Folders")
+	foldersLog.Info("Initializing Grafana Folders")
 
 	countSkipped := 0
 	countCreated := 0
@@ -94,6 +112,7 @@ func (g *GrafanaInstance) ProcessFolders() {
 
 	for _, folderUID := range folders {
 		var folderFromConfig ConfigFolderSchema
+
 		config.K.Unmarshal("folders."+folderUID, &folderFromConfig)
 
 		folderLog := slog.With(
@@ -101,8 +120,15 @@ func (g *GrafanaInstance) ProcessFolders() {
 				slog.String("uid", folderUID),
 				slog.String("title", folderFromConfig.Title),
 				slog.String("description", folderFromConfig.Description),
+				slog.Any("permissions", config.K.Get("folders."+folderUID+".permissions")),
 			),
 		)
+
+		folderLog.Info("Processing Grafana Folder")
+
+		if len(folderFromConfig.Permissions.Teams) > 0 {
+			config.K.MustInt64Map("folders." + folderUID + ".permissions.teams")
+		}
 
 		f := Folder{
 			Client: g.api,
@@ -117,7 +143,7 @@ func (g *GrafanaInstance) ProcessFolders() {
 
 		if f.doesFolderExist() {
 			countSkipped++
-			foldersLog.Debug("Skipped Grafana Folder")
+			foldersLog.Debug("Grafana Folder already exists - skipping")
 		} else {
 			f.createFolder()
 			countCreated++

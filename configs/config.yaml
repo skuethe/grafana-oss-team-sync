@@ -62,7 +62,7 @@ folders:
     description: "A folder to test things"
     permissions:
       teams:
-        testteam: 4
+        testteam: 2
         test2team: 1
   testfolder2:
     title: "TestFolder2"

@@ -27,7 +27,7 @@ func Start(userList *[]models.AdminCreateUserForm, teamList *[]models.CreateTeam
 		os.Exit(1)
 	}
 
-	instance.ProcessUsers(userList)
-	instance.ProcessTeams(teamList)
-	instance.ProcessFolders()
+	instance.processUsers(userList)
+	instance.processTeams(teamList)
+	instance.processFolders()
 }

@@ -1,8 +1,5 @@
 # TODOs
 
-- folders
-    - validate permission input
-
 - config input
     - yaml schema validation?
 
@@ -13,3 +10,5 @@
 
 - features
     - allow team permissions to add individual users
+    - allow team permissions to add roles
+

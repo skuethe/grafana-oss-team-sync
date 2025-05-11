@@ -10,11 +10,25 @@ import (
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 )
 
-// ref:
-// https://github.com/grafana/grafana-foundation-sdk/blob/main/examples/go/grafana-openapi-client-go/main.go
+//
+// Entra ID
+//
 
-// add team member:
-// https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.AddTeamMember
+// client:
+// https://learn.microsoft.com/en-us/graph/sdks/create-client?from=snippets&tabs=go
+
+// search groups
+// https://learn.microsoft.com/en-gb/graph/api/group-list?view=graph-rest-1.0&tabs=go#optional-query-parameters
+
+// list group members:
+// https://learn.microsoft.com/en-gb/graph/api/group-list-members?view=graph-rest-1.0&tabs=go
+
+// get user:
+// https://learn.microsoft.com/en-gb/graph/api/user-get?view=graph-rest-1.0&tabs=http
+
+// app access needed?
+// https://learn.microsoft.com/en-gb/graph/permissions-reference?view=graph-rest-1.0#groupmemberreadall
+// https://learn.microsoft.com/en-gb/graph/permissions-reference?view=graph-rest-1.0#userreadbasicall
 
 func main() {
 	// Initialize logger

@@ -1,7 +1,9 @@
 package grafana
 
 import (
+	"crypto/rand"
 	"log/slog"
+	"math/big"
 
 	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -11,6 +13,21 @@ type user struct {
 	client *client.GrafanaHTTPAPI
 	log    slog.Logger
 	form   models.AdminCreateUserForm
+}
+
+func generateSecurePassword() string {
+
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+"
+	const length = 32
+
+	password := make([]byte, length)
+	charsetLength := big.NewInt(int64(len(charset)))
+	for i := range password {
+		index, _ := rand.Int(rand.Reader, charsetLength)
+		password[i] = charset[index.Int64()]
+	}
+
+	return string(password)
 }
 
 func (u *user) doesUserExist() bool {
@@ -23,7 +40,7 @@ func (u *user) createUser() {
 		Email:    u.form.Email,
 		Login:    u.form.Login,
 		Name:     u.form.Name,
-		Password: u.form.Password,
+		Password: models.Password(generateSecurePassword()),
 	})
 	if err != nil {
 		u.log.Error("Could not create User", "error", err)

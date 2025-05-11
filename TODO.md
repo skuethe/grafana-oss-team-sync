@@ -12,5 +12,6 @@
     - allow team permissions to add individual users
     - allow team permissions to add roles
 
-- users
-    - generate random PW
+- add README info
+    - how to setup Grafana
+

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/skuethe/grafana-oss-team-sync/internal/azure"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 )
@@ -81,6 +82,9 @@ func main() {
 	//
 	//
 	//
+
+	// Run Azure related packages
+	azure.Start()
 
 	// Run Grafana related packages
 	grafana.Start(&userList, &teamList)

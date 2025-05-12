@@ -1,1 +1,1 @@
-# grafana-team-sync
+# grafana-oss-team-sync

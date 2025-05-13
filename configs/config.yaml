@@ -15,9 +15,6 @@ loglevel: 0
 #
 # Teams you want to sync to Grafana
 #
-# WARNING:
-# Team names are case sensitive!
-#
 
 teams:
   grafana-devops: {}

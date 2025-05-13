@@ -3,35 +3,47 @@ package azure
 import (
 	"context"
 	"log/slog"
+	"os"
+	"strings"
 
+	grafanaModels "github.com/grafana/grafana-openapi-client-go/models"
+	abstractions "github.com/microsoft/kiota-abstractions-go"
 	graph "github.com/microsoftgraph/msgraph-sdk-go"
 	graphgroups "github.com/microsoftgraph/msgraph-sdk-go/groups"
 
-	// "github.com/microsoftgraph/msgraph-sdk-go/models"
+	"github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 )
 
-type group struct {
-	client *graph.GraphServiceClient
-	log    slog.Logger
-	name   string
+type groups struct {
+	client        *graph.GraphServiceClient
+	requestFilter string
 }
 
-func (a *group) doesGroupExist() bool {
-	requestFilter := "displayName eq " + a.name
+func (s *groups) getData() (models.GroupCollectionResponseable, error) {
+
+	headers := abstractions.NewRequestHeaders()
+	headers.Add("ConsistencyLevel", "eventual")
+
+	// requestSearch := "\"displayName:" + a.name + "\""
+	// requestTop := int32(5)
+	requestFilter := s.requestFilter
 	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
 		Filter: &requestFilter,
 		Select: []string{"id", "displayName", "mail"},
+		// Top: &requestTop,
+		// Search: &requestSearch,
+		// Expand: []string{"members($select=id,displayName)"},
 	}
 	configuraton := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
+		Headers:         headers,
 		QueryParameters: requestParams,
 	}
-	groups, err := a.client.Groups().Get(context.Background(), configuraton)
-	if groups != nil {
-		a.log.Info("Found Azure Groups", "DEBUG", groups)
+	result, err := s.client.Groups().Get(context.Background(), configuraton)
+	if err != nil {
+		return nil, err
 	}
-
-	return err == nil
+	return result, nil
 }
 
 func (a *AzureInstance) processGroups() {
@@ -39,43 +51,52 @@ func (a *AzureInstance) processGroups() {
 	groupsLog.Info("Initializing Azure Groups")
 
 	countFound := 0
-	countIgnored := 0
-
-	// add logic
+	// countIgnored := 0
 
 	teams := config.K.MapKeys("teams")
-	for _, teamName := range teams {
+
+	g := groups{
+		client:        a.api,
+		requestFilter: "displayName in ('" + strings.Join(teams, "', '") + "')",
+	}
+
+	groupList, err := g.getData()
+	if err != nil {
+		groupsLog.Error("Could not get Group results from Azure", "error", err)
+		os.Exit(1)
+	}
+
+	var grafanaTeamList []grafanaModels.CreateTeamCommand
+	for _, group := range groupList.GetValue() {
+
+		groupDisplayName := *group.GetDisplayName()
+		groupId := *group.GetId()
+		// groupMail := group.GetMail()
+		// if groupMail != nil {
+		// 	groupMail = strings.ToLower(groupMail)
+		// }
+
 		groupLog := slog.With(
 			slog.Group("group",
-				slog.String("name", teamName),
+				slog.String("displayName", groupDisplayName),
+				slog.String("ID", groupId),
 			),
 		)
 		groupLog.Info("Processing Azure Group")
 
-		g := group{
-			client: a.api,
-			log:    *groupLog,
-			name:   teamName,
-		}
-
-		if g.doesGroupExist() {
-			countFound++
-		} else {
-			countIgnored++
-			groupLog.Warn("Group not found - ignoring")
-		}
-
-		// teamList = append(teamList, models.CreateTeamCommand{
-		// 	Name:  teamName,
-		// 	Email: strings.ToLower(config.K.String("teams." + teamName + ".email")),
-		// })
+		grafanaTeamList = append(grafanaTeamList, grafanaModels.CreateTeamCommand{
+			Name: groupDisplayName,
+			// Email: *groupMail,
+		})
+		countFound++
+		groupsLog.Info("DEBUG", "state", grafanaTeamList)
 	}
 
 	groupsLog.Info(
 		"Finished Azure Groups",
 		slog.Group("stats",
 			slog.Int("found", countFound),
-			slog.Int("ignored", countIgnored),
+			slog.Int("ignored", len(teams)-countFound),
 		),
 	)
 

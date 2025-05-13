@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	auth "github.com/microsoft/kiota-authentication-azure-go"
 	graph "github.com/microsoftgraph/msgraph-sdk-go"
 )
 
@@ -22,11 +23,32 @@ func initClient() *graph.GraphServiceClient {
 		os.Exit(1)
 	}
 
-	graphClient, err := graph.NewGraphServiceClientWithCredentials(credential, []string{"https://graph.microsoft.com/.default"})
+	// Create an auth provider using the credential
+	authProvider, err := auth.NewAzureIdentityAuthenticationProviderWithScopes(credential, []string{
+		"https://graph.microsoft.com/.default",
+	})
 	if err != nil {
-		clientLog.Error("Could not create Azure graph client", "error", err)
+		clientLog.Error("Could not create Azure auth provider", "error", err)
 		os.Exit(1)
 	}
 
-	return graphClient
+	// Create a request adapter using the auth provider
+	adapter, err := graph.NewGraphRequestAdapter(authProvider)
+	if err != nil {
+		clientLog.Error("Could not create Azure request adapter", "error", err)
+		os.Exit(1)
+	}
+
+	// Create a Graph client using request adapter
+	client := graph.NewGraphServiceClient(adapter)
+	return client
+
+	// graphClient, err := graph.NewGraphServiceClientWithCredentials(
+	// 	credential, []string{"https://graph.microsoft.com/.default"})
+	// if err != nil {
+	// 	clientLog.Error("Could not create Azure graph client", "error", err)
+	// 	os.Exit(1)
+	// }
+
+	// return graphClient
 }

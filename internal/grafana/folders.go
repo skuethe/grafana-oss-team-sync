@@ -10,28 +10,12 @@ import (
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 )
 
-type configFolderSchema struct {
-	Title       string `koanf:"title"`
-	Description string `koanf:"description"`
-	Permissions struct {
-		Teams map[string]permissionsAllowed `koanf:"teams"`
-	} `koanf:"permissions"`
-}
-
 type folder struct {
 	client *client.GrafanaHTTPAPI
 	log    slog.Logger
-	input  configFolderSchema
+	input  config.FolderSchema
 	model  models.CreateFolderCommand
 }
-
-type permissionsAllowed int64
-
-const (
-	PermissionViewer permissionsAllowed = 1 << iota
-	PermissionEditor
-	PermissionAdmin
-)
 
 func (f *folder) doesFolderExist() bool {
 	_, err := f.client.Folders.GetFolderByUID(f.model.UID)
@@ -70,7 +54,7 @@ func (f *folder) manageFolderPermissions() {
 		}
 
 		switch teamPermission {
-		case PermissionViewer, PermissionEditor, PermissionAdmin:
+		case config.PermissionViewer, config.PermissionEditor, config.PermissionAdmin:
 		default:
 			f.log.Warn("Permission not allowed - skipping", "wrong.permission", teamPermission)
 			continue
@@ -105,7 +89,7 @@ func (g *GrafanaInstance) processFolders() {
 	folders := config.K.MapKeys("folders")
 
 	for _, folderUID := range folders {
-		var folderFromConfig configFolderSchema
+		var folderFromConfig config.FolderSchema
 
 		config.K.Unmarshal("folders."+folderUID, &folderFromConfig)
 

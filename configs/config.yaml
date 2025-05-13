@@ -20,9 +20,11 @@ loglevel: 0
 #
 
 teams:
-  testteam: ""
-  test2team:
-    email: "test2@test.com"
+  grafana-devops: {}
+  grafana-technology: {}
+  # testteam: ""
+  # test2team:
+  #   email: "test2@test.com"
 
 
 

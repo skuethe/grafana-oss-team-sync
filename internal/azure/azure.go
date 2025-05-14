@@ -2,11 +2,12 @@ package azure
 
 import (
 	"log/slog"
+	"os"
 
 	graph "github.com/microsoftgraph/msgraph-sdk-go"
 )
 
-type AzureInstance struct {
+type azureInstance struct {
 	api *graph.GraphServiceClient
 }
 
@@ -14,8 +15,10 @@ func Start() {
 	azureLog := slog.With(slog.String("package", "azure"))
 	azureLog.Info("Initializing Azure")
 
-	instance := AzureInstance{
-		api: initClient(),
+	instance, err := new()
+	if err != nil {
+		azureLog.Error("Could not create MS Graph client", "error", err)
+		os.Exit(1)
 	}
 
 	// azureLog.Info("Validating Azure Health")

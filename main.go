@@ -3,9 +3,7 @@ package main
 import (
 	"log/slog"
 	"os"
-	"strings"
 
-	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/joho/godotenv"
 	"github.com/skuethe/grafana-oss-team-sync/internal/azure"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
@@ -60,14 +58,14 @@ func main() {
 	//
 	//
 
-	var teamList []models.CreateTeamCommand
-	teams := config.K.MapKeys("teams")
-	for _, teamName := range teams {
-		teamList = append(teamList, models.CreateTeamCommand{
-			Name:  teamName,
-			Email: strings.ToLower(config.K.String("teams." + teamName + ".email")),
-		})
-	}
+	// var teamList []models.CreateTeamCommand
+	// teams := config.K.MapKeys("teams")
+	// for _, teamName := range teams {
+	// 	teamList = append(teamList, models.CreateTeamCommand{
+	// 		Name:  teamName,
+	// 		Email: strings.ToLower(config.K.String("teams." + teamName + ".email")),
+	// 	})
+	// }
 
 	// userList := []models.AdminCreateUserForm{
 	// 	{

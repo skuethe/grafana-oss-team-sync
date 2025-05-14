@@ -47,7 +47,7 @@ func (s *groups) getData() (models.GroupCollectionResponseable, error) {
 	return result, nil
 }
 
-func (a *AzureInstance) processGroups() (grafanaTeamList []grafanaModels.CreateTeamCommand) {
+func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.CreateTeamCommand) {
 	groupsLog := slog.With(slog.String("package", "azure.groups"))
 	groupsLog.Info("Initializing Azure Groups")
 
@@ -86,7 +86,7 @@ func (a *AzureInstance) processGroups() (grafanaTeamList []grafanaModels.CreateT
 		)
 		groupLog.Info("Processing Azure Group")
 
-		grafanaTeamList = append(grafanaTeamList, grafanaModels.CreateTeamCommand{
+		grafanaTeamList = append(grafanaTeamList, &grafanaModels.CreateTeamCommand{
 			Name:  groupDisplayName,
 			Email: mail,
 		})

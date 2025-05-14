@@ -13,6 +13,7 @@ import (
 
 	"github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
+	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
 )
 
 type groups struct {
@@ -46,12 +47,11 @@ func (s *groups) getData() (models.GroupCollectionResponseable, error) {
 	return result, nil
 }
 
-func (a *AzureInstance) processGroups() (grafanaTeamList []*grafanaModels.CreateTeamCommand) {
+func (a *AzureInstance) processGroups() (grafanaTeamList []grafanaModels.CreateTeamCommand) {
 	groupsLog := slog.With(slog.String("package", "azure.groups"))
 	groupsLog.Info("Initializing Azure Groups")
 
 	countFound := 0
-	// countIgnored := 0
 
 	teams := config.K.MapKeys("teams")
 
@@ -66,14 +66,13 @@ func (a *AzureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 		os.Exit(1)
 	}
 
-	// var grafanaTeamList []*grafanaModels.CreateTeamCommand
 	for _, group := range groupList.GetValue() {
 
 		groupDisplayName := *group.GetDisplayName()
 		groupId := *group.GetId()
 		groupMail := group.GetMail()
 
-		var mail string = ""
+		var mail string
 		if groupMail != nil {
 			mail = strings.ToLower(*groupMail)
 		}
@@ -87,18 +86,23 @@ func (a *AzureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 		)
 		groupLog.Info("Processing Azure Group")
 
-		grafanaTeamList = append(grafanaTeamList, &grafanaModels.CreateTeamCommand{
+		grafanaTeamList = append(grafanaTeamList, grafanaModels.CreateTeamCommand{
 			Name:  groupDisplayName,
 			Email: mail,
 		})
 		countFound++
+		teams = helpers.RemoveFromSlice(teams, groupDisplayName)
+	}
+
+	if len(teams) > 0 {
+		groupsLog.Warn("Could not find the following groups in Azure", "ignored", strings.Join(teams, ","))
 	}
 
 	groupsLog.Info(
 		"Finished Azure Groups",
 		slog.Group("stats",
 			slog.Int("found", countFound),
-			slog.Int("ignored", len(teams)-countFound),
+			slog.Int("ignored", len(teams)),
 		),
 	)
 

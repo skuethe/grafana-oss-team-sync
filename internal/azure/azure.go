@@ -26,6 +26,6 @@ func Start() {
 	// }
 
 	// instance.processUsers(userList)
-	// instance.processTeams(teamList)
-	instance.processGroups()
+	teams := instance.processGroups()
+	azureLog.Info("DEBUG", "return", teams)
 }

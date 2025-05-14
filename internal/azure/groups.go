@@ -46,7 +46,7 @@ func (s *groups) getData() (models.GroupCollectionResponseable, error) {
 	return result, nil
 }
 
-func (a *AzureInstance) processGroups() {
+func (a *AzureInstance) processGroups() (grafanaTeamList []*grafanaModels.CreateTeamCommand) {
 	groupsLog := slog.With(slog.String("package", "azure.groups"))
 	groupsLog.Info("Initializing Azure Groups")
 
@@ -66,30 +66,32 @@ func (a *AzureInstance) processGroups() {
 		os.Exit(1)
 	}
 
-	var grafanaTeamList []grafanaModels.CreateTeamCommand
+	// var grafanaTeamList []*grafanaModels.CreateTeamCommand
 	for _, group := range groupList.GetValue() {
 
 		groupDisplayName := *group.GetDisplayName()
 		groupId := *group.GetId()
-		// groupMail := group.GetMail()
-		// if groupMail != nil {
-		// 	groupMail = strings.ToLower(groupMail)
-		// }
+		groupMail := group.GetMail()
+
+		var mail string = ""
+		if groupMail != nil {
+			mail = strings.ToLower(*groupMail)
+		}
 
 		groupLog := slog.With(
 			slog.Group("group",
-				slog.String("displayName", groupDisplayName),
-				slog.String("ID", groupId),
+				slog.String("id", groupId),
+				slog.String("displayname", groupDisplayName),
+				slog.String("mail", mail),
 			),
 		)
 		groupLog.Info("Processing Azure Group")
 
-		grafanaTeamList = append(grafanaTeamList, grafanaModels.CreateTeamCommand{
-			Name: groupDisplayName,
-			// Email: *groupMail,
+		grafanaTeamList = append(grafanaTeamList, &grafanaModels.CreateTeamCommand{
+			Name:  groupDisplayName,
+			Email: mail,
 		})
 		countFound++
-		groupsLog.Info("DEBUG", "state", grafanaTeamList)
 	}
 
 	groupsLog.Info(
@@ -100,4 +102,5 @@ func (a *AzureInstance) processGroups() {
 		),
 	)
 
+	return
 }

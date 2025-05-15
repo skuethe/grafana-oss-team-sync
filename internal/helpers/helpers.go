@@ -1,10 +1,18 @@
 package helpers
 
-func RemoveFromSlice(s []string, r string) []string {
-	for k, v := range s {
-		if v == r {
-			return append(s[:k], s[k+1:]...)
+import "strings"
+
+func RemoveFromSlice(searchHere []string, removeThis string, caseSensitive bool) []string {
+	for k, v := range searchHere {
+		var validated bool
+		if caseSensitive {
+			validated = v == removeThis
+		} else {
+			validated = strings.EqualFold(v, removeThis)
+		}
+		if validated {
+			return append(searchHere[:k], searchHere[k+1:]...)
 		}
 	}
-	return s
+	return searchHere
 }

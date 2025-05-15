@@ -91,7 +91,7 @@ func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 			Email: mail,
 		})
 		countFound++
-		teams = helpers.RemoveFromSlice(teams, groupDisplayName)
+		teams = helpers.RemoveFromSlice(teams, groupDisplayName, false)
 	}
 
 	if len(teams) > 0 {

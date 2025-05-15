@@ -7,17 +7,12 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/skuethe/grafana-oss-team-sync/internal/azure"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
+	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 )
 
 //
 // Entra ID
 //
-
-// client:
-// https://learn.microsoft.com/en-us/graph/sdks/create-client?from=snippets&tabs=go
-
-// search groups
-// https://learn.microsoft.com/en-gb/graph/api/group-list?view=graph-rest-1.0&tabs=go#optional-query-parameters
 
 // list group members:
 // https://learn.microsoft.com/en-gb/graph/api/group-list-members?view=graph-rest-1.0&tabs=go
@@ -39,33 +34,27 @@ func main() {
 		Level: loggerLevel,
 	}))
 	slog.SetDefault(logger)
-	slog.Info("Running Grafana Team Sync")
+	slog.Info("starting Grafana OSS Team Sync")
 
 	// Handle .env files
 	godotenv.Load()
 
 	// Initialize config
-	config.Start()
+	config.Load()
 
 	// Further configure logger
 	logLevelFromConfig := config.GetLogLevel()
 	loggerLevel.Set(logLevelFromConfig)
 	slog.SetDefault(logger)
 
+	// Initialize Grafana
+	grafana.New()
+
 	//
 	//
 	// Temporary data inputs
 	//
 	//
-
-	// var teamList []models.CreateTeamCommand
-	// teams := config.K.MapKeys("teams")
-	// for _, teamName := range teams {
-	// 	teamList = append(teamList, models.CreateTeamCommand{
-	// 		Name:  teamName,
-	// 		Email: strings.ToLower(config.K.String("teams." + teamName + ".email")),
-	// 	})
-	// }
 
 	// userList := []models.AdminCreateUserForm{
 	// 	{

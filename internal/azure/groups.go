@@ -13,6 +13,7 @@ import (
 
 	"github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
+	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
 )
 
@@ -21,7 +22,7 @@ type groups struct {
 	requestFilter string
 }
 
-func (s *groups) getData() (models.GroupCollectionResponseable, error) {
+func (g *groups) getGroupData() (models.GroupCollectionResponseable, error) {
 
 	headers := abstractions.NewRequestHeaders()
 	headers.Add("ConsistencyLevel", "eventual")
@@ -29,7 +30,7 @@ func (s *groups) getData() (models.GroupCollectionResponseable, error) {
 	// requestSearch := "\"displayName:" + a.name + "\""
 	// requestTop := int32(5)
 	requestCount := true
-	requestFilter := s.requestFilter
+	requestFilter := g.requestFilter
 	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
 		Filter: &requestFilter,
 		Select: []string{"id", "displayName", "mail"},
@@ -42,16 +43,16 @@ func (s *groups) getData() (models.GroupCollectionResponseable, error) {
 		Headers:         headers,
 		QueryParameters: requestParams,
 	}
-	result, err := s.client.Groups().Get(context.Background(), configuraton)
+	result, err := g.client.Groups().Get(context.Background(), configuraton)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.CreateTeamCommand) {
+func (a *AzureInstance) processGroups() {
 	groupsLog := slog.With(slog.String("package", "azure.groups"))
-	groupsLog.Info("Initializing Azure Groups")
+	groupsLog.Info("processing Azure groups")
 
 	teams := config.K.Strings("teams")
 
@@ -60,13 +61,15 @@ func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 		requestFilter: "displayName in ('" + strings.Join(teams, "', '") + "')",
 	}
 
-	groupList, err := g.getData()
+	groupList, err := g.getGroupData()
 	if err != nil {
-		groupsLog.Error("Could not get Group results from Azure", "error", err)
+		groupsLog.Error("could not get Group results from Azure", "error", err)
 		os.Exit(1)
 	}
 
 	countFound := *groupList.GetOdataCount()
+
+	var grafanaTeamList []grafanaModels.CreateTeamCommand
 
 	for _, group := range groupList.GetValue() {
 
@@ -86,9 +89,9 @@ func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 				slog.String("mail", mail),
 			),
 		)
-		groupLog.Info("Processing Azure Group")
+		groupLog.Info("found Azure group")
 
-		grafanaTeamList = append(grafanaTeamList, &grafanaModels.CreateTeamCommand{
+		grafanaTeamList = append(grafanaTeamList, grafanaModels.CreateTeamCommand{
 			Name:  groupDisplayName,
 			Email: mail,
 		})
@@ -96,16 +99,16 @@ func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 	}
 
 	if len(teams) > 0 {
-		groupsLog.Warn("Could not find the following groups in Azure", "ignored", strings.Join(teams, ","))
+		groupsLog.Warn("could not find the following groups in Azure", "ignored", strings.Join(teams, ","))
 	}
 
 	groupsLog.Info(
-		"Finished Azure Groups",
+		"finished processing Azure groups",
 		slog.Group("stats",
 			slog.Int64("found", countFound),
 			slog.Int("ignored", len(teams)),
 		),
 	)
 
-	return
+	grafana.Instance.ProcessTeams(&grafanaTeamList)
 }

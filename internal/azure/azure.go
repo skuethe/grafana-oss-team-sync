@@ -4,31 +4,44 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	graph "github.com/microsoftgraph/msgraph-sdk-go"
 )
 
-type azureInstance struct {
+type AzureInstance struct {
 	api *graph.GraphServiceClient
 }
 
-func Start() {
+func New() *AzureInstance {
 	azureLog := slog.With(slog.String("package", "azure"))
-	azureLog.Info("Initializing Azure")
+	azureLog.Info("initializing Azure")
 
-	instance, err := new()
+	clientId := os.Getenv("CLIENT_ID")
+	tenantId := os.Getenv("TENANT_ID")
+	clientSecret := os.Getenv("CLIENT_SECRET")
+
+	credential, err := azidentity.NewClientSecretCredential(tenantId, clientId, clientSecret, nil)
 	if err != nil {
-		azureLog.Error("Could not create MS Graph client", "error", err)
+		azureLog.Error("unable to create secret credential for client", "error", err)
 		os.Exit(1)
 	}
 
-	// azureLog.Info("Validating Azure Health")
-	// _, err := instance.api.Health.GetHealth()
-	// if err != nil {
-	// 	grafanaLog.Error("Grafana instance is not healthy", "error", err)
-	// 	os.Exit(1)
-	// }
+	client, err := graph.NewGraphServiceClientWithCredentials(
+		credential, []string{"https://graph.microsoft.com/.default"})
+	if err != nil {
+		azureLog.Error("unable to create client", "error", err)
+		os.Exit(1)
+	}
+
+	return &AzureInstance{
+		api: client,
+	}
+}
+
+func Start() {
+	instance := New()
+
+	instance.processGroups()
 
 	// instance.processUsers(userList)
-	teams := instance.processGroups()
-	azureLog.Info("DEBUG", "return", teams)
 }

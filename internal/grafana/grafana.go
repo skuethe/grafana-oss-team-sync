@@ -2,32 +2,50 @@ package grafana
 
 import (
 	"log/slog"
+	"net/url"
 	"os"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/grafana/grafana-openapi-client-go/client"
-	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
 type GrafanaInstance struct {
 	api *client.GrafanaHTTPAPI
 }
 
-func Start(userList *[]models.AdminCreateUserForm, teamList *[]models.CreateTeamCommand) {
-	grafanaLog := slog.With(slog.String("package", "grafana"))
-	grafanaLog.Info("Initializing Grafana")
+var Instance *GrafanaInstance
 
-	instance := GrafanaInstance{
-		api: initClient(),
+func New() {
+	grafanaLog := slog.With(slog.String("package", "grafana"))
+	grafanaLog.Info("initializing Grafana")
+
+	cfg := client.TransportConfig{
+		// Host is the doman name or IP address of the host that serves the API.
+		Host: "localhost:3000",
+		// BasePath is the URL prefix for all API paths, relative to the host root.
+		BasePath: "/api",
+		// Schemes are the transfer protocols used by the API (http or https).
+		Schemes: []string{"http"},
+		// BasicAuth is optional basic auth credentials.
+		BasicAuth: url.UserPassword("admin", "admin"),
 	}
 
-	grafanaLog.Info("Validating Grafana Health")
-	_, err := instance.api.Health.GetHealth()
+	client := client.NewHTTPClientWithConfig(strfmt.Default, &cfg)
+
+	_, err := client.Health.GetHealth()
 	if err != nil {
 		grafanaLog.Error("Grafana instance is not healthy", "error", err)
 		os.Exit(1)
 	}
+	grafanaLog.Info("validated instance health")
 
-	instance.processUsers(userList)
-	instance.processTeams(teamList)
-	instance.processFolders()
+	Instance = &GrafanaInstance{
+		api: client,
+	}
 }
+
+// func Start() {
+// 	instance.processUsers(userList)
+// 	instance.processTeams(teamList)
+// 	instance.processFolders()
+// }

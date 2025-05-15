@@ -19,7 +19,8 @@ loglevel: 0
 teams:
   - grafana-devops
   - grafana-technology
-  - testteam
+  # - testteam
+  - technology
   # grafana-devops: {}
   # grafana-technology: {}
   # testteam: ""

@@ -12,10 +12,6 @@ import (
 	"github.com/knadh/koanf/v2"
 )
 
-// type Config struct {
-// 	k *koanf.Koanf
-// }
-
 // Global koanf instance for input handling
 var K = koanf.New(".")
 
@@ -32,19 +28,19 @@ func GetLogLevel() slog.Level {
 	case 99:
 		level = slog.LevelDebug
 	default:
-		slog.Warn("Undefined log level set, falling back to INFO", "loglevel", configLevel)
+		slog.Warn("undefined log level set, falling back to INFO", "loglevel", configLevel)
 		level = slog.LevelInfo
 	}
 	return level
 }
 
-func Start() {
+func Load() {
 	configLog := slog.With(slog.String("package", "config"))
-	configLog.Info("Initializing Config")
+	configLog.Info("loading config")
 
 	// Load YAML config
 	if err := K.Load(file.Provider("configs/config.yaml"), yaml.Parser()); err != nil {
-		configLog.Error("Could not load Config", "error", err)
+		configLog.Error("could not load config", "error", err)
 		os.Exit(1)
 	}
 

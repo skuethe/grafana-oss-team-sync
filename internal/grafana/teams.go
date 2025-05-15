@@ -20,10 +20,10 @@ func (t *team) doesTeamExist() bool {
 		Name: &t.form.Name,
 	})
 	if err != nil {
-		t.log.Error("Could not search for Grafana Team", "error", err)
+		t.log.Error("could not search for Grafana team", "error", err)
 		os.Exit(1)
 	}
-	t.log.Debug("Team search results", "search", "Name: "+t.form.Name, "result", result)
+	t.log.Debug("team search results", "searchName", t.form.Name, "searchResult", result)
 	return len(result.Payload.Teams) > 0
 }
 
@@ -33,15 +33,15 @@ func (t *team) createTeam() {
 		Email: t.form.Email,
 	})
 	if err != nil {
-		t.log.Error("Could not create Grafana Team", "error", err)
+		t.log.Error("could not create Grafana team", "error", err)
 	} else {
-		t.log.Info("Created Grafana Team")
+		t.log.Info("created Grafana team")
 	}
 }
 
-func (g *GrafanaInstance) processTeams(teamList *[]models.CreateTeamCommand) {
+func (g *GrafanaInstance) ProcessTeams(teamList *[]models.CreateTeamCommand) {
 	teamsLog := slog.With(slog.String("package", "grafana.teams"))
-	teamsLog.Info("Initializing Grafana Teams")
+	teamsLog.Info("processing Grafana teams")
 
 	countSkipped := 0
 	countCreated := 0
@@ -53,23 +53,23 @@ func (g *GrafanaInstance) processTeams(teamList *[]models.CreateTeamCommand) {
 				slog.String("name", instance.Name),
 			),
 		)
-		teamLog.Info("Processing Grafana Team")
 
 		t := team{
 			client: g.api,
 			log:    *teamLog,
 			form:   instance,
 		}
+
 		if t.doesTeamExist() {
 			countSkipped++
-			teamLog.Debug("Skipped Grafana Team")
+			teamLog.Debug("skipped Grafana team")
 		} else {
 			t.createTeam()
 			countCreated++
 		}
 	}
 	teamsLog.Info(
-		"Finished Grafana Teams",
+		"finished processing Grafana teams",
 		slog.Group("stats",
 			slog.Int("created", countCreated),
 			slog.Int("skipped", countSkipped),

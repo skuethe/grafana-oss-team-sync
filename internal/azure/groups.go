@@ -28,10 +28,12 @@ func (s *groups) getData() (models.GroupCollectionResponseable, error) {
 
 	// requestSearch := "\"displayName:" + a.name + "\""
 	// requestTop := int32(5)
+	requestCount := true
 	requestFilter := s.requestFilter
 	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
 		Filter: &requestFilter,
 		Select: []string{"id", "displayName", "mail"},
+		Count:  &requestCount,
 		// Top: &requestTop,
 		// Search: &requestSearch,
 		// Expand: []string{"members($select=id,displayName)"},
@@ -51,9 +53,7 @@ func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 	groupsLog := slog.With(slog.String("package", "azure.groups"))
 	groupsLog.Info("Initializing Azure Groups")
 
-	countFound := 0
-
-	teams := config.K.MapKeys("teams")
+	teams := config.K.Strings("teams")
 
 	g := groups{
 		client:        a.api,
@@ -65,6 +65,8 @@ func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 		groupsLog.Error("Could not get Group results from Azure", "error", err)
 		os.Exit(1)
 	}
+
+	countFound := *groupList.GetOdataCount()
 
 	for _, group := range groupList.GetValue() {
 
@@ -90,7 +92,6 @@ func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 			Name:  groupDisplayName,
 			Email: mail,
 		})
-		countFound++
 		teams = helpers.RemoveFromSlice(teams, groupDisplayName, false)
 	}
 
@@ -101,7 +102,7 @@ func (a *azureInstance) processGroups() (grafanaTeamList []*grafanaModels.Create
 	groupsLog.Info(
 		"Finished Azure Groups",
 		slog.Group("stats",
-			slog.Int("found", countFound),
+			slog.Int64("found", countFound),
 			slog.Int("ignored", len(teams)),
 		),
 	)

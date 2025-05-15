@@ -50,6 +50,12 @@ func main() {
 	// Initialize Grafana
 	grafana.New()
 
+	// Run Azure related packages
+	azure.Start()
+
+	// Process Grafana folders
+	grafana.Instance.ProcessFolders()
+
 	//
 	//
 	// Temporary data inputs
@@ -75,9 +81,6 @@ func main() {
 	//
 	//
 	//
-
-	// Run Azure related packages
-	azure.Start()
 
 	// Run Grafana related packages
 	// grafana.Start(&userList, &teamList)

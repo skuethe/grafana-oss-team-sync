@@ -30,9 +30,9 @@ func (f *folder) createFolder() {
 		ParentUID:   f.model.ParentUID,
 	})
 	if err != nil {
-		f.log.Error("Could not create Grafana Folder", "error", err)
+		f.log.Error("could not create Grafana folder", "error", err)
 	} else {
-		f.log.Info("Created Grafana Folder")
+		f.log.Info("created Grafana folder")
 	}
 }
 
@@ -45,18 +45,18 @@ func (f *folder) manageFolderPermissions() {
 			Name: &teamName,
 		})
 		if err != nil {
-			f.log.Error("Could not search for specific team - skipping", "error", err)
+			f.log.Error("could not search for specified team - skipping", "error", err)
 			continue
 		}
 		if len(team.Payload.Teams) == 0 {
-			f.log.Warn("Specified Team for folder permissions does not exist - skipping")
+			f.log.Warn("specified team for folder permissions does not exist - skipping", "team", teamName)
 			continue
 		}
 
 		switch teamPermission {
 		case config.PermissionViewer, config.PermissionEditor, config.PermissionAdmin:
 		default:
-			f.log.Warn("Permission not allowed - skipping", "wrong.permission", teamPermission)
+			f.log.Warn("wrong permission defined - skipping", "team", teamName, "permission", teamPermission)
 			continue
 		}
 
@@ -72,16 +72,16 @@ func (f *folder) manageFolderPermissions() {
 		Items: permissionList,
 	})
 	if err != nil {
-		f.log.Error("Could not update Grafana Folder Permissions", "error", err)
+		f.log.Error("could not update Grafana folder permissions", "error", err)
 	} else {
-		f.log.Info("Grafana Folder Permissions updated")
+		f.log.Info("Grafana folder permissions updated")
 	}
 }
 
-func (g *GrafanaInstance) processFolders() {
+func (g *GrafanaInstance) ProcessFolders() {
 
 	foldersLog := slog.With(slog.String("package", "grafana.folders"))
-	foldersLog.Info("Initializing Grafana Folders")
+	foldersLog.Info("processing Grafana folders")
 
 	countSkipped := 0
 	countCreated := 0
@@ -97,11 +97,8 @@ func (g *GrafanaInstance) processFolders() {
 			slog.Group("folder",
 				slog.String("uid", folderUID),
 				slog.String("title", folderFromConfig.Title),
-				slog.String("description", folderFromConfig.Description),
-				slog.Any("permissions", config.K.Get("folders."+folderUID+".permissions")),
 			),
 		)
-		folderLog.Info("Processing Grafana Folder")
 
 		if len(folderFromConfig.Permissions.Teams) > 0 {
 			config.K.MustInt64Map("folders." + folderUID + ".permissions.teams")
@@ -120,7 +117,7 @@ func (g *GrafanaInstance) processFolders() {
 
 		if f.doesFolderExist() {
 			countSkipped++
-			folderLog.Debug("Grafana Folder already exists - skipping")
+			folderLog.Debug("skipping Grafana folder because it already exists")
 		} else {
 			f.createFolder()
 			countCreated++
@@ -130,7 +127,7 @@ func (g *GrafanaInstance) processFolders() {
 	}
 
 	foldersLog.Info(
-		"Finished Grafana Folders",
+		"finished processing Grafana folders",
 		slog.Group("stats",
 			slog.Int("created", countCreated),
 			slog.Int("skipped", countSkipped),

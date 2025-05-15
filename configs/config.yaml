@@ -19,14 +19,8 @@ loglevel: 0
 teams:
   - grafana-devops
   - grafana-technology
-  # - testteam
   - technology
-  # grafana-devops: {}
-  # grafana-technology: {}
-  # testteam: ""
-  # technology: {}
-  # test2team:
-  #   email: "test2@test.com"
+  # - doesnotexist
 
 
 
@@ -66,11 +60,14 @@ folders:
     description: "A folder to test things"
     permissions:
       teams:
-        testteam: 2
+        grafana-devops: 2
+        grafana-technology: 1
         test2team: 1
   testfolder2:
     title: "TestFolder2"
     description: "A second folder"
     permissions:
       teams:
-        testteam: 1
+        Technology: 1
+        grafana-devops: 4
+        grafana-technology: 3

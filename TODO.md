@@ -17,3 +17,9 @@
 - groups / teams
     - either make Azure group search results case sensitive OR
     - make Grafana team search case insensitive
+
+- users
+    0. Optional: enable / disable user sync in config
+    1. for every source group add users to a list `[]models.AdminCreateUserForm`
+    2. make sure each entry is unique
+    3. call grafana.ProcessUsers

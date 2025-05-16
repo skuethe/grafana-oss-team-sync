@@ -1,0 +1,110 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats: [tar.gz]
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+
+dockers:
+- image_templates:
+    - "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}-amd64"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}-amd64"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}-amd64"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:latest-amd64"
+  use: buildx
+  dockerfile: Dockerfile
+  build_flag_templates:
+  - "--platform=linux/amd64"
+  - --label=org.opencontainers.image.title={{ .ProjectName }}
+  - --label=org.opencontainers.image.description={{ .ProjectName }}
+  - --label=org.opencontainers.image.url=https://github.com/skuethe/grafana-oss-team-sync
+  - --label=org.opencontainers.image.source=https://github.com/skuethe/grafana-oss-team-sync
+  - --label=org.opencontainers.image.version={{ .Version }}
+  - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
+  - --label=org.opencontainers.image.revision={{ .FullCommit }}
+  # - --label=org.opencontainers.image.licenses=MIT
+- image_templates:
+    - "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}-arm64v8"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}-arm64v8"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}-arm64v8"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:latest-arm64v8"
+  use: buildx
+  goarch: arm64
+  dockerfile: Dockerfile
+  build_flag_templates:
+  - "--platform=linux/arm64/v8"
+  - --label=org.opencontainers.image.title={{ .ProjectName }}
+  - --label=org.opencontainers.image.description={{ .ProjectName }}
+  - --label=org.opencontainers.image.url=https://github.com/skuethe/grafana-oss-team-sync
+  - --label=org.opencontainers.image.source=https://github.com/skuethe/grafana-oss-team-sync
+  - --label=org.opencontainers.image.version={{ .Version }}
+  - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
+  - --label=org.opencontainers.image.revision={{ .FullCommit }}
+  # - --label=org.opencontainers.image.licenses=MIT
+
+
+docker_manifests:
+- name_template: "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}"
+  image_templates:
+    - "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}-amd64"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}-arm64v8"
+
+- name_template: "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}"
+  image_templates:
+    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}-amd64"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}-arm64v8"
+
+- name_template: "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}"
+  image_templates:
+    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}-amd64"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}-arm64v8"
+
+- name_template: "ghcr.io/skuethe/grafana-oss-team-sync:latest"
+  image_templates:
+    - "ghcr.io/skuethe/grafana-oss-team-sync:latest}-amd64"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:latest-arm64v8"
+
+
+nfpms:
+- maintainer: skuethe <56306041+skuethe@users.noreply.github.com>
+  description: |-
+    Grafana OSS Team Sync
+    Sync groups and users from external sources to Grafana without Grafana Enterprise
+  homepage: https://github.com/skuethe/grafana-oss-team-sync
+  formats:
+  - apk
+  - deb
+  - rpm
+  - archlinux
+
+
+changelog:
+  use: git
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"

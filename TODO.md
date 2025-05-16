@@ -12,13 +12,25 @@
 - add README info
     - how to setup Grafana
 
+- azure
+    - rename azure to entraid
+    - modify graph sdk via kiota and verify if that gives us a smaller package size
+        -> https://learn.microsoft.com/en-gb/graph/sdks/customize-client?tabs=go
+        -> https://stackoverflow.com/questions/78355878/how-to-disable-backingstore-and-dirty-tracking-in-graph-beta-sdk-for-java
 
 - groups / teams
     - either make Azure group search results case sensitive OR
     - make Grafana team search case insensitive
+    - test azure pagination behaviour -> request ~10 groups and see what happens
 
 - users
-    0. Optional: enable / disable user sync in config
-    1. for every source group add users to a list `[]models.AdminCreateUserForm`
-    2. make sure each entry is unique
-    3. call grafana.ProcessUsers
+    - fix "login" attribute -> migrate from ID to surname
+    - add user to team after user was created
+
+- config
+    - allow to disable specific steps (f.e. via "skip.folders", "skip.teams" or "skip.users")
+
+- logging
+    - make detailed results from azure all "DEBUG"
+    - make "skipped" results from Grafana "DEBUG"
+    - make "created" results from Grafana "INFO"

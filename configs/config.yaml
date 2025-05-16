@@ -31,8 +31,9 @@ source: "azure"
 
 teams:
   - grafana-devops
+  - devops
   - grafana-technology
-  - technology
+  # - technology
   # - doesnotexist
 
 

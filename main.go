@@ -50,11 +50,11 @@ func main() {
 	// Initialize Grafana
 	grafana.New()
 
-	// Load Azure related packages
+	// Load source plugins
 	azure.Load()
 
 	// Process Grafana folders
-	grafana.Instance.ProcessFolders()
+	// grafana.Instance.ProcessFolders()
 
 	//
 	//

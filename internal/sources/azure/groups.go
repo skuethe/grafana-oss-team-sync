@@ -13,7 +13,6 @@ import (
 
 	"github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
-	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
 )
 
@@ -35,9 +34,9 @@ func (g *groups) getGroupData() (models.GroupCollectionResponseable, error) {
 		Filter: &requestFilter,
 		Select: []string{"id", "displayName", "mail"},
 		Count:  &requestCount,
+		// Expand: []string{"members($select=id,displayName)"},
 		// Top: &requestTop,
 		// Search: &requestSearch,
-		// Expand: []string{"members($select=id,displayName)"},
 	}
 	configuraton := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
 		Headers:         headers,
@@ -63,13 +62,14 @@ func (a *AzureInstance) processGroups() {
 
 	groupList, err := g.getGroupData()
 	if err != nil {
-		groupsLog.Error("could not get Group results from Azure", "error", err)
+		groupsLog.Error("could not get group results from Azure", "error", err)
 		os.Exit(1)
 	}
 
 	countFound := *groupList.GetOdataCount()
 
 	var grafanaTeamList []grafanaModels.CreateTeamCommand
+	var groupIDList []string
 
 	for _, group := range groupList.GetValue() {
 
@@ -95,6 +95,7 @@ func (a *AzureInstance) processGroups() {
 			Name:  groupDisplayName,
 			Email: mail,
 		})
+		groupIDList = append(groupIDList, groupId)
 		teams = helpers.RemoveFromSlice(teams, groupDisplayName, false)
 	}
 
@@ -110,5 +111,9 @@ func (a *AzureInstance) processGroups() {
 		),
 	)
 
-	grafana.Instance.ProcessTeams(&grafanaTeamList)
+	if len(groupIDList) > 0 {
+		a.processUsers(groupIDList)
+	}
+
+	// grafana.Instance.ProcessTeams(&grafanaTeamList)
 }

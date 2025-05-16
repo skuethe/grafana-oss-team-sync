@@ -49,7 +49,7 @@ func (u *user) createUser() {
 	}
 }
 
-func (g *GrafanaInstance) processUsers(userList *[]models.AdminCreateUserForm) {
+func (g *GrafanaInstance) ProcessUsers(userList *[]models.AdminCreateUserForm) {
 	usersLog := slog.With(slog.String("package", "grafana.users"))
 	usersLog.Info("Processing Grafana Users")
 
@@ -65,7 +65,6 @@ func (g *GrafanaInstance) processUsers(userList *[]models.AdminCreateUserForm) {
 			),
 		)
 		userLog.Info("Processing Grafana User")
-
 		u := user{
 			client: g.api,
 			log:    *userLog,

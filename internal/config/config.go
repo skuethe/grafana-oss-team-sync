@@ -49,4 +49,12 @@ func Load() {
 		return strings.Replace(strings.ToLower(
 			strings.TrimPrefix(s, "GOTS_")), "_", ".", -1)
 	}), nil)
+
+	// Validate source input
+	err := valdidateSource()
+	if err != nil {
+		configLog.Error("error parsing source config", "error", err)
+		os.Exit(1)
+	}
+
 }

@@ -11,6 +11,19 @@
 loglevel: 0
 
 
+#
+# Source from where you want to sync teams
+#
+#
+# Options:
+# "azure" - Entra ID (Azure Active Directory)
+#
+# At the moment only azure is supported as a source
+#
+
+source: "azure"
+
+
 
 #
 # Teams you want to sync to Grafana
@@ -26,6 +39,8 @@ teams:
 
 #
 # Folders you want to create in Grafana
+#
+
 #
 # WARNINGS:
 # - Folder entries are converted to lowercase and used as the folders UID

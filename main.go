@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/skuethe/grafana-oss-team-sync/internal/azure"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
+	"github.com/skuethe/grafana-oss-team-sync/internal/sources/azure"
 )
 
 //
@@ -50,8 +50,8 @@ func main() {
 	// Initialize Grafana
 	grafana.New()
 
-	// Run Azure related packages
-	azure.Start()
+	// Load Azure related packages
+	azure.Load()
 
 	// Process Grafana folders
 	grafana.Instance.ProcessFolders()

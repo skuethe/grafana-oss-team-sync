@@ -6,6 +6,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	graph "github.com/microsoftgraph/msgraph-sdk-go"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 )
 
 type AzureInstance struct {
@@ -38,10 +39,11 @@ func New() *AzureInstance {
 	}
 }
 
-func Start() {
-	instance := New()
+func Load() {
+	if config.GetSource() == config.SourceAzure {
+		instance := New()
 
-	instance.processGroups()
-
-	// instance.processUsers(userList)
+		instance.processGroups()
+		// instance.processUsers(userList)
+	}
 }

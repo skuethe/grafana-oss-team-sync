@@ -19,4 +19,3 @@
 - groups / teams
     - either make Azure group search results case sensitive OR
     - make Grafana team search case insensitive
-

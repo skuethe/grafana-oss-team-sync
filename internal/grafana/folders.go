@@ -49,14 +49,13 @@ func (f *folder) manageFolderPermissions() {
 			continue
 		}
 		if len(team.Payload.Teams) == 0 {
-			f.log.Warn("specified team for folder permissions does not exist - skipping", "team", teamName)
+			f.log.Error("skipping folder permissions for team", "team", teamName, "error", "team does not exist")
 			continue
 		}
 
-		switch teamPermission {
-		case config.PermissionViewer, config.PermissionEditor, config.PermissionAdmin:
-		default:
-			f.log.Warn("wrong permission defined - skipping", "team", teamName, "permission", teamPermission)
+		permerr := config.ValidateFolderPermission(teamPermission)
+		if permerr != nil {
+			f.log.Error("skipping folder permissions for team", "team", teamName, "error", permerr)
 			continue
 		}
 

@@ -99,14 +99,14 @@ func (a *AzureInstance) processGroups() {
 	}
 
 	if len(teams) > 0 {
-		groupsLog.Warn("could not find the following groups in Azure", "ignored", strings.Join(teams, ","))
+		groupsLog.Warn("could not find the following groups in Azure", "skipped", strings.Join(teams, ","))
 	}
 
 	groupsLog.Info(
 		"finished processing Azure groups",
 		slog.Group("stats",
 			slog.Int64("found", countFound),
-			slog.Int("ignored", len(teams)),
+			slog.Int("skipped", len(teams)),
 		),
 	)
 

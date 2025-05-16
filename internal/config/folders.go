@@ -1,5 +1,10 @@
 package config
 
+import (
+	"errors"
+	"fmt"
+)
+
 type FolderSchema struct {
 	Title       string `koanf:"title"`
 	Description string `koanf:"description"`
@@ -15,3 +20,16 @@ const (
 	PermissionEditor
 	PermissionAdmin
 )
+
+func ValidateFolderPermission(in folderPermissions) error {
+	switch in {
+	case PermissionViewer:
+		return nil
+	case PermissionEditor:
+		return nil
+	case PermissionAdmin:
+		return nil
+	}
+
+	return errors.New("invalid permission defined: " + fmt.Sprint(in))
+}

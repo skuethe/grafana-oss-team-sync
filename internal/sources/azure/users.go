@@ -66,7 +66,7 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 
 		u := users{
 			client:        a.api,
-			requestSelect: []string{"id", "displayName", "mail"},
+			requestSelect: []string{"userPrincipalName", "displayName", "mail"},
 			fromGroup:     groupID,
 		}
 
@@ -85,7 +85,7 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 
 		for _, user := range userList.GetValue() {
 			userDisplayName := *user.GetDisplayName()
-			userId := *user.GetId()
+			userPrincipalName := *user.GetUserPrincipalName()
 			userMail := user.GetMail()
 
 			var mail string
@@ -95,7 +95,7 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 
 			userLog := groupLog.With(
 				slog.Group("user",
-					slog.String("id", userId),
+					slog.String("principalname", userPrincipalName),
 					slog.String("displayname", userDisplayName),
 					slog.String("mail", mail),
 				),
@@ -103,7 +103,7 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 			userLog.Debug("found Azure user")
 
 			grafanaUser := grafanaModels.AdminCreateUserForm{
-				Login: userId,
+				Login: userPrincipalName,
 				Name:  userDisplayName,
 				Email: mail,
 			}

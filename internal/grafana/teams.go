@@ -2,51 +2,43 @@ package grafana
 
 import (
 	"log/slog"
-	"os"
 
-	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-type team struct {
-	client *client.GrafanaHTTPAPI
-	log    slog.Logger
-	form   models.CreateTeamCommand
+type Teams struct {
+	Teams *[]Team
 }
 
-func (t *team) doesTeamExist() bool {
-	result, err := t.client.Teams.SearchTeams(&teams.SearchTeamsParams{
-		Name: &t.form.Name,
+type Team models.CreateTeamCommand
+
+func doesTeamExist(team Team) (bool, error) {
+	result, err := Instance.api.Teams.SearchTeams(&teams.SearchTeamsParams{
+		Name: &team.Name,
 	})
 	if err != nil {
-		t.log.Error("could not search for Grafana team", "error", err)
-		os.Exit(1)
+		return false, err
 	}
-	t.log.Debug("team search results", "searchName", t.form.Name, "searchResult", result)
-	return len(result.Payload.Teams) > 0
+	return len(result.Payload.Teams) > 0, nil
 }
 
-func (t *team) createTeam() {
-	_, err := t.client.Teams.CreateTeam(&models.CreateTeamCommand{
-		Name:  t.form.Name,
-		Email: t.form.Email,
-	})
+func createTeam(team Team) error {
+	_, err := Instance.api.Teams.CreateTeam(team)
 	if err != nil {
-		t.log.Error("could not create Grafana team", "error", err)
-	} else {
-		t.log.Info("created Grafana team")
+		return err
 	}
+	return nil
 }
 
-func (g *GrafanaInstance) ProcessTeams(teamList *[]models.CreateTeamCommand) {
+func (t *Teams) ProcessTeams() {
 	teamsLog := slog.With(slog.String("package", "grafana.teams"))
 	teamsLog.Info("processing Grafana teams")
 
 	countSkipped := 0
 	countCreated := 0
 
-	for _, instance := range *teamList {
+	for _, instance := range *t.Teams {
 
 		teamLog := slog.With(
 			slog.Group("team",
@@ -54,18 +46,22 @@ func (g *GrafanaInstance) ProcessTeams(teamList *[]models.CreateTeamCommand) {
 			),
 		)
 
-		t := team{
-			client: g.api,
-			log:    *teamLog,
-			form:   instance,
-		}
-
-		if t.doesTeamExist() {
-			countSkipped++
-			teamLog.Debug("skipped Grafana team")
+		exists, err := doesTeamExist(instance)
+		if err != nil {
+			teamLog.Error("could not search for Grafana team", "error", err)
 		} else {
-			t.createTeam()
-			countCreated++
+			if exists {
+				countSkipped++
+				teamLog.Debug("skipped Grafana team")
+			} else {
+				err := createTeam(&instance)
+				if err != nil {
+					teamLog.Error("could not create Grafana team", "error", err)
+				} else {
+					teamLog.Info("created Grafana team")
+					countCreated++
+				}
+			}
 		}
 	}
 	teamsLog.Info(

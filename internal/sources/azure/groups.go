@@ -6,13 +6,13 @@ import (
 	"os"
 	"strings"
 
-	grafanaModels "github.com/grafana/grafana-openapi-client-go/models"
 	abstractions "github.com/microsoft/kiota-abstractions-go"
 	graph "github.com/microsoftgraph/msgraph-sdk-go"
 	graphgroups "github.com/microsoftgraph/msgraph-sdk-go/groups"
 
 	"github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
+	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
 )
 
@@ -68,7 +68,7 @@ func (a *AzureInstance) processGroups() {
 
 	countFound := *groupList.GetOdataCount()
 
-	var grafanaTeamList []grafanaModels.CreateTeamCommand
+	var grafanaTeamList []*grafana.Team
 	var groupIDList []string
 
 	for _, group := range groupList.GetValue() {
@@ -91,7 +91,7 @@ func (a *AzureInstance) processGroups() {
 		)
 		groupLog.Info("found Azure group")
 
-		grafanaTeamList = append(grafanaTeamList, grafanaModels.CreateTeamCommand{
+		grafanaTeamList = append(grafanaTeamList, &grafana.Team{
 			Name:  groupDisplayName,
 			Email: mail,
 		})
@@ -111,9 +111,12 @@ func (a *AzureInstance) processGroups() {
 		),
 	)
 
-	if len(groupIDList) > 0 {
-		a.processUsers(groupIDList)
-	}
+	// if len(groupIDList) > 0 {
+	// 	a.processUsers(groupIDList)
+	// }
 
 	// grafana.Instance.ProcessTeams(&grafanaTeamList)
+	// grafana.Teams{
+	// 	Teams: &grafanaTeamList,
+	// }
 }

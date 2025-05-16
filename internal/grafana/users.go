@@ -43,15 +43,15 @@ func (u *user) createUser() {
 		Password: models.Password(generateSecurePassword()),
 	})
 	if err != nil {
-		u.log.Error("Could not create User", "error", err)
+		u.log.Error("could not create Grafana user", "error", err)
 	} else {
-		u.log.Info("Created Grafana User")
+		u.log.Info("created Grafana user")
 	}
 }
 
 func (g *GrafanaInstance) ProcessUsers(userList *[]models.AdminCreateUserForm) {
 	usersLog := slog.With(slog.String("package", "grafana.users"))
-	usersLog.Info("Processing Grafana Users")
+	usersLog.Info("processing Grafana users")
 
 	countSkipped := 0
 	countCreated := 0
@@ -64,7 +64,7 @@ func (g *GrafanaInstance) ProcessUsers(userList *[]models.AdminCreateUserForm) {
 				slog.String("email", instance.Email),
 			),
 		)
-		userLog.Info("Processing Grafana User")
+
 		u := user{
 			client: g.api,
 			log:    *userLog,
@@ -72,16 +72,14 @@ func (g *GrafanaInstance) ProcessUsers(userList *[]models.AdminCreateUserForm) {
 		}
 		if u.doesUserExist() {
 			countSkipped++
-			userLog.Debug(
-				"Skipped Grafana User",
-			)
+			userLog.Debug("skipped Grafana user")
 		} else {
 			u.createUser()
 			countCreated++
 		}
 	}
 	usersLog.Info(
-		"Finished Grafana Users",
+		"finished processing Grafana users",
 		slog.Group("stats",
 			slog.Int("created", countCreated),
 			slog.Int("skipped", countSkipped),

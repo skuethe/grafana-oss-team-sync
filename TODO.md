@@ -24,7 +24,6 @@
     - test azure pagination behaviour -> request ~10 groups and see what happens
 
 - users
-    - fix "login" attribute -> migrate from ID to surname
     - add user to team after user was created
 
 - config

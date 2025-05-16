@@ -1,12 +1,10 @@
 # TODOs
 
-- config input
-    - yaml schema validation?
-
 - repo release
     - add golang specific github actions
     - add badges
         - `https://goreportcard.com/`
+    - add goreleaser
 
 - features
     - allow team permissions to add individual users

@@ -54,7 +54,7 @@ func main() {
 	azure.Load()
 
 	// Process Grafana folders
-	// grafana.Instance.ProcessFolders()
+	grafana.Instance.ProcessFolders()
 
 	//
 	//

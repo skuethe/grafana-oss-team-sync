@@ -4,58 +4,54 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 )
 
-type folder struct {
-	client *client.GrafanaHTTPAPI
-	log    slog.Logger
-	input  config.FolderSchema
-	model  models.CreateFolderCommand
+type Folder struct {
+	input config.FolderSchema
+	model models.CreateFolderCommand
 }
 
-func (f *folder) doesFolderExist() bool {
-	_, err := f.client.Folders.GetFolderByUID(f.model.UID)
+func (f *Folder) doesFolderExist() bool {
+	_, err := Instance.api.Folders.GetFolderByUID(f.model.UID)
 	return err == nil
 }
 
-func (f *folder) createFolder() {
-	_, err := f.client.Folders.CreateFolder(&models.CreateFolderCommand{
+func (f *Folder) createFolder() error {
+	_, err := Instance.api.Folders.CreateFolder(&models.CreateFolderCommand{
 		Title:       f.model.Title,
 		Description: f.model.Description,
 		UID:         f.model.UID,
 		ParentUID:   f.model.ParentUID,
 	})
 	if err != nil {
-		f.log.Error("could not create Grafana folder", "error", err)
-	} else {
-		f.log.Info("created Grafana folder")
+		return err
 	}
+	return nil
 }
 
-func (f *folder) manageFolderPermissions() {
+func (f *Folder) manageFolderPermissions() error {
 
 	var permissionList []*models.DashboardACLUpdateItem
 
 	for teamName, teamPermission := range f.input.Permissions.Teams {
-		team, err := f.client.Teams.SearchTeams(&teams.SearchTeamsParams{
+		team, err := Instance.api.Teams.SearchTeams(&teams.SearchTeamsParams{
 			Name: &teamName,
 		})
 		if err != nil {
-			f.log.Error("could not search for specified team - skipping", "error", err)
+			slog.Error("could not search for specified team - skipping", "error", err)
 			continue
 		}
 		if len(team.Payload.Teams) == 0 {
-			f.log.Error("skipping folder permissions for team", "team", teamName, "error", "team does not exist")
+			slog.Error("skipping folder permissions for team", "team", teamName, "error", "team does not exist")
 			continue
 		}
 
 		permerr := config.ValidateFolderPermission(teamPermission)
 		if permerr != nil {
-			f.log.Error("skipping folder permissions for team", "team", teamName, "error", permerr)
+			slog.Error("skipping folder permissions for team", "team", teamName, "error", permerr)
 			continue
 		}
 
@@ -67,14 +63,13 @@ func (f *folder) manageFolderPermissions() {
 		})
 	}
 
-	_, err := f.client.FolderPermissions.UpdateFolderPermissions(f.model.UID, &models.UpdateDashboardACLCommand{
+	_, err := Instance.api.FolderPermissions.UpdateFolderPermissions(f.model.UID, &models.UpdateDashboardACLCommand{
 		Items: permissionList,
 	})
 	if err != nil {
-		f.log.Error("could not update Grafana folder permissions", "error", err)
-	} else {
-		f.log.Info("Grafana folder permissions updated")
+		return err
 	}
+	return nil
 }
 
 func (g *GrafanaInstance) ProcessFolders() {
@@ -103,10 +98,8 @@ func (g *GrafanaInstance) ProcessFolders() {
 			config.K.MustInt64Map("folders." + folderUID + ".permissions.teams")
 		}
 
-		f := folder{
-			client: g.api,
-			log:    *folderLog,
-			input:  folderFromConfig,
+		f := Folder{
+			input: folderFromConfig,
 			model: models.CreateFolderCommand{
 				UID:         strings.ToLower(folderUID),
 				Title:       folderFromConfig.Title,
@@ -118,11 +111,21 @@ func (g *GrafanaInstance) ProcessFolders() {
 			countSkipped++
 			folderLog.Debug("skipping Grafana folder because it already exists")
 		} else {
-			f.createFolder()
-			countCreated++
+			err := f.createFolder()
+			if err != nil {
+				folderLog.Error("could not create Grafana folder", "error", err)
+			} else {
+				folderLog.Info("created Grafana folder")
+				countCreated++
+			}
 		}
 
-		f.manageFolderPermissions()
+		err := f.manageFolderPermissions()
+		if err != nil {
+			folderLog.Error("could not update Grafana folder permissions", "error", err)
+		} else {
+			folderLog.Info("Grafana folder permissions updated")
+		}
 	}
 
 	foldersLog.Info(

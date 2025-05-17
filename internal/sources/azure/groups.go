@@ -68,8 +68,7 @@ func (a *AzureInstance) processGroups() {
 
 	countFound := *groupList.GetOdataCount()
 
-	var grafanaTeams *grafana.Teams
-	var grafanaTeamList []grafana.Team
+	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
 	var groupIDList []string
 
 	for _, group := range groupList.GetValue() {
@@ -92,7 +91,7 @@ func (a *AzureInstance) processGroups() {
 		)
 		groupLog.Info("found Azure group")
 
-		grafanaTeamList = append(grafanaTeamList, grafana.Team{
+		*grafanaTeamList = append(*grafanaTeamList, grafana.Team{
 			Name:  groupDisplayName,
 			Email: mail,
 		})
@@ -116,8 +115,5 @@ func (a *AzureInstance) processGroups() {
 		a.processUsers(groupIDList)
 	}
 
-	grafanaTeams = &grafana.Teams{
-		Teams: grafanaTeamList,
-	}
-	grafanaTeams.ProcessTeams()
+	grafanaTeamList.ProcessTeams()
 }

@@ -5,15 +5,11 @@ import (
 	"log/slog"
 	"math/big"
 
-	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/models"
 )
 
-type user struct {
-	client *client.GrafanaHTTPAPI
-	log    slog.Logger
-	form   models.AdminCreateUserForm
-}
+type User models.AdminCreateUserForm
+type Users []User
 
 func generateSecurePassword() string {
 
@@ -30,52 +26,50 @@ func generateSecurePassword() string {
 	return string(password)
 }
 
-func (u *user) doesUserExist() bool {
-	_, err := u.client.Users.GetUserByLoginOrEmail(u.form.Login)
+func (u *User) doesUserExist() bool {
+	_, err := Instance.api.Users.GetUserByLoginOrEmail(u.Login)
 	return err == nil
 }
 
-func (u *user) createUser() {
-	_, err := u.client.AdminUsers.AdminCreateUser(&models.AdminCreateUserForm{
-		Email:    u.form.Email,
-		Login:    u.form.Login,
-		Name:     u.form.Name,
+func (u *User) createUser() error {
+	_, err := Instance.api.AdminUsers.AdminCreateUser(&models.AdminCreateUserForm{
+		Email:    u.Email,
+		Login:    u.Login,
+		Name:     u.Name,
 		Password: models.Password(generateSecurePassword()),
 	})
 	if err != nil {
-		u.log.Error("could not create Grafana user", "error", err)
-	} else {
-		u.log.Info("created Grafana user")
+		return err
 	}
+	return nil
 }
 
-func (g *GrafanaInstance) ProcessUsers(userList *[]models.AdminCreateUserForm) {
+func (u *Users) ProcessUsers() {
 	usersLog := slog.With(slog.String("package", "grafana.users"))
 	usersLog.Info("processing Grafana users")
 
 	countSkipped := 0
 	countCreated := 0
 
-	for _, instance := range *userList {
+	for _, user := range *u {
 
 		userLog := slog.With(
 			slog.Group("user",
-				slog.String("login", instance.Login),
-				slog.String("email", instance.Email),
+				slog.String("login", user.Login),
+				slog.String("email", user.Email),
 			),
 		)
-
-		u := user{
-			client: g.api,
-			log:    *userLog,
-			form:   instance,
-		}
-		if u.doesUserExist() {
+		if user.doesUserExist() {
 			countSkipped++
 			userLog.Debug("skipped Grafana user")
 		} else {
-			u.createUser()
-			countCreated++
+			err := user.createUser()
+			if err != nil {
+				userLog.Error("could not create Grafana user", "error", err)
+			} else {
+				userLog.Info("created Grafana user")
+				countCreated++
+			}
 		}
 	}
 	usersLog.Info(

@@ -7,7 +7,6 @@ import (
 	"slices"
 	"strings"
 
-	grafanaModels "github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 
 	abstractions "github.com/microsoft/kiota-abstractions-go"
@@ -49,7 +48,7 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 	usersLog := slog.With(slog.String("package", "azure.users"))
 	usersLog.Info("processing Azure users")
 
-	var grafanaUserList []grafanaModels.AdminCreateUserForm
+	var grafanaUserList *grafana.Users = &grafana.Users{}
 
 	globalDuplicateUsers := 0
 
@@ -102,19 +101,19 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 			)
 			userLog.Debug("found Azure user")
 
-			grafanaUser := grafanaModels.AdminCreateUserForm{
+			grafanaUser := grafana.User{
 				Login: userPrincipalName,
 				Name:  userDisplayName,
 				Email: mail,
 			}
 			userExists := false
-			if slices.Contains(grafanaUserList, grafanaUser) {
+			if slices.Contains(*grafanaUserList, grafanaUser) {
 				userExists = true
 				userLog.Debug("skipping duplicate user")
 				usersDuplicate++
 			}
 			if !userExists {
-				grafanaUserList = append(grafanaUserList, grafanaUser)
+				*grafanaUserList = append(*grafanaUserList, grafanaUser)
 				usersAdded++
 			}
 		}
@@ -137,10 +136,10 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 	usersLog.Info(
 		"finished processing Azure users",
 		slog.Group("stats",
-			slog.Int("unique", len(grafanaUserList)),
+			slog.Int("unique", len(*grafanaUserList)),
 			slog.Int("duplicate", globalDuplicateUsers),
 		),
 	)
 
-	grafana.Instance.ProcessUsers(&grafanaUserList)
+	grafanaUserList.ProcessUsers()
 }

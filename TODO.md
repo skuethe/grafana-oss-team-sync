@@ -5,9 +5,10 @@
     - add badges
         - `https://goreportcard.com/`
 
-- features
+- future features
     - allow team permissions to add individual users
     - allow team permissions to add roles
+    - allow to skip specific steps (f.e. via "skip.folders", "skip.teams" or "skip.users")
 
 - add README info
     - how to setup Grafana
@@ -32,11 +33,7 @@
         -> https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.AddTeamMember
 
 - config
-    - allow to disable specific steps (f.e. via "skip.folders", "skip.teams" or "skip.users")
     - add "retry" to connect to Grafana instance
-
-- Grafana
-    - version check via API?
 
 - logging
     - make detailed results from azure all "DEBUG"

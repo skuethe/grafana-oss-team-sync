@@ -32,20 +32,14 @@ func New() {
 
 	client := client.NewHTTPClientWithConfig(strfmt.Default, &cfg)
 
-	_, err := client.Health.GetHealth()
+	health, err := client.Health.GetHealth()
 	if err != nil {
 		grafanaLog.Error("Grafana instance is not healthy", "error", err)
 		os.Exit(1)
 	}
-	grafanaLog.Info("validated instance health")
+	grafanaLog.Info("validated instance health", "version", health.Payload.Version)
 
 	Instance = &GrafanaInstance{
 		api: client,
 	}
 }
-
-// func Start() {
-// 	instance.processUsers(userList)
-// 	instance.processTeams(teamList)
-// 	instance.processFolders()
-// }

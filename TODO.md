@@ -11,6 +11,9 @@
 
 - add README info
     - how to setup Grafana
+        - "Azure AD" auth
+        - disable registration ?
+        - ...
 
 - azure
     - rename azure to entraid
@@ -24,12 +27,22 @@
     - test azure pagination behaviour -> request ~10 groups and see what happens
 
 - users
-    - add user to team after user was created
+    - add user to team after user was created (we need the user ID)
+        -> https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.AddTeamMember
 
 - config
     - allow to disable specific steps (f.e. via "skip.folders", "skip.teams" or "skip.users")
+    - add "retry" to connect to Grafana instance
+
+- Grafana
+    - version check via API?
 
 - logging
     - make detailed results from azure all "DEBUG"
     - make "skipped" results from Grafana "DEBUG"
     - make "created" results from Grafana "INFO"
+
+- tests
+    - write _test files
+    - integration tests
+        - run against multiple Grafana versions in CI

@@ -8,12 +8,12 @@ import (
 )
 
 type Teams struct {
-	Teams *[]Team
+	Teams []Team
 }
 
 type Team models.CreateTeamCommand
 
-func doesTeamExist(team Team) (bool, error) {
+func doesTeamExist(team *Team) (bool, error) {
 	result, err := Instance.api.Teams.SearchTeams(&teams.SearchTeamsParams{
 		Name: &team.Name,
 	})
@@ -24,7 +24,10 @@ func doesTeamExist(team Team) (bool, error) {
 }
 
 func createTeam(team *Team) error {
-	_, err := Instance.api.Teams.CreateTeam(team)
+	_, err := Instance.api.Teams.CreateTeam(&models.CreateTeamCommand{
+		Name:  team.Name,
+		Email: team.Email,
+	})
 	if err != nil {
 		return err
 	}
@@ -38,7 +41,7 @@ func (t *Teams) ProcessTeams() {
 	countSkipped := 0
 	countCreated := 0
 
-	for _, instance := range *t.Teams {
+	for _, instance := range t.Teams {
 
 		teamLog := slog.With(
 			slog.Group("team",
@@ -46,7 +49,7 @@ func (t *Teams) ProcessTeams() {
 			),
 		)
 
-		exists, err := doesTeamExist(instance)
+		exists, err := doesTeamExist(&instance)
 		if err != nil {
 			teamLog.Error("could not search for Grafana team", "error", err)
 		} else {
@@ -54,7 +57,7 @@ func (t *Teams) ProcessTeams() {
 				countSkipped++
 				teamLog.Debug("skipped Grafana team")
 			} else {
-				err := createTeam(instance)
+				err := createTeam(&instance)
 				if err != nil {
 					teamLog.Error("could not create Grafana team", "error", err)
 				} else {

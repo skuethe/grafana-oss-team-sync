@@ -112,13 +112,12 @@ func (a *AzureInstance) processGroups() {
 		),
 	)
 
-	// if len(groupIDList) > 0 {
-	// 	a.processUsers(groupIDList)
-	// }
+	if len(groupIDList) > 0 {
+		a.processUsers(groupIDList)
+	}
 
-	// grafana.Instance.ProcessTeams(&grafanaTeamList)
 	grafanaTeams = &grafana.Teams{
-		Teams: &grafanaTeamList,
+		Teams: grafanaTeamList,
 	}
 	grafanaTeams.ProcessTeams()
 }

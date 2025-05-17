@@ -46,3 +46,6 @@
     - write _test files
     - integration tests
         - run against multiple Grafana versions in CI
+
+- CI
+    - add github actions

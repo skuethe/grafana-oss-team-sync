@@ -23,7 +23,7 @@ func doesTeamExist(team Team) (bool, error) {
 	return len(result.Payload.Teams) > 0, nil
 }
 
-func createTeam(team Team) error {
+func createTeam(team *Team) error {
 	_, err := Instance.api.Teams.CreateTeam(team)
 	if err != nil {
 		return err
@@ -54,7 +54,7 @@ func (t *Teams) ProcessTeams() {
 				countSkipped++
 				teamLog.Debug("skipped Grafana team")
 			} else {
-				err := createTeam(&instance)
+				err := createTeam(instance)
 				if err != nil {
 					teamLog.Error("could not create Grafana team", "error", err)
 				} else {

@@ -77,11 +77,4 @@ func main() {
 	// 	},
 	// }
 
-	//
-	//
-	//
-	//
-
-	// Run Grafana related packages
-	// grafana.Start(&userList, &teamList)
 }

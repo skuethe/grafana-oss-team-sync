@@ -12,6 +12,7 @@
 - add README info
     - how to setup Grafana
         - "Azure AD" auth
+            - minimum permissions required?
         - disable registration ?
         - ...
 

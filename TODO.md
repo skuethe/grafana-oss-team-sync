@@ -39,6 +39,7 @@
     - make detailed results from azure all "DEBUG"
     - make "skipped" results from Grafana "DEBUG"
     - make "created" results from Grafana "INFO"
+    - Use OpenTelemetry standards / go libs?
 
 - tests
     - write _test files

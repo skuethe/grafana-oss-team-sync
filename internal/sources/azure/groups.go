@@ -113,7 +113,9 @@ func (a *AzureInstance) processGroups() {
 
 	if len(groupIDList) > 0 {
 		a.processUsers(groupIDList)
+		grafanaTeamList.ProcessTeams()
+	} else {
+		groupsLog.Warn("no groups to process, skipping Grafana teams package")
 	}
 
-	grafanaTeamList.ProcessTeams()
 }

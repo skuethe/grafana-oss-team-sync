@@ -12,7 +12,8 @@ loglevel: 0
 
 
 #
-# Source from where you want to sync teams
+# Source configuration
+# From where you want to sync teams
 #
 #
 # Options:
@@ -22,6 +23,39 @@ loglevel: 0
 #
 
 source: "azure"
+
+
+
+#
+# Grafana configuration
+#
+
+grafana:
+  connection:
+    #
+    # Scheme to use
+    # Either "http" or "https"
+    # Default "http"
+    #
+    # scheme: "https"
+
+    #
+    # Host and port of your Grafana instance
+    # Default "localhost:3000"
+    #
+    # host: "localhost:3000"
+
+    #
+    # Set base path for accessing Grafana API
+    # Default "/api"
+    #
+    # basePath: "/api"
+
+    #
+    # Amount of retries to connect to your Grafana instance
+    # Default 0
+    #
+    # retry: 2
 
 
 

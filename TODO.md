@@ -32,9 +32,6 @@
     - add user to team after user was created (we need the user ID)
         -> https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.AddTeamMember
 
-- config
-    - add "retry" to connect to Grafana instance
-
 - logging
     - make detailed results from azure all "DEBUG"
     - make "skipped" results from Grafana "DEBUG"

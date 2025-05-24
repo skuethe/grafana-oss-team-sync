@@ -1,6 +1,7 @@
 services:
   grafana:
-    image: docker.io/grafana/grafana-oss:12.0.0
+    # ref: https://github.com/grafana/grafana/releases/latest
+    image: docker.io/grafana/grafana-oss:12.0.1
     container_name: grafana
     restart: unless-stopped
     ports:

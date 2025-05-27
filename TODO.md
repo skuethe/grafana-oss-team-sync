@@ -16,6 +16,10 @@
             - minimum permissions required?
         - disable registration ?
         - ...
+    - how to setup EntraID app with permissions
+
+- grafana
+    - validate possible authentication possibilities (besides basic auth) and see if we can / want to support them
 
 - entraid
     - modify graph sdk via kiota and verify if that gives us a smaller package size

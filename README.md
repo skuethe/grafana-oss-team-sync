@@ -32,13 +32,18 @@
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
-  <ol>
+  &nbsp;
+  <ul>
     <li><a href="#about-the-project">About The Project</a></li>
-    <li><a href="#history">History</a></li>
+    <li><a href="#setup">Setup</a></li>
+      <ul>
+        <li><a href="#grafana">Grafana</a></li>
+        <li><a href="#entraid">EntraID</a></li>
+      </ul>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-  </ol>
+  </ul>
 </details>
 <br/>
 
@@ -47,13 +52,35 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-soon™
+This project was created because the build-in "team sync" in Grafana is an enterprise feature and only usable with an appropriate license key. This is where `grafana-oss-team-sync` comes into play - it is a FOSS tool to help you achive the same functionality as the "team sync" feature.  
+
+### Current feature list
+
+It also has additional features that can optionally be used. The list of features include:  
+
+- search your enterprise solution for specified `group(s)` and create them as `teams` in your Grafana instance(s)
+- (optional) create `account(s)` linked to the specified source groups as `users` in your Grafana instance(s)
+- (optional) create specified `folder(s)` in your Grafana instance(s) and add group(s) to the folder(s) `permissions`
+
+### Backlog feature list
+
+Features which will may be be added in the future:
+
+- allow to reference **users** on folder permissions
+- allow to reference **roles** on folder permissions
+- also **delete** users and groups when removed from the source / sync list
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-<!-- HISTORY -->
-## History
+<!-- Setup -->
+## Setup
+
+### Grafana
+
+soon™
+
+### EntraID
 
 soon™
 
@@ -68,7 +95,7 @@ Contributions are what makes the open source community such an amazing place to 
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
 
-See [`CONTRIBUTING`](CONTRIBUTING) for more information.
+See [`CONTRIBUTING`](CONTRIBUTING.md) for more information.
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -78,9 +105,9 @@ See [`CONTRIBUTING`](CONTRIBUTING) for more information.
 <!-- LICENSE -->
 ## License
 
-Distributed under the `GNU General Public License v3.0`.
+Distributed under the `GNU General Public License v3.0 ("GPL-3.0")`.
 
-See [`LICENSE`](LICENSE) for more information.
+See [`LICENSE`](LICENSE.md) for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

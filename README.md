@@ -52,7 +52,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project was created because the build-in "team sync" in Grafana is an enterprise feature and only usable with an appropriate license key. This is where `grafana-oss-team-sync` comes into play - it is a FOSS tool to help you achive the same functionality as the "team sync" feature.  
+This project was created because the build-in "team sync" in Grafana is an [enterprise feature](https://grafana.com/docs/grafana/v12.0/introduction/grafana-enterprise/#team-sync) and only usable with an appropriate license key. This is where `grafana-oss-team-sync` comes into play - it is a FOSS tool to help you achive the same functionality as the "team sync" feature.  
 
 ### Current feature list
 

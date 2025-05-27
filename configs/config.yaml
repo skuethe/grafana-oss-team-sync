@@ -17,12 +17,12 @@ loglevel: 0
 #
 #
 # Options:
-# "azure" - Entra ID (Azure Active Directory)
+# "entraid" - Entra ID (formerly Azure Active Directory)
 #
-# At the moment only azure is supported as a source
+# At the moment only entraid is supported as a source
 #
 
-source: "azure"
+source: "entraid"
 
 
 

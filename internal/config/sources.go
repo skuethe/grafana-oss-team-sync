@@ -12,7 +12,7 @@ type SourceSchema struct {
 type sourcePlugin string
 
 const (
-	SourceAzure sourcePlugin = "azure"
+	SourceEntraID sourcePlugin = "entraid"
 )
 
 var Source *SourceSchema
@@ -27,7 +27,7 @@ func valdidateSource() error {
 	}
 
 	switch Source.Plugin {
-	case SourceAzure:
+	case SourceEntraID:
 		return nil
 	}
 

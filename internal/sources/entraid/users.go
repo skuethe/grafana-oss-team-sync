@@ -1,4 +1,4 @@
-package azure
+package entraid
 
 import (
 	"context"
@@ -44,9 +44,9 @@ func (u *users) getUserData() (models.UserCollectionResponseable, error) {
 	return result, nil
 }
 
-func (a *AzureInstance) processUsers(fromGroupList []string) {
-	usersLog := slog.With(slog.String("package", "azure.users"))
-	usersLog.Info("processing Azure users")
+func (a *EntraIDInstance) processUsers(fromGroupList []string) {
+	usersLog := slog.With(slog.String("package", "entraid.users"))
+	usersLog.Info("processing EntraID users")
 
 	var grafanaUserList *grafana.Users = &grafana.Users{}
 
@@ -71,7 +71,7 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 
 		userList, err := u.getUserData()
 		if err != nil {
-			groupLog.Error("could not get user results from Azure", "error", err)
+			groupLog.Error("could not get user results from EntraID", "error", err)
 			os.Exit(1)
 		}
 
@@ -99,7 +99,7 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 					slog.String("mail", mail),
 				),
 			)
-			userLog.Debug("found Azure user")
+			userLog.Debug("found EntraID user")
 
 			grafanaUser := grafana.User{
 				Login: userPrincipalName,
@@ -134,7 +134,7 @@ func (a *AzureInstance) processUsers(fromGroupList []string) {
 	// fmt.Print(string(tmp))
 
 	usersLog.Info(
-		"finished processing Azure users",
+		"finished processing EntraID users",
 		slog.Group("stats",
 			slog.Int("unique", len(*grafanaUserList)),
 			slog.Int("duplicate", globalDuplicateUsers),

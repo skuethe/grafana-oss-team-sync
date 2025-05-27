@@ -1,4 +1,4 @@
-package azure
+package entraid
 
 import (
 	"context"
@@ -49,9 +49,9 @@ func (g *groups) getGroupData() (models.GroupCollectionResponseable, error) {
 	return result, nil
 }
 
-func (a *AzureInstance) processGroups() {
-	groupsLog := slog.With(slog.String("package", "azure.groups"))
-	groupsLog.Info("processing Azure groups")
+func (a *EntraIDInstance) processGroups() {
+	groupsLog := slog.With(slog.String("package", "entraid.groups"))
+	groupsLog.Info("processing entraid groups")
 
 	teams := config.K.Strings("teams")
 
@@ -62,7 +62,7 @@ func (a *AzureInstance) processGroups() {
 
 	groupList, err := g.getGroupData()
 	if err != nil {
-		groupsLog.Error("could not get group results from Azure", "error", err)
+		groupsLog.Error("could not get group results from EntraID", "error", err)
 		os.Exit(1)
 	}
 
@@ -89,7 +89,7 @@ func (a *AzureInstance) processGroups() {
 				slog.String("mail", mail),
 			),
 		)
-		groupLog.Info("found Azure group")
+		groupLog.Info("found EntraID group")
 
 		*grafanaTeamList = append(*grafanaTeamList, grafana.Team{
 			Name:  groupDisplayName,
@@ -100,11 +100,11 @@ func (a *AzureInstance) processGroups() {
 	}
 
 	if len(teams) > 0 {
-		groupsLog.Warn("could not find the following groups in Azure", "skipped", strings.Join(teams, ","))
+		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(teams, ","))
 	}
 
 	groupsLog.Info(
-		"finished processing Azure groups",
+		"finished processing EntraID groups",
 		slog.Group("stats",
 			slog.Int64("found", countFound),
 			slog.Int("skipped", len(teams)),

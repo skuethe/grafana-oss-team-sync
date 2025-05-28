@@ -56,19 +56,19 @@ This project was created because the build-in "team sync" in Grafana is an [ente
 
 ### Current feature list
 
-It also has additional features that can optionally be used. The list of features include:  
+The list of features include:  
 
-- search your enterprise solution for specified `group(s)` and create them as `teams` in your Grafana instance(s)
-- (optional) create `account(s)` linked to the specified source groups as `users` in your Grafana instance(s)
-- (optional) create specified `folder(s)` in your Grafana instance(s) and add group(s) to the folder(s) `permissions`
+- search your enterprise solution for specific `groups` and create them as `teams` in your Grafana instance
+- (optional) create `accounts` linked to each source group as `users` in your Grafana instance
+- (optional) create specific `folders` in your Grafana instance and add groups to the folders `permission` list as either a `viewer`, `editor` or `admin` role
 
 ### Backlog feature list
 
-Features which will may be be added in the future:
+Things which potentially will be added in the future:
 
-- allow to reference **users** on folder permissions
-- allow to reference **roles** on folder permissions
-- also **delete** users and groups when removed from the source / sync list
+- allow to reference `users` on folder permissions
+- allow to reference `roles` on folder permissions
+- `delete` users and groups when removed from the source / sync list
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

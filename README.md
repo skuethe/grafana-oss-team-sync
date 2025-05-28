@@ -35,6 +35,7 @@
   &nbsp;
   <ul>
     <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#requirements">Requirements</a></li>
     <li><a href="#setup">Setup</a></li>
       <ul>
         <li><a href="#grafana">Grafana</a></li>
@@ -69,6 +70,23 @@ Things which potentially will be added in the future:
 - allow to reference `users` on folder permissions
 - allow to reference `roles` on folder permissions
 - `delete` users and groups when removed from the source / sync list
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+<!-- Requirements -->
+## Requirements
+
+In it's first release, this tool only supports `Microsoft Entra ID` as a source for groups and users.  
+The idea is to add new sources in the future as a "plugin" feature.
+
+| Service  | Requirements   |
+|----------|----------------|
+| Grafana  | Supported versions: `11.x`, `12.x` |
+| Entra ID | Auth via Azure app: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` <br/>Minimum app permissions: `User.ReadBasic.All`, `GroupMember.Read.All` |
+
+&nbsp;  
+This tool is opinionated in a few ways, which result in special configuration requirements for it to work properly. See <a href="#setup">Setup</a> below.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

@@ -14,6 +14,7 @@ import (
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
+	"github.com/skuethe/grafana-oss-team-sync/internal/plugin"
 )
 
 type groups struct {
@@ -49,14 +50,14 @@ func (g *groups) getGroupData() (models.GroupCollectionResponseable, error) {
 	return result, nil
 }
 
-func (a *EntraIDInstance) processGroups() {
+func ProcessGroups(instance *plugin.SourceInstance) {
 	groupsLog := slog.With(slog.String("package", "entraid.groups"))
 	groupsLog.Info("processing entraid groups")
 
 	teams := config.K.Strings("teams")
 
 	g := groups{
-		client:        a.api,
+		client:        instance.EntraID,
 		requestFilter: "displayName in ('" + strings.Join(teams, "', '") + "')",
 	}
 
@@ -112,7 +113,7 @@ func (a *EntraIDInstance) processGroups() {
 	)
 
 	if len(groupIDList) > 0 {
-		a.processUsers(groupIDList)
+		ProcessUsers(instance, groupIDList)
 		grafanaTeamList.ProcessTeams()
 	} else {
 		groupsLog.Warn("no groups to process, skipping Grafana teams package")

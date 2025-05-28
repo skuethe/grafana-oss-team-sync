@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
+	"github.com/skuethe/grafana-oss-team-sync/internal/plugin"
 
 	abstractions "github.com/microsoft/kiota-abstractions-go"
 	graph "github.com/microsoftgraph/msgraph-sdk-go"
@@ -44,7 +45,7 @@ func (u *users) getUserData() (models.UserCollectionResponseable, error) {
 	return result, nil
 }
 
-func (a *EntraIDInstance) processUsers(fromGroupList []string) {
+func ProcessUsers(instance *plugin.SourceInstance, fromGroupList []string) {
 	usersLog := slog.With(slog.String("package", "entraid.users"))
 	usersLog.Info("processing EntraID users")
 
@@ -64,7 +65,7 @@ func (a *EntraIDInstance) processUsers(fromGroupList []string) {
 		usersDuplicate := 0
 
 		u := users{
-			client:        a.api,
+			client:        instance.EntraID,
 			requestSelect: []string{"userPrincipalName", "displayName", "mail"},
 			fromGroup:     groupID,
 		}

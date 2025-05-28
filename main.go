@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
-	"github.com/skuethe/grafana-oss-team-sync/internal/sources/entraid"
+	"github.com/skuethe/grafana-oss-team-sync/internal/sources"
 )
 
 //
@@ -50,8 +50,8 @@ func main() {
 	// Initialize Grafana
 	grafana.New()
 
-	// Load source plugins
-	entraid.Load()
+	// Load configured source plugin
+	sources.LoadPlugin()
 
 	// Process Grafana folders
 	grafana.Instance.ProcessFolders()

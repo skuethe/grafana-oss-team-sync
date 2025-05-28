@@ -1,6 +1,8 @@
 package helpers
 
-import "strings"
+import (
+	"strings"
+)
 
 func RemoveFromSlice(searchHere []string, removeThis string, caseSensitive bool) []string {
 	for k, v := range searchHere {

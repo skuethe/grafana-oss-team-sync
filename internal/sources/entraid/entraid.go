@@ -6,14 +6,11 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	graph "github.com/microsoftgraph/msgraph-sdk-go"
-	"github.com/skuethe/grafana-oss-team-sync/internal/config"
+
+	"github.com/skuethe/grafana-oss-team-sync/internal/plugin"
 )
 
-type EntraIDInstance struct {
-	api *graph.GraphServiceClient
-}
-
-func New() *EntraIDInstance {
+func New() *plugin.SourceInstance {
 	entraidLog := slog.With(slog.String("package", "entraid"))
 	entraidLog.Info("initializing EntraID")
 
@@ -34,16 +31,16 @@ func New() *EntraIDInstance {
 		os.Exit(1)
 	}
 
-	return &EntraIDInstance{
-		api: client,
+	return &plugin.SourceInstance{
+		EntraID: client,
 	}
 }
 
-func Load() {
-	if config.GetSource() == config.SourceEntraID {
-		instance := New()
+// func Load() {
+// 	if config.GetSource() == config.SourceEntraID {
+// 		instance := New()
 
-		instance.processGroups()
-		// instance.processUsers(userList)
-	}
-}
+// 		instance.ProcessGroups()
+// 		// instance.processUsers(userList)
+// 	}
+// }

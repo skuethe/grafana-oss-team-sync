@@ -9,26 +9,32 @@ import (
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources/entraid"
 )
 
-func CallPlugin() {
-	pluginLog := slog.With(slog.String("package", "entraid.groups"))
-	pluginLog.Info("processing entraid groups")
+func CallPlugin() (*grafana.Teams, *grafana.Users) {
+	pluginLog := slog.With(slog.String("package", "sources"))
+	pluginLog.Info("processing source plugin")
 
 	var instance *plugin.SourceInstance
-	var grafanaTeamList *grafana.Teams
+	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
+	var grafanaUserList *grafana.Users = &grafana.Users{}
 
 	// Execute specific source plugin, which need to return a *grafana.Teams instance
 	switch config.GetSource() {
 	case config.SourceEntraID:
+		var entraidGroupIDList []string
+
+		// EntraID: create new msgraph client
 		instance = entraid.New()
-		grafanaTeamList = entraid.ProcessGroups(instance)
+
+		// EntraID: search for all specified groups
+		grafanaTeamList, entraidGroupIDList = entraid.ProcessGroups(instance)
+
+		// EntraID: fetch all users which are a member of any found group
+		if !config.Feature.DisableUserSync {
+			grafanaUserList = entraid.ProcessUsers(instance, entraidGroupIDList)
+		}
 	}
 
-	// Continue to process available data against our Grafana instance
-	if len(*grafanaTeamList) > 0 {
-		// ProcessUsers(instance, groupIDList)
-		grafanaTeamList.ProcessTeams()
-	} else {
-		pluginLog.Warn("no groups to process, skipping Grafana teams package")
-	}
+	pluginLog.Info("finished processing source plugin")
 
+	return grafanaTeamList, grafanaUserList
 }

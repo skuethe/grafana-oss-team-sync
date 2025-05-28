@@ -51,10 +51,32 @@ func main() {
 	grafana.New()
 
 	// Call the configured source plugin
-	sources.CallPlugin()
+	grafanaTeamList, grafanaUserList := sources.CallPlugin()
 
-	// Process Grafana folders
-	grafana.Instance.ProcessFolders()
+	// Grafana: continue to process teams
+	if len(*grafanaTeamList) > 0 {
+		grafanaTeamList.ProcessTeams()
+	} else {
+		slog.Warn("no groups to process, skipping Grafana teams package")
+	}
+
+	// Grafana: continue to process users
+	if !config.Feature.DisableUserSync {
+		if len(*grafanaUserList) > 0 {
+			grafanaUserList.ProcessUsers()
+		} else {
+			slog.Warn("no users to process, skipping Grafana users package")
+		}
+	} else {
+		slog.Info("user sync disabled in config, skipping Grafana users package")
+	}
+
+	// Grafana: continue to process folders
+	if !config.Feature.DisableFolders {
+		grafana.Instance.ProcessFolders()
+	} else {
+		slog.Info("folder feature disabled in config, skipping Grafana folders package")
+	}
 
 	//
 	//

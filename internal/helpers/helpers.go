@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"slices"
 	"strings"
 )
 
@@ -13,7 +14,7 @@ func RemoveFromSlice(searchHere []string, removeThis string, caseSensitive bool)
 			validated = strings.EqualFold(v, removeThis)
 		}
 		if validated {
-			return append(searchHere[:k], searchHere[k+1:]...)
+			return slices.Delete(searchHere, k, k+1)
 		}
 	}
 	return searchHere

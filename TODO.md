@@ -8,7 +8,6 @@
 - future features
     - allow team permissions to add individual users
     - allow team permissions to add roles
-    - allow to skip specific steps (f.e. via "skip.folders", "skip.teams" or "skip.users")
 
 - add README info
     - how to setup Grafana

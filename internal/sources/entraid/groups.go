@@ -50,15 +50,16 @@ func (g *groups) getGroupData() (models.GroupCollectionResponseable, error) {
 	return result, nil
 }
 
-func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
+func ProcessGroups(instance *plugin.SourceInstance) (*grafana.Teams, []string) {
 	groupsLog := slog.With(slog.String("package", "entraid.groups"))
 	groupsLog.Info("processing entraid groups")
 
-	teams := config.K.Strings("teams")
+	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
+	var groupIDList []string = []string{}
 
 	g := groups{
 		client:        instance.EntraID,
-		requestFilter: "displayName in ('" + strings.Join(teams, "', '") + "')",
+		requestFilter: "displayName in ('" + strings.Join(config.Teams.List, "', '") + "')",
 	}
 
 	groupList, err := g.getGroupData()
@@ -68,9 +69,6 @@ func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 	}
 
 	countFound := *groupList.GetOdataCount()
-
-	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
-	var groupIDList []string
 
 	for _, group := range groupList.GetValue() {
 
@@ -97,27 +95,20 @@ func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 			Email: mail,
 		})
 		groupIDList = append(groupIDList, groupId)
-		teams = helpers.RemoveFromSlice(teams, groupDisplayName, false)
+		config.Teams.List = helpers.RemoveFromSlice(config.Teams.List, groupDisplayName, false)
 	}
 
-	if len(teams) > 0 {
-		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(teams, ","))
+	if len(config.Teams.List) > 0 {
+		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Teams.List, ","))
 	}
 
 	groupsLog.Info(
 		"finished processing EntraID groups",
 		slog.Group("stats",
 			slog.Int64("found", countFound),
-			slog.Int("skipped", len(teams)),
+			slog.Int("skipped", len(config.Teams.List)),
 		),
 	)
 
-	if len(groupIDList) > 0 {
-		ProcessUsers(instance, groupIDList)
-		grafanaTeamList.ProcessTeams()
-	} else {
-		groupsLog.Warn("no groups to process, skipping Grafana teams package")
-	}
-
-	return grafanaTeamList
+	return grafanaTeamList, groupIDList
 }

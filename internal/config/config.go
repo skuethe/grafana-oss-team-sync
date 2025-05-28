@@ -51,10 +51,27 @@ func Load() {
 	}), nil)
 
 	// Validate source input
-	err := valdidateSource()
-	if err != nil {
-		configLog.Error("error parsing source config", "error", err)
+	sourceErr := valdidateSource()
+	if sourceErr != nil {
+		configLog.Error("error parsing source config", "error", sourceErr)
 		os.Exit(1)
+	}
+
+	// Validate feature flags
+	featureErr := valdidateFeatureSchema()
+	if featureErr != nil {
+		configLog.Error("error parsing feature config", "error", featureErr)
+		os.Exit(1)
+	}
+
+	// Validate teams input
+	teamsErr := validateTeamsSchema()
+	if teamsErr != nil {
+		configLog.Error("error parsing teams config", "error", teamsErr)
+		os.Exit(1)
+	}
+	if len(Teams.List) == 0 {
+		configLog.Warn("your teams input is empty")
 	}
 
 }

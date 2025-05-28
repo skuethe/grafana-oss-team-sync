@@ -45,7 +45,7 @@ func (u *users) getUserData() (models.UserCollectionResponseable, error) {
 	return result, nil
 }
 
-func ProcessUsers(instance *plugin.SourceInstance, fromGroupList []string) {
+func ProcessUsers(instance *plugin.SourceInstance, fromGroupList []string) *grafana.Users {
 	usersLog := slog.With(slog.String("package", "entraid.users"))
 	usersLog.Info("processing EntraID users")
 
@@ -131,9 +131,6 @@ func ProcessUsers(instance *plugin.SourceInstance, fromGroupList []string) {
 
 	}
 
-	// tmp, _ := json.MarshalIndent(grafanaUserList, "", "  ")
-	// fmt.Print(string(tmp))
-
 	usersLog.Info(
 		"finished processing EntraID users",
 		slog.Group("stats",
@@ -142,5 +139,5 @@ func ProcessUsers(instance *plugin.SourceInstance, fromGroupList []string) {
 		),
 	)
 
-	grafanaUserList.ProcessUsers()
+	return grafanaUserList
 }

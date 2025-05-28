@@ -60,6 +60,16 @@ grafana:
 
 
 #
+# Configure feature behaviour
+#
+
+features:
+  disableFolders: false
+  disableUserSync: false
+
+
+
+#
 # Teams you want to sync to Grafana
 #
 

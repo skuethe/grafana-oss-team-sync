@@ -31,6 +31,10 @@ func (t *Team) createTeam() error {
 	return nil
 }
 
+func (t *Teams) Len() {
+
+}
+
 func (t *Teams) ProcessTeams() {
 	teamsLog := slog.With(slog.String("package", "grafana.teams"))
 	teamsLog.Info("processing Grafana teams")

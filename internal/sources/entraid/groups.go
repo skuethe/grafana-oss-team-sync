@@ -50,7 +50,7 @@ func (g *groups) getGroupData() (models.GroupCollectionResponseable, error) {
 	return result, nil
 }
 
-func ProcessGroups(instance *plugin.SourceInstance) {
+func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 	groupsLog := slog.With(slog.String("package", "entraid.groups"))
 	groupsLog.Info("processing entraid groups")
 
@@ -119,4 +119,5 @@ func ProcessGroups(instance *plugin.SourceInstance) {
 		groupsLog.Warn("no groups to process, skipping Grafana teams package")
 	}
 
+	return grafanaTeamList
 }

@@ -50,8 +50,8 @@ func main() {
 	// Initialize Grafana
 	grafana.New()
 
-	// Load configured source plugin
-	sources.LoadPlugin()
+	// Call the configured source plugin
+	sources.CallPlugin()
 
 	// Process Grafana folders
 	grafana.Instance.ProcessFolders()

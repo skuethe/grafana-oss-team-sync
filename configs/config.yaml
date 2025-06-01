@@ -37,7 +37,7 @@ grafana:
     # Either "http" or "https"
     # Default "http"
     #
-    # scheme: "https"
+    # scheme: "http"
 
     #
     # Host and port of your Grafana instance
@@ -55,7 +55,7 @@ grafana:
     # Amount of retries to connect to your Grafana instance
     # Default 0
     #
-    # retry: 2
+    # retry: 0
 
 
 

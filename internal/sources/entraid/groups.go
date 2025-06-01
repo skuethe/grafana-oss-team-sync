@@ -50,12 +50,35 @@ func (g *groups) getGroupData() (models.GroupCollectionResponseable, error) {
 	return result, nil
 }
 
-func ProcessGroups(instance *plugin.SourceInstance) (*grafana.Teams, []string) {
+func (g *groups) getUsersFromGroup(groupID string) (models.UserCollectionResponseable, error) {
+
+	headers := abstractions.NewRequestHeaders()
+	headers.Add("ConsistencyLevel", "eventual")
+
+	// requestTop := int32(5)
+	requestCount := true
+	requestParams := &graphgroups.ItemTransitiveMembersGraphUserRequestBuilderGetQueryParameters{
+		Select: []string{"userPrincipalName", "displayName", "mail"},
+		Count:  &requestCount,
+		// Top: &requestTop,
+	}
+	configuraton := &graphgroups.ItemTransitiveMembersGraphUserRequestBuilderGetRequestConfiguration{
+		Headers:         headers,
+		QueryParameters: requestParams,
+	}
+	result, err := g.client.Groups().ByGroupId(groupID).TransitiveMembers().GraphUser().Get(context.Background(), configuraton)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 	groupsLog := slog.With(slog.String("package", "entraid.groups"))
 	groupsLog.Info("processing entraid groups")
 
 	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
-	var groupIDList []string = []string{}
+	var grafanaUserList *grafana.Users = &grafana.Users{}
 
 	g := groups{
 		client:        instance.EntraID,
@@ -90,11 +113,22 @@ func ProcessGroups(instance *plugin.SourceInstance) (*grafana.Teams, []string) {
 		)
 		groupLog.Info("found EntraID group")
 
+		// Get all users from current group
+		userList, err := g.getUsersFromGroup(groupId)
+		if err != nil {
+			groupLog.Error("could not get user results from EntraID", "error", err)
+			os.Exit(1)
+		}
+
+		grafanaUserList = ProcessUsers(userList)
+
 		*grafanaTeamList = append(*grafanaTeamList, grafana.Team{
-			Name:  groupDisplayName,
-			Email: mail,
+			Parameter: &grafana.TeamParameter{
+				Name:  groupDisplayName,
+				Email: mail,
+			},
+			Users: grafanaUserList,
 		})
-		groupIDList = append(groupIDList, groupId)
 		config.Teams.List = helpers.RemoveFromSlice(config.Teams.List, groupDisplayName, false)
 	}
 
@@ -110,5 +144,5 @@ func ProcessGroups(instance *plugin.SourceInstance) (*grafana.Teams, []string) {
 		),
 	)
 
-	return grafanaTeamList, groupIDList
+	return grafanaTeamList
 }

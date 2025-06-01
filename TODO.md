@@ -30,10 +30,6 @@
     - make Grafana team search case insensitive
     - test entraid pagination behaviour -> request ~10 groups and see what happens
 
-- users
-    - add user to team after user was created (we need the user ID)
-        -> https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.AddTeamMember
-
 - logging
     - make detailed results from entraid all "DEBUG"
     - make "skipped" results from Grafana "DEBUG"
@@ -47,3 +43,8 @@
 
 - CI
     - add github actions
+
+- workflow:
+    1. plugin: fetch groups and save it an the grafana.Teams object
+    2. plugin: fetch users per group and also save it an the grafana.Teams object
+    3. 

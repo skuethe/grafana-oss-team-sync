@@ -56,12 +56,16 @@ func (t *Team) addUsersToTeam() error {
 	if getIDErr != nil {
 		return getIDErr
 	}
+	// TODO: call GetTeamMembers on the team id and in the loop only run "AddTeamMember" if user is not yet part of it
+	// ref: https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250516123951-83fcd32d7bbe/client/teams#Client.GetTeamMembers
 	for _, user := range *t.Users {
 		userID, getUserIDErr := user.getUserID()
 		if getUserIDErr != nil {
 			slog.Error("could not get UID for user", "error", getUserIDErr)
 			continue
 		}
+		// TODO: eval if using "SetTeamMemberships" is better here...
+		// ref: https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.SetTeamMemberships
 		_, userAddErr := Instance.api.Teams.AddTeamMember(*teamID, &models.AddTeamMemberCommand{
 			UserID: *userID,
 		})

@@ -87,4 +87,5 @@ func main() {
 	// 	},
 	// }
 
+	slog.Info("finished Grafana OSS Team Sync")
 }

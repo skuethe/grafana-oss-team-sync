@@ -19,6 +19,7 @@
 
 - grafana
     - validate possible authentication possibilities (besides basic auth) and see if we can / want to support them
+    - add "labels" to users / groups / folders to mark them "source: grafana-oss-team-sync"?
 
 - entraid
     - modify graph sdk via kiota and verify if that gives us a smaller package size

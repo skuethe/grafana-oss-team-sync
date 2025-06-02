@@ -47,12 +47,7 @@ func ProcessUsers(userCollection models.UserCollectionResponseable) *grafana.Use
 		})
 	}
 
-	usersLog.Info(
-		"finished processing EntraID users for group",
-		slog.Group("stats",
-			slog.Int("unique", len(*grafanaUserList)),
-		),
-	)
+	usersLog.Info("finished processing EntraID users for group")
 
 	return grafanaUserList
 }

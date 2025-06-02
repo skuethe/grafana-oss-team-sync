@@ -14,12 +14,6 @@ import (
 // Entra ID
 //
 
-// list group members:
-// https://learn.microsoft.com/en-gb/graph/api/group-list-members?view=graph-rest-1.0&tabs=go
-
-// get user:
-// https://learn.microsoft.com/en-gb/graph/api/user-get?view=graph-rest-1.0&tabs=http
-
 // app access needed?
 // https://learn.microsoft.com/en-gb/graph/permissions-reference?view=graph-rest-1.0#groupmemberreadall
 // https://learn.microsoft.com/en-gb/graph/permissions-reference?view=graph-rest-1.0#userreadbasicall

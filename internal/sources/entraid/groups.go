@@ -87,7 +87,9 @@ func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 
 	groupList, err := g.getGroupData()
 	if err != nil {
-		groupsLog.Error("could not get group results from EntraID", "error", err)
+		groupsLog.Error("could not get group results from EntraID",
+			slog.Any("error", err),
+		)
 		os.Exit(1)
 	}
 
@@ -116,7 +118,9 @@ func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 		// Get all users from current group
 		userList, err := g.getUsersFromGroup(groupId)
 		if err != nil {
-			groupLog.Error("could not get user results from EntraID", "error", err)
+			groupLog.Error("could not get user results from EntraID",
+				slog.Any("error", err),
+			)
 			os.Exit(1)
 		}
 
@@ -136,8 +140,7 @@ func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Teams.List, ","))
 	}
 
-	groupsLog.Info(
-		"finished processing EntraID groups",
+	groupsLog.Info("finished processing EntraID groups",
 		slog.Group("stats",
 			slog.Int64("found", countFound),
 			slog.Int("skipped", len(config.Teams.List)),

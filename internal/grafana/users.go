@@ -100,7 +100,9 @@ func (t *Teams) ProcessUsers() {
 		} else {
 			err := user.createUser()
 			if err != nil {
-				userLog.Error("could not create Grafana user", "error", err)
+				userLog.Error("could not create Grafana user",
+					slog.Any("error", err),
+				)
 			} else {
 				userLog.Info("created Grafana user")
 				countCreated++
@@ -108,8 +110,7 @@ func (t *Teams) ProcessUsers() {
 		}
 	}
 
-	usersLog.Info(
-		"finished processing Grafana users",
+	usersLog.Info("finished processing Grafana users",
 		slog.Group("stats",
 			slog.Int("created", countCreated),
 			slog.Int("skipped", countSkipped),

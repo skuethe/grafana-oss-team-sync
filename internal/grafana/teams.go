@@ -98,7 +98,9 @@ func (t *Teams) ProcessTeams() {
 
 		exists, err := team.doesTeamExist()
 		if err != nil {
-			teamLog.Error("could not search for Grafana team", "error", err)
+			teamLog.Error("could not search for Grafana team",
+				slog.Any("error", err),
+			)
 		} else {
 			if exists {
 				countSkipped++
@@ -106,7 +108,9 @@ func (t *Teams) ProcessTeams() {
 			} else {
 				err := team.createTeam()
 				if err != nil {
-					teamLog.Error("could not create Grafana team", "error", err)
+					teamLog.Error("could not create Grafana team",
+						slog.Any("error", err),
+					)
 					continue
 				} else {
 					teamLog.Info("created Grafana team")
@@ -116,15 +120,18 @@ func (t *Teams) ProcessTeams() {
 			teamLog.Info("processing team members")
 			userList, err := team.addUsersToTeam()
 			if err != nil {
-				teamLog.Error("could not add Grafana users to Grafana team", "error", err)
+				teamLog.Error("could not add Grafana users to Grafana team",
+					slog.Any("error", err),
+				)
 			} else {
-				teamLog.Debug("added users to team", "list", *userList)
+				teamLog.Debug("added users to team",
+					slog.Any("list", *userList),
+				)
 			}
 			teamLog.Info("finished processing team members")
 		}
 	}
-	teamsLog.Info(
-		"finished processing Grafana teams",
+	teamsLog.Info("finished processing Grafana teams",
 		slog.Group("stats",
 			slog.Int("created", countCreated),
 			slog.Int("skipped", countSkipped),

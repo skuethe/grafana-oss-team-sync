@@ -6,8 +6,6 @@ import (
 	"os"
 	"time"
 
-	"fmt"
-
 	"github.com/go-openapi/strfmt"
 	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/health"
@@ -54,9 +52,16 @@ func New() {
 	retryLoop := 0
 	retryMax := config.K.Int("grafana.connection.retry")
 
-	grafanaLog.Info("connecting to Grafana instance", "retry", retryMax)
+	grafanaLog.Info("connecting to Grafana instance",
+		slog.Int("retry", retryMax),
+	)
 	for {
-		grafanaLog.Debug("trying to establish connection", "retry.lopp", fmt.Sprint(retryLoop), "retry.max", retryMax)
+		grafanaLog.Debug("trying to establish connection",
+			slog.Group("retry",
+				slog.Int("loop", retryLoop),
+				slog.Int("max", retryMax),
+			),
+		)
 		health, healthErr = client.Health.GetHealth()
 		if healthErr == nil || retryLoop == retryMax {
 			break
@@ -65,10 +70,14 @@ func New() {
 		time.Sleep(2 * time.Second)
 	}
 	if healthErr != nil {
-		grafanaLog.Error("Grafana instance is not healthy", "error", healthErr)
+		grafanaLog.Error("Grafana instance is not healthy",
+			slog.Any("error", healthErr),
+		)
 		os.Exit(1)
 	}
-	grafanaLog.Info("validated instance health", "version", health.Payload.Version)
+	grafanaLog.Info("validated instance health",
+		slog.String("version", health.Payload.Version),
+	)
 
 	Instance = &GrafanaInstance{
 		api: client,

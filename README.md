@@ -36,11 +36,12 @@
   <ul>
     <li><a href="#about-the-project">About The Project</a></li>
     <li><a href="#requirements">Requirements</a></li>
-    <li><a href="#setup">Setup</a></li>
+    <li><a href="#configuration">Configuration</a></li>
       <ul>
         <li><a href="#grafana">Grafana</a></li>
         <li><a href="#entraid">EntraID</a></li>
       </ul>
+    <li><a href="#opinionated-behaviour">Opinionated Behaviour</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -53,15 +54,20 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project was created because the build-in "team sync" in Grafana is an [enterprise feature](https://grafana.com/docs/grafana/v12.0/introduction/grafana-enterprise/#team-sync) and only usable with an appropriate license key. This is where `grafana-oss-team-sync` comes into play - it is a FOSS tool to help you achive the same functionality as the "team sync" feature.  
+I created this project to get more experience with Golang and because the Grafana build-in **Team Sync** is an [enterprise feature][1] and as such only usable with an appropriate license key.  
+This is where `grafana-oss-team-sync` can help you - it is a FOSS tool to help you create **teams**, **users** and even **folders** in Grafana and keep them (and their permissions) in sync with your configured source.  
+
+Sources are setup as plugins, which can be easily extended to others in the future.  
+Currently the following sources are supported:  
+- **Entra ID** (formerly "Azure Active Directory")
 
 ### Current feature list
 
 The list of features include:  
 
-- search your enterprise solution for specific `groups` and create them as `teams` in your Grafana instance
-- (optional) create `accounts` linked to each source group as `users` in your Grafana instance
-- (optional) create specific `folders` in your Grafana instance and add groups to the folders `permission` list as either a `viewer`, `editor` or `admin` role
+- search your `source` for specific `groups` and create them as `teams` in your Grafana instance
+- (optional) create `users` from each group in your Grafana instance
+- (optional) create `folders` from config in your Grafana instance and add groups to the `permission` list as either a `viewer`, `editor` or `admin` role
 
 ### Backlog feature list
 
@@ -69,9 +75,10 @@ Things which potentially will be added in the future:
 
 - allow to reference `users` on folder permissions
 - allow to reference `roles` on folder permissions
-- `delete` users and groups when removed from the source / sync list
+- allow to assign `admin` permissions to team members
+- **delete** users and groups when removed from the source / sync list
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">( <a href="#top">Back to top</a> )</p>
 
 
 <!-- Requirements -->
@@ -80,29 +87,67 @@ Things which potentially will be added in the future:
 In it's first release, this tool only supports `Microsoft Entra ID` as a source for groups and users.  
 The idea is to add new sources in the future as a "plugin" feature.
 
-| Service  | Requirements   |
-|----------|----------------|
-| Grafana  | Supported versions: `11.x`, `12.x` |
-| Entra ID | Auth via Azure app: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` <br/>Minimum app permissions: `User.ReadBasic.All`, `GroupMember.Read.All` |
-
-&nbsp;  
-This tool is opinionated in a few ways, which result in special configuration requirements for it to work properly. See <a href="#setup">Setup</a> below.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
+We support Grafana versions `11.x` and `12.x`.  
+It probably works with older versions as well. Just give it a try.
 
 
-<!-- Setup -->
-## Setup
+<!-- Configuration -->
+## Configuration
 
+The following tool specific configuration is available.  
+Details on **Grafana** and **source** specific requirements can be found below.
+
+You can configure these either in the `config.yaml` or via environment variables starting with `GOTS_`.
+
+| Configuration                     | Config file                     | Env Variable                        | Input Type | Description |
+|-----------------------------------|---------------------------------|-------------------------------------|----------  |-------------|
+| Log level                         | `loglevel`                      | `GOTS_LOGLEVEL`                     | `int`      | Configure the log level<br>**Allowed**: `0` (INFO), `1` (WARN), `2` (ERROR), `99` (DEBUG)<br>**Default**: `0` (INFO) |
+| Source plugin                     | `source`                        | `GOTS_SOURCE`                       | `string`   | Configure the source plugin you want to use<br>**Allowed**: `entraid` |
+| Auth file                         | `authFile`                      | `GOTS_AUTHFILE`                     | `string`   | Configure an optional file to load authentication data from |
+| Feature: disable folder sync      | `features.disableFolders`       | `GOTS_FEATURE_DISABLEFOLDERS`       | `bool`     | Control the folder sync feature<br>**Default**: `false` |
+| Feature: disable user sync        | `features.disableUserSync`      | `GOTS_FEATURE_DISABLEUSERSYNC`      | `bool`     | Control the user sync feature<br>**Default**: `false` |
+| Feature: add local admin to teams | `features.addLocalAdminToTeams` | `GOTS_FEATURE_ADDLOCALADMINTOTEAMS` | `bool`     | Control adding Grafana local admin to each team<br>**Default**: `true` |
+| Grafana connection                |                                 |                                     |            | |
+|                                   | `grafana.connection.scheme`     | `GOTS_GRAFANA_CONNECTION_SCHEME`    | `string`   | Configure the scheme to use<br>**Allowed**: `http`, `https`<br>**Default**: `http` |
+|                                   | `grafana.connection.host`       | `GOTS_GRAFANA_CONNECTION_HOST`      | `string`   | Configure the host to use<br>**Default**: `localhost:3000` |
+|                                   | `grafana.connection.basePath`   | `GOTS_GRAFANA_CONNECTION_BASEPATH`  | `string`   | Configure the base path to use<br>**Default**: `/api` |
+|                                   | `grafana.connection.retry`      | `GOTS_GRAFANA_CONNECTION_RETRY`     | `int`      | Configure the connection retry, waiting 2 seconds in between each<br>**Default**: `0` |
+| Team sync                         | `teams`                         | `GOTS_TEAMS`                        | `[]string` | Configure the list of teams to sync |
+| Folder sync                       | `folders`                       | `GOTS_FOLDERS`                      | `list`     | ... |
+
+<!-- Configuration - Grafana -->
 ### Grafana
 
-soon™
+| Configuration | Requirements  |
+|---------------|---------------|
+| Auth          | Using basic auth |
+| Connection    | Modify settings in `config.yaml` path: `grafana.connection` |
 
-### EntraID
 
-soon™
+<!-- Configuration - entraid -->
+### Source: `entraid`
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+| Configuration   | Requirements  |
+|-----------------|---------------|
+| Auth            | Using Azure app via env variables: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` |
+| App permissions | Minimum: `User.ReadBasic.All`, `GroupMember.Read.All` |
+
+
+&nbsp;  
+This tool is opinionated in a few ways, which result in special configuration requirements for it to work properly. See [Setup](#setup) below.
+
+<p align="right">( <a href="#top">Back to top</a> )</p>
+
+
+<!-- Opinionated Behaviour -->
+## Opinionated Behaviour
+
+Please note the following opinionated behaviour of this tool.
+
+- `Teams`: member lists of each configured team are completely overridden to avoid interference from other sources
+- `Folders`: the permissions of each folder are completely overridden to avoid interference from other sources
+
+<p align="right">( <a href="#top">Back to top</a> )</p>
 
 
 <!-- CONTRIBUTING -->
@@ -116,7 +161,7 @@ Don't forget to give the project a star! Thanks again!
 See [`CONTRIBUTING`](CONTRIBUTING.md) for more information.
 
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">( <a href="#top">Back to top</a> )</p>
 
 
 
@@ -127,7 +172,7 @@ Distributed under the `GNU General Public License v3.0 ("GPL-3.0")`.
 
 See [`LICENSE`](LICENSE.md) for more information.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">( <a href="#top">Back to top</a> )</p>
 
 
 
@@ -136,8 +181,10 @@ See [`LICENSE`](LICENSE.md) for more information.
 
 soon™
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">( <a href="#top">Back to top</a> )</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[1]: <https://grafana.com/docs/grafana/v12.0/introduction/grafana-enterprise/#team-sync> "Grafana Enterprise - Team Sync"

@@ -27,6 +27,35 @@ source: "entraid"
 
 
 #
+# Optional: load authentication variables from this file
+#
+# authFile: ""
+
+
+
+#
+# Configure feature behaviour
+#
+
+features:
+  #
+  # Grafana: disable creating folders and managing their permissions
+  #
+  disableFolders: false
+
+  #
+  # Grafana: disable creating users
+  #
+  disableUserSync: false
+
+  #
+  # Grafana: add the local Grafana admin user ("admin@localhost") to each created team as a member
+  #
+  addLocalAdminToTeams: true
+
+
+
+#
 # Grafana configuration
 #
 
@@ -56,28 +85,6 @@ grafana:
     # Default 0
     #
     # retry: 0
-
-
-
-#
-# Configure feature behaviour
-#
-
-features:
-  #
-  # Grafana: disable creating folders and managing their permissions
-  #
-  disableFolders: false
-
-  #
-  # Grafana: disable creating users
-  #
-  disableUserSync: false
-
-  #
-  # Grafana: add the local Grafana admin user ("admin@localhost") to each created team as a member
-  #
-  addLocalAdminToTeams: true
 
 
 

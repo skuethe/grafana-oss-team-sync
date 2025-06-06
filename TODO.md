@@ -1,11 +1,11 @@
 # TODOs
 
-- search "TODO" in code
-
 - repo release
     - add golang specific github actions
     - add badges
         - `https://goreportcard.com/`
+        - `https://github.com/badges/shields`
+        - `https://www.bestpractices.dev/en` ?
 
 
 - future features
@@ -23,9 +23,13 @@
     - how to setup EntraID app with permissions
 
 
+- config
+    - add "authfile" feature to load authentication variables from an optional file instead of env variables or the config.yaml
+    - validate all possible ENV VAR input
+
+
 - grafana
     - validate possible authentication possibilities (besides basic auth) and see if we can / want to support them
-    - add "labels" to users / groups / folders to mark them "source: grafana-oss-team-sync"?
 
 
 - entraid
@@ -51,7 +55,3 @@
     - write _test files
     - integration tests
         - run against multiple Grafana versions in CI
-
-
-- CI
-    - add github actions

@@ -8,10 +8,6 @@
         - `https://www.bestpractices.dev/en` ?
 
 
-- tool
-    - add cli parameters
-        - add custom "usage" output for better visuals of short and full flags
-
 
 - future features
     - allow folder permissions to add individual users

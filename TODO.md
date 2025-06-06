@@ -10,8 +10,7 @@
 
 - tool
     - add cli parameters
-        - "config" / "--config"
-        - allow other flags to override config / envs
+        - add custom "usage" output for better visuals of short and full flags
 
 
 - future features

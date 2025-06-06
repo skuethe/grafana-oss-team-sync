@@ -9,7 +9,9 @@ import (
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
+	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
+	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
 )
 
 // Global koanf instance for input handling
@@ -39,7 +41,7 @@ func Load() {
 	configLog.Info("loading config")
 
 	// Load YAML config
-	if err := K.Load(file.Provider("configs/config.yaml"), yaml.Parser()); err != nil {
+	if err := K.Load(file.Provider(flags.Config), yaml.Parser()); err != nil {
 		configLog.Error("could not load config",
 			slog.Any("error", err),
 		)
@@ -51,6 +53,9 @@ func Load() {
 		return strings.Replace(strings.ToLower(
 			strings.TrimPrefix(s, "GOTS_")), "_", ".", -1)
 	}), nil)
+
+	// Load flags and merge (override) config
+	K.Load(posflag.Provider(flags.Instance, ".", K), nil)
 
 	// Validate source input
 	sourceErr := valdidateSource()

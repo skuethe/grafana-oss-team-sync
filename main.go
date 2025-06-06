@@ -26,8 +26,9 @@ var (
 //  - Directory.Read.All
 
 func main() {
-	// Handle flags
+	// Handle Flags
 	flags.Load()
+	flags.Instance.Parse(os.Args[1:])
 
 	// Handle version printing
 	if flags.Version {
@@ -59,8 +60,6 @@ func main() {
 	logLevelFromConfig := config.GetLogLevel()
 	loggerLevel.Set(logLevelFromConfig)
 	slog.SetDefault(logger)
-
-	os.Exit(0)
 
 	// Initialize Grafana
 	grafana.New()

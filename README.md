@@ -39,7 +39,7 @@
     <li><a href="#configuration">Configuration</a></li>
       <ul>
         <li><a href="#grafana">Grafana</a></li>
-        <li><a href="#entraid">EntraID</a></li>
+        <li><a href="#source-entraid">Source: EntraID</a></li>
       </ul>
     <li><a href="#opinionated-behaviour">Opinionated Behaviour</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -66,10 +66,10 @@ Currently the following sources are supported:
 The list of features include:  
 
 - search your `source` for specific `groups` and create them as `teams` in your Grafana instance
-- (optional) create `users` from each group in your Grafana instance
-- (optional) create `folders` from config in your Grafana instance and add groups to the `permission` list as either a `viewer`, `editor` or `admin` role
+- (optional) create `users` from each configured source group
+- (optional) create `folders` from config input and add groups to the `permission` list as either a `viewer`, `editor` or `admin` role
 
-### Backlog feature list
+### Possible future improvements
 
 Things which potentially will be added in the future:
 
@@ -99,21 +99,21 @@ Details on **Grafana** and **source** specific requirements can be found below.
 
 You can configure these either in the `config.yaml` or via environment variables starting with `GOTS_`.
 
-| Configuration                     | Config file                     | Env Variable                        | Input Type | Description |
-|-----------------------------------|---------------------------------|-------------------------------------|----------  |-------------|
-| Log level                         | `loglevel`                      | `GOTS_LOGLEVEL`                     | `int`      | Configure the log level<br>**Allowed**: `0` (INFO), `1` (WARN), `2` (ERROR), `99` (DEBUG)<br>**Default**: `0` (INFO) |
-| Source plugin                     | `source`                        | `GOTS_SOURCE`                       | `string`   | Configure the source plugin you want to use<br>**Allowed**: `entraid` |
-| Auth file                         | `authFile`                      | `GOTS_AUTHFILE`                     | `string`   | Configure an optional file to load authentication data from |
-| Feature: disable folder sync      | `features.disableFolders`       | `GOTS_FEATURE_DISABLEFOLDERS`       | `bool`     | Control the folder sync feature<br>**Default**: `false` |
-| Feature: disable user sync        | `features.disableUserSync`      | `GOTS_FEATURE_DISABLEUSERSYNC`      | `bool`     | Control the user sync feature<br>**Default**: `false` |
-| Feature: add local admin to teams | `features.addLocalAdminToTeams` | `GOTS_FEATURE_ADDLOCALADMINTOTEAMS` | `bool`     | Control adding Grafana local admin to each team<br>**Default**: `true` |
-| Grafana connection                |                                 |                                     |            | |
-|                                   | `grafana.connection.scheme`     | `GOTS_GRAFANA_CONNECTION_SCHEME`    | `string`   | Configure the scheme to use<br>**Allowed**: `http`, `https`<br>**Default**: `http` |
-|                                   | `grafana.connection.host`       | `GOTS_GRAFANA_CONNECTION_HOST`      | `string`   | Configure the host to use<br>**Default**: `localhost:3000` |
-|                                   | `grafana.connection.basePath`   | `GOTS_GRAFANA_CONNECTION_BASEPATH`  | `string`   | Configure the base path to use<br>**Default**: `/api` |
-|                                   | `grafana.connection.retry`      | `GOTS_GRAFANA_CONNECTION_RETRY`     | `int`      | Configure the connection retry, waiting 2 seconds in between each<br>**Default**: `0` |
-| Team sync                         | `teams`                         | `GOTS_TEAMS`                        | `[]string` | Configure the list of teams to sync |
-| Folder sync                       | `folders`                       | `GOTS_FOLDERS`                      | `list`     | ... |
+| Configuration                     | Config file                     | Description |
+|-----------------------------------|---------------------------------|-------------|
+| Log level                         | `loglevel`                      | Configure the log level<br>**Type**: `int`<br>**Env var**: `GOTS_LOGLEVEL`<br>**Allowed**: `0` (INFO), `1` (WARN), `2` (ERROR), `99` (DEBUG)<br>**Default**: `0` (INFO) |
+| Source plugin                     | `source`                        | Configure the source plugin you want to use<br>**Type**: `string`<br>**Env var**: `GOTS_SOURCE`<br>**Allowed**: `entraid` |
+| Auth file                         | `authFile`                      | Configure an optional file to load authentication data from<br>**Type**: `string`<br>**Env var**: `GOTS_AUTHFILE` |
+| Feature: disable folder sync      | `features.disableFolders`       | Control the folder sync feature<br>**Type**: `bool`<br>**Env var**: `GOTS_FEATURE_DISABLEFOLDERS`<br>**Default**: `false` |
+| Feature: disable user sync        | `features.disableUserSync`      | Control the user sync feature<br>**Type**: `bool`<br>**Env var**: `GOTS_FEATURE_DISABLEUSERSYNC`<br>**Default**: `false` |
+| Feature: add local admin to teams | `features.addLocalAdminToTeams` | Control adding Grafana local admin to each team<br>**Type**: `bool`<br>**Env var**: `GOTS_FEATURE_ADDLOCALADMINTOTEAMS`<br>**Default**: `true` |
+| Grafana connection                |                                 | |
+|                                   | `grafana.connection.scheme`     | Configure the scheme to use<br>**Type**: `string`<br>**Env var**: `GOTS_GRAFANA_CONNECTION_SCHEME`<br>**Allowed**: `http`, `https`<br>**Default**: `http` |
+|                                   | `grafana.connection.host`       | Configure the host to use<br>**Type**: `string`<br>**Env var**: `GOTS_GRAFANA_CONNECTION_HOST`<br>**Default**: `localhost:3000` |
+|                                   | `grafana.connection.basePath`   | Configure the base path to use<br>**Type**: `string`<br>**Env var**: `GOTS_GRAFANA_CONNECTION_BASEPATH`<br>**Default**: `/api` |
+|                                   | `grafana.connection.retry`      | Configure the connection retry, waiting 2 seconds in between each<br>**Type**: `int`<br>**Env var**: `GOTS_GRAFANA_CONNECTION_RETRY`<br>**Default**: `0` |
+| Team sync                         | `teams`                         | Configure the list of teams to sync<br>**Type**: `[]string`<br>**Env var**: `GOTS_TEAMS` |
+| Folder sync                       | `folders`                       | Configure the list of folders to sync<br>**Type**: `[]interface`<br>**Env var**: `GOTS_FOLDERS` |
 
 <!-- Configuration - Grafana -->
 ### Grafana
@@ -134,7 +134,7 @@ You can configure these either in the `config.yaml` or via environment variables
 
 
 &nbsp;  
-This tool is opinionated in a few ways, which result in special configuration requirements for it to work properly. See [Setup](#setup) below.
+This tool is opinionated in a few ways, which result in special configuration requirements for it to work properly. See details [below](#opinionated-behaviour).
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 

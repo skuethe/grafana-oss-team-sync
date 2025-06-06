@@ -1,7 +1,6 @@
 package grafana
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
@@ -53,10 +52,10 @@ func (t *Team) createTeam() error {
 	return nil
 }
 
-func (t *Team) addUsersToTeam() error {
+func (t *Team) addUsersToTeam() (*[]string, error) {
 	teamID, tErr := t.getTeamUID()
 	if tErr != nil {
-		return tErr
+		return nil, tErr
 	}
 
 	adminMemberList := &[]string{}
@@ -69,18 +68,16 @@ func (t *Team) addUsersToTeam() error {
 	for _, user := range *t.Users {
 		*teamMemberList = append(*teamMemberList, user.Email)
 	}
-	fmt.Println(*adminMemberList)
-	fmt.Println(*teamMemberList)
 
 	_, mErr := Instance.api.Teams.SetTeamMemberships(*teamID, &models.SetTeamMembershipsCommand{
 		Admins:  *adminMemberList,
 		Members: *teamMemberList,
 	})
 	if mErr != nil {
-		return mErr
+		return nil, mErr
 	}
 
-	return nil
+	return teamMemberList, nil
 }
 
 func (t *Teams) ProcessTeams() {
@@ -115,10 +112,14 @@ func (t *Teams) ProcessTeams() {
 					countCreated++
 				}
 			}
-			err := team.addUsersToTeam()
+			teamLog.Info("processing team members")
+			userList, err := team.addUsersToTeam()
 			if err != nil {
 				teamLog.Error("could not add Grafana users to Grafana team", "error", err)
+			} else {
+				teamLog.Debug("added users to team", "list", *userList)
 			}
+			teamLog.Info("finished processing team members")
 		}
 	}
 	teamsLog.Info(

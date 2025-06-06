@@ -26,3 +26,7 @@ go.work.sum
 
 # Added by goreleaser init:
 dist/
+
+# Possibly config.yaml copies for testing, but keep main "config.yaml"
+configs/*.yaml
+!configs/config.yaml

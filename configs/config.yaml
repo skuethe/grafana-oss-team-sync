@@ -92,10 +92,8 @@ grafana:
 # Teams you want to sync to Grafana
 #
 
-teams:
-  - grafana-devops
-  # - grafana-technology
-  # - doesnotexist
+teams: []
+  # - myGroupName
 
 
 
@@ -131,18 +129,4 @@ teams:
 #         team2: 2
 #
 
-folders:
-  testfolder:
-    title: "testFolder"
-    description: "A folder to test things"
-    permissions:
-      teams:
-        grafana-devops: 2
-        # grafana-technology: 1
-  testfolder2:
-    title: "TestFolder2"
-    description: "A second folder"
-    permissions:
-      teams:
-        grafana-devops: 2
-        # grafana-technology: 3
+folders: {}

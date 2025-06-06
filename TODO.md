@@ -8,6 +8,13 @@
         - `https://www.bestpractices.dev/en` ?
 
 
+- tool
+    - add cli parameters
+        - "config" / "--config"
+        - "version" / "--version"
+
+
+
 - future features
     - allow folder permissions to add individual users
     - allow folder permissions to add roles

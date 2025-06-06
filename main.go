@@ -10,9 +10,11 @@ import (
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources"
 )
 
-//
-// Entra ID
-//
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
 
 // app access needed?
 // https://learn.microsoft.com/en-gb/graph/permissions-reference?view=graph-rest-1.0#groupmemberreadall
@@ -28,7 +30,13 @@ func main() {
 		Level: loggerLevel,
 	}))
 	slog.SetDefault(logger)
-	slog.Info("starting Grafana OSS Team Sync")
+	slog.Info("starting Grafana OSS Team Sync",
+		slog.Group("release",
+			slog.String("version", version),
+			slog.String("commit", commit),
+			slog.String("date", date),
+		),
+	)
 
 	// Handle .env files
 	godotenv.Load()

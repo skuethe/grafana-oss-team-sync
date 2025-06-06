@@ -53,10 +53,12 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-I created this project to get more experience with Golang and because the Grafana build-in **Team Sync** is an [enterprise feature][1] and as such only usable with an appropriate license key.  
-This is where `grafana-oss-team-sync` can help you - it is a FOSS tool to help you create **teams**, **users** and even **folders** in Grafana and keep them (and their permissions) in sync with your configured source.  
+I created this project to get into Go development and as such, it is probably far from being perfect. Keep an open mind to that and feel free to [contribute](#contributing) if you want to optimize or extend its functionality.  
 
-Sources are setup as plugins, which can be easily extended to others in the future.  
+The idea is to use `grafana-oss-team-sync` as an FOSS tool to create **teams**, **users** and even **folders** in Grafana and keep them (and their permissions) in sync with a configured source.  
+This functionality _does_ exist in Grafana itself ("Team Sync"), but is a is an [enterprise feature][1] and as such only usable with an appropriate license key.
+
+Sources are internally setup as plugins, which can be easily extended to others in the future.  
 Currently the following sources are supported:  
 - **Entra ID** (formerly "Azure Active Directory")
 

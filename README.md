@@ -86,8 +86,7 @@ Things which potentially will be added in the future:
 In it's first release, this tool only supports `Microsoft Entra ID` as a source for groups and users.  
 The idea is to add new sources in the future as a "plugin" feature.
 
-We support Grafana versions `11.x` and `12.x`.  
-It probably works with older versions as well. Just give it a try.
+This tool works with Grafana versions `>=11.1.0`.  
 
 
 <!-- Configuration -->
@@ -122,6 +121,7 @@ You can configure these either in the `config.yaml` or via environment variables
 | Auth          | Using basic auth |
 | Connection    | Modify settings in `config.yaml` path: `grafana.connection` |
 
+Minimum Grafana version is `11.1.0` as it introduced [a new bulk team membership endpoint][2] we are currently using.
 
 <!-- Configuration - entraid -->
 ### Source: `entraid`
@@ -179,3 +179,4 @@ See [`LICENSE`](LICENSE.md) for more information.
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
 [1]: <https://grafana.com/docs/grafana/v12.0/introduction/grafana-enterprise/#team-sync> "Grafana Enterprise - Team Sync"
+[2]: <https://github.com/grafana/grafana/pull/87441> "Team: Add an endpoint for bulk team membership updates"

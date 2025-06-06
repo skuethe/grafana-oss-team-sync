@@ -2,6 +2,7 @@ package grafana
 
 import (
 	"log/slog"
+	"strconv"
 
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -30,15 +31,15 @@ func (t *Team) doesTeamExist() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return len(result.Payload.Teams) > 0, nil
+	return len(result.Payload.Teams) == 1, nil
 }
 
-func (t *Team) getTeamUID() (*string, error) {
+func (t *Team) getTeamID() (*int64, error) {
 	result, err := t.searchTeam()
 	if err != nil {
 		return nil, err
 	}
-	return &result.Payload.Teams[0].UID, nil
+	return &result.Payload.Teams[0].ID, nil
 }
 
 func (t *Team) createTeam() error {
@@ -53,7 +54,7 @@ func (t *Team) createTeam() error {
 }
 
 func (t *Team) addUsersToTeam() (*[]string, error) {
-	teamID, tErr := t.getTeamUID()
+	teamID, tErr := t.getTeamID()
 	if tErr != nil {
 		return nil, tErr
 	}
@@ -69,7 +70,7 @@ func (t *Team) addUsersToTeam() (*[]string, error) {
 		*teamMemberList = append(*teamMemberList, user.Email)
 	}
 
-	_, mErr := Instance.api.Teams.SetTeamMemberships(*teamID, &models.SetTeamMembershipsCommand{
+	_, mErr := Instance.api.Teams.SetTeamMemberships(strconv.FormatInt(*teamID, 10), &models.SetTeamMembershipsCommand{
 		Admins:  *adminMemberList,
 		Members: *teamMemberList,
 	})

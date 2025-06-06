@@ -11,7 +11,7 @@
 - tool
     - add cli parameters
         - "config" / "--config"
-
+        - allow other flags to override config / envs
 
 
 - future features

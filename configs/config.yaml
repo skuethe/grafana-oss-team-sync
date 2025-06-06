@@ -64,8 +64,20 @@ grafana:
 #
 
 features:
+  #
+  # Grafana: disable creating folders and managing their permissions
+  #
   disableFolders: false
+
+  #
+  # Grafana: disable creating users
+  #
   disableUserSync: false
+
+  #
+  # Grafana: add the local Grafana admin user ("admin@localhost") to each created team as a member
+  #
+  addLocalAdminToTeams: true
 
 
 
@@ -75,8 +87,7 @@ features:
 
 teams:
   - grafana-devops
-  - devops
-  - grafana-technology
+  # - grafana-technology
   # - doesnotexist
 
 
@@ -120,13 +131,11 @@ folders:
     permissions:
       teams:
         grafana-devops: 2
-        grafana-technology: 1
-        test2team: 1
+        # grafana-technology: 1
   testfolder2:
     title: "TestFolder2"
     description: "A second folder"
     permissions:
       teams:
-        Technology: 1
-        grafana-devops: 4
-        grafana-technology: 3
+        grafana-devops: 2
+        # grafana-technology: 3

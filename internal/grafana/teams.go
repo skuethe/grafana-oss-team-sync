@@ -1,10 +1,12 @@
 package grafana
 
 import (
+	"fmt"
 	"log/slog"
 
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
 	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 )
 
 type TeamParameter models.CreateTeamCommand
@@ -52,29 +54,32 @@ func (t *Team) createTeam() error {
 }
 
 func (t *Team) addUsersToTeam() error {
-	teamID, getIDErr := t.getTeamUID()
-	if getIDErr != nil {
-		return getIDErr
+	teamID, tErr := t.getTeamUID()
+	if tErr != nil {
+		return tErr
 	}
-	// TODO: call GetTeamMembers on the team id and in the loop only run "AddTeamMember" if user is not yet part of it
-	// ref: https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250516123951-83fcd32d7bbe/client/teams#Client.GetTeamMembers
+
+	adminMemberList := &[]string{}
+	teamMemberList := &[]string{}
+
+	if config.Feature.AddLocalAdminToTeams {
+		*adminMemberList = append(*adminMemberList, "admin@localhost")
+	}
+
 	for _, user := range *t.Users {
-		userID, getUserIDErr := user.getUserID()
-		if getUserIDErr != nil {
-			slog.Error("could not get UID for user", "error", getUserIDErr)
-			continue
-		}
-		// TODO: eval if using "SetTeamMemberships" is better here...
-		// ref: https://pkg.go.dev/github.com/grafana/grafana-openapi-client-go@v0.0.0-20250428202209-be3a35ff1dac/client/teams#Client.SetTeamMemberships
-		_, userAddErr := Instance.api.Teams.AddTeamMember(*teamID, &models.AddTeamMemberCommand{
-			UserID: *userID,
-		})
-		if userAddErr != nil {
-			slog.Error("could not add user to team", "error", userAddErr)
-			continue
-		}
-		slog.Debug("added Grafana user to Grafana team")
+		*teamMemberList = append(*teamMemberList, user.Email)
 	}
+	fmt.Println(*adminMemberList)
+	fmt.Println(*teamMemberList)
+
+	_, mErr := Instance.api.Teams.SetTeamMemberships(*teamID, &models.SetTeamMembershipsCommand{
+		Admins:  *adminMemberList,
+		Members: *teamMemberList,
+	})
+	if mErr != nil {
+		return mErr
+	}
+
 	return nil
 }
 

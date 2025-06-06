@@ -49,7 +49,7 @@ func (f *Folder) manageFolderPermissions() error {
 			continue
 		}
 
-		permerr := config.ValidateFolderPermission(teamPermission)
+		permerr := config.ValidateGrafanaPermission(teamPermission)
 		if permerr != nil {
 			slog.Error("skipping folder permissions for team", "team", teamName, "error", permerr)
 			continue

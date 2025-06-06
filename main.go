@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
+	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources"
 )
@@ -24,6 +26,15 @@ var (
 //  - Directory.Read.All
 
 func main() {
+	// Handle flags
+	flags.Load()
+
+	// Handle version printing
+	if flags.Version {
+		fmt.Printf("version: %s (commit: %s; build date: %s)\n", version, commit, date)
+		os.Exit(0)
+	}
+
 	// Initialize logger
 	loggerLevel := new(slog.LevelVar)
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
@@ -48,6 +59,8 @@ func main() {
 	logLevelFromConfig := config.GetLogLevel()
 	loggerLevel.Set(logLevelFromConfig)
 	slog.SetDefault(logger)
+
+	os.Exit(0)
 
 	// Initialize Grafana
 	grafana.New()

@@ -11,7 +11,6 @@
 - tool
     - add cli parameters
         - "config" / "--config"
-        - "version" / "--version"
 
 
 

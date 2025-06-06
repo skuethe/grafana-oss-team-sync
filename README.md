@@ -44,7 +44,6 @@
     <li><a href="#opinionated-behaviour">Opinionated Behaviour</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
   </ul>
 </details>
 <br/>
@@ -99,7 +98,7 @@ Details on **Grafana** and **source** specific requirements can be found below.
 
 You can configure these either in the `config.yaml` or via environment variables starting with `GOTS_`.
 
-| Configuration                     | Config file                     | Description |
+| Configuration                     | Config File YAML Path           | Description |
 |-----------------------------------|---------------------------------|-------------|
 | Log level                         | `loglevel`                      | Configure the log level<br>**Type**: `int`<br>**Env var**: `GOTS_LOGLEVEL`<br>**Allowed**: `0` (INFO), `1` (WARN), `2` (ERROR), `99` (DEBUG)<br>**Default**: `0` (INFO) |
 | Source plugin                     | `source`                        | Configure the source plugin you want to use<br>**Type**: `string`<br>**Env var**: `GOTS_SOURCE`<br>**Allowed**: `entraid` |
@@ -174,14 +173,6 @@ See [`LICENSE`](LICENSE.md) for more information.
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 
-
-
-<!-- CONTACT -->
-## Contact
-
-soon™
-
-<p align="right">( <a href="#top">Back to top</a> )</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->

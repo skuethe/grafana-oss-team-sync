@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
@@ -49,9 +48,6 @@ func main() {
 			slog.String("date", date),
 		),
 	)
-
-	// Handle .env files
-	godotenv.Load()
 
 	// Initialize config
 	config.Load()

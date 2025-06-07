@@ -15,7 +15,13 @@
     - allow to assign admin permissions to team members
 
 
+- cli
+    - optimize flags usage for "features" and "grafana"
+
+
 - add README info
+    - add flags documentation
+    - add hint that passwords are generated
     - how to setup Grafana
         - "Azure AD" auth
             - minimum permissions required?
@@ -26,6 +32,7 @@
 
 - config
     - add "authfile" feature to load authentication variables from an optional file instead of env variables or the config.yaml
+        -> need to load these as ENV variables (for source auth) AND as config input (for Grafana auth)
     - validate all possible ENV VAR input
 
 

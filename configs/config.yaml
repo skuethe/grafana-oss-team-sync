@@ -27,9 +27,10 @@ source: "entraid"
 
 
 #
-# Optional: load authentication variables from this file
+# AuthFile
+# Optional: if you want to load sensitive data from another file, specify it's path here
 #
-# authFile: ""
+authFile: "configs/sensitive.yaml"
 
 
 

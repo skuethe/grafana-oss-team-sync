@@ -6,6 +6,8 @@ import (
 
 	"log/slog"
 
+	"github.com/joho/godotenv"
+	"github.com/knadh/koanf/parsers/dotenv"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
@@ -36,9 +38,17 @@ func GetLogLevel() slog.Level {
 	return level
 }
 
+func isAuthFileSet() bool {
+	authFile := K.String("authFile")
+	return authFile != ""
+}
+
 func Load() {
 	configLog := slog.With(slog.String("package", "config"))
 	configLog.Info("loading config")
+
+	// Handle .env files
+	godotenv.Load()
 
 	// Load YAML config
 	if err := K.Load(file.Provider(flags.Config), yaml.Parser()); err != nil {
@@ -46,6 +56,17 @@ func Load() {
 			slog.Any("error", err),
 		)
 		os.Exit(1)
+	}
+
+	// Load optional authFile YAML
+	if isAuthFileSet() {
+		if err := K.Load(file.Provider(K.String("authFile")), dotenv.Parser()); err != nil {
+			configLog.Error("could not load authFile",
+				slog.Any("error", err),
+			)
+			os.Exit(1)
+		}
+		godotenv.Load(K.String("authFile"))
 	}
 
 	// Load env vars and merge (override) config

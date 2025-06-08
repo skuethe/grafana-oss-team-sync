@@ -19,9 +19,18 @@ import (
 // Global koanf instance for input handling
 var K = koanf.New(".")
 
+const (
+	ConfigPathAuthFile string = "authFile"
+	ConfigPathFeatures string = "features"
+	ConfigPathFolders  string = "folders"
+	ConfigPathGrafana  string = "grafana"
+	ConfigPathLogLevel string = "loglevel"
+	ConfigPathSource   string = "source"
+)
+
 func GetLogLevel() slog.Level {
 	var level slog.Level
-	configLevel := K.Int("loglevel")
+	configLevel := K.Int(ConfigPathLogLevel)
 	switch configLevel {
 	case 0:
 		level = slog.LevelInfo
@@ -39,7 +48,7 @@ func GetLogLevel() slog.Level {
 }
 
 func isAuthFileSet() bool {
-	authFile := K.String("authFile")
+	authFile := K.String(ConfigPathAuthFile)
 	return authFile != ""
 }
 
@@ -60,13 +69,13 @@ func Load() {
 
 	// Load optional authFile YAML
 	if isAuthFileSet() {
-		if err := K.Load(file.Provider(K.String("authFile")), dotenv.Parser()); err != nil {
-			configLog.Error("could not load authFile",
+		if err := K.Load(file.Provider(K.String(ConfigPathAuthFile)), dotenv.Parser()); err != nil {
+			configLog.Error("could not load "+ConfigPathAuthFile,
 				slog.Any("error", err),
 			)
 			os.Exit(1)
 		}
-		godotenv.Load(K.String("authFile"))
+		godotenv.Load(K.String(ConfigPathAuthFile))
 	}
 
 	// Load env vars and merge (override) config

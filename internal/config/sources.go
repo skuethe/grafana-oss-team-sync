@@ -23,7 +23,7 @@ func (s sourcePlugin) String() string {
 
 func valdidateSource() error {
 	Source = &SourceSchema{
-		Plugin: sourcePlugin(strings.ToLower(K.MustString("source"))),
+		Plugin: sourcePlugin(strings.ToLower(K.MustString(ConfigPathSource))),
 	}
 
 	switch Source.Plugin {

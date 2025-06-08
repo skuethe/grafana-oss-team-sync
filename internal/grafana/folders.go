@@ -88,12 +88,12 @@ func (g *GrafanaInstance) ProcessFolders() {
 	countSkipped := 0
 	countCreated := 0
 
-	folders := config.K.MapKeys("folders")
+	folders := config.K.MapKeys(config.ConfigPathFolders)
 
 	for _, folderUID := range folders {
 		var folderFromConfig config.FolderSchema
 
-		config.K.Unmarshal("folders."+folderUID, &folderFromConfig)
+		config.K.Unmarshal(config.ConfigPathFolders+"."+folderUID, &folderFromConfig)
 
 		folderLog := slog.With(
 			slog.Group("folder",
@@ -103,7 +103,7 @@ func (g *GrafanaInstance) ProcessFolders() {
 		)
 
 		if len(folderFromConfig.Permissions.Teams) > 0 {
-			config.K.MustInt64Map("folders." + folderUID + ".permissions.teams")
+			config.K.MustInt64Map(config.ConfigPathFolders + "." + folderUID + ".permissions.teams")
 		}
 
 		f := Folder{

@@ -9,5 +9,5 @@ type FeatureSchema struct {
 var Feature *FeatureSchema
 
 func valdidateFeatureSchema() error {
-	return K.Unmarshal("features", &Feature)
+	return K.Unmarshal(ConfigPathFeatures, &Feature)
 }

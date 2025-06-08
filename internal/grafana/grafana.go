@@ -50,7 +50,7 @@ func New() {
 	var health *health.GetHealthOK
 	var healthErr error
 	retryLoop := 0
-	retryMax := config.K.Int("grafana.connection.retry")
+	retryMax := config.K.Int(config.ConfigPathGrafana + ".connection.retry")
 
 	grafanaLog.Info("connecting to Grafana instance",
 		slog.Int("retry", retryMax),

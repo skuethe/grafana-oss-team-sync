@@ -31,7 +31,7 @@ func main() {
 
 	// Handle version printing
 	if flags.Version {
-		fmt.Printf("version: %s (commit: %s; build date: %s)\n", version, commit, date)
+		fmt.Printf("Version: %s\nCommit: %s\nBuild date: %s\n", version, commit, date)
 		os.Exit(0)
 	}
 

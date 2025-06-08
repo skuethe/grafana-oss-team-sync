@@ -9,6 +9,11 @@
 
 
 
+- look into:
+    - Go "data streams" aka channels?
+    - Go contexts and their benefits
+
+
 - future features
     - allow folder permissions to add individual users
     - allow folder permissions to add roles

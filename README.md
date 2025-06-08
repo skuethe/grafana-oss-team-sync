@@ -85,8 +85,9 @@ Things which potentially will be added in the future:
 <!-- Requirements -->
 ## Requirements
 
-In it's first release, this tool only supports `Microsoft Entra ID` as a source for groups and users.  
-The idea is to add new sources in the future as a "plugin" feature.
+In it's current state, only `Microsoft Entra ID` is available as a source for groups and users.  
+The idea is to add new sources in the future as a "plugin" feature.  
+Feel free to contribute your desired source.
 
 This tool works with Grafana versions `>=11.1.0`.  
 
@@ -145,8 +146,9 @@ This tool is opinionated in a few ways, which result in special configuration re
 
 Please note the following opinionated behaviour of this tool.
 
-- `Teams`: member lists of each configured team are completely overridden to avoid interference from other sources
-- `Folders`: the permissions of each folder are completely overridden to avoid interference from other sources
+- this tool should be the single point of truth for creating groups in Grafana. For that matter, we are enforcing the following:
+  - `Teams`: all members of each configured team are completely overridden with matching users from the source. If you, f.e. added other additional users or canged their permission (to "admin" f.e.), these changes will be lost during the next sync operation. This also helps with keeping the groups up to date with your configured source (when removing users f.e.)
+  - `Folders`: the permissions of each folder are completely overridden with the input from your config. If you don't want this to happen, you can always disable the folder sync feature via config / env variable or cli flag
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 

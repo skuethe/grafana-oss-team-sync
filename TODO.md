@@ -39,6 +39,9 @@
 
 - grafana
     - validate possible authentication possibilities (besides basic auth) and see if we can / want to support them
+        -> https://grafana.com/docs/grafana/latest/developers/http_api/authentication/
+        - basic auth
+        - service account token
 
 
 - entraid

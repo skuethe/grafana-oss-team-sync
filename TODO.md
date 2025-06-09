@@ -26,7 +26,6 @@
 
 - add README info
     - add flags documentation
-    - add hint that passwords are generated
     - add "build it yourself" docs
     - how to setup Grafana
         - "Azure AD" auth

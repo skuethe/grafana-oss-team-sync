@@ -149,6 +149,7 @@ Please note the following opinionated behaviour of this tool.
 - this tool should be the single point of truth for creating groups in Grafana. For that matter, we are enforcing the following:
   - `Teams`: all members of each configured team are completely overridden with matching users from the source. If you, f.e. added other additional users or canged their permission (to "admin" f.e.), these changes will be lost during the next sync operation. This also helps with keeping the groups up to date with your configured source (when removing users f.e.)
   - `Folders`: the permissions of each folder are completely overridden with the input from your config. If you don't want this to happen, you can always disable the folder sync feature via config / env variable or cli flag
+- if the user sync feature is enabled, all newly created users will get a randomly generated password assigned. This password is not available afterwards, as it should not be used in the first place. Ideally you have [setup SSO authentication][3] with the same source as your group and user sync
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 
@@ -184,3 +185,4 @@ See [`LICENSE`](LICENSE.md) for more information.
 
 [1]: <https://grafana.com/docs/grafana/v12.0/introduction/grafana-enterprise/#team-sync> "Grafana Enterprise - Team Sync"
 [2]: <https://github.com/grafana/grafana/pull/87441> "Team: Add an endpoint for bulk team membership updates"
+[3]: <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/> "Configure authentication"

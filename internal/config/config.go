@@ -20,17 +20,21 @@ import (
 var K = koanf.New(".")
 
 const (
-	ConfigPathAuthFile string = "authFile"
-	ConfigPathFeatures string = "features"
-	ConfigPathFolders  string = "folders"
-	ConfigPathGrafana  string = "grafana"
-	ConfigPathLogLevel string = "loglevel"
-	ConfigPathSource   string = "source"
+	ConfigParamAuthFile string = "authFile"
+	ConfigParamFeatures string = "features"
+	ConfigParamFolders  string = "folders"
+	ConfigParamGrafana  string = "grafana"
+	ConfigParamLogLevel string = "loglevel"
+	ConfigParamSource   string = "source"
+
+	ConfigParamAuthBasicUsername string = "username"
+	ConfigParamAuthBasicPassword string = "password"
+	ConfigParamAuthToken         string = "token"
 )
 
 func GetLogLevel() slog.Level {
 	var level slog.Level
-	configLevel := K.Int(ConfigPathLogLevel)
+	configLevel := K.Int(ConfigParamLogLevel)
 	switch configLevel {
 	case 0:
 		level = slog.LevelInfo
@@ -48,7 +52,7 @@ func GetLogLevel() slog.Level {
 }
 
 func isAuthFileSet() bool {
-	authFile := K.String(ConfigPathAuthFile)
+	authFile := K.String(ConfigParamAuthFile)
 	return authFile != ""
 }
 
@@ -69,13 +73,13 @@ func Load() {
 
 	// Load optional authFile YAML
 	if isAuthFileSet() {
-		if err := K.Load(file.Provider(K.String(ConfigPathAuthFile)), dotenv.Parser()); err != nil {
-			configLog.Error("could not load "+ConfigPathAuthFile,
+		if err := K.Load(file.Provider(K.String(ConfigParamAuthFile)), dotenv.Parser()); err != nil {
+			configLog.Error("could not load "+ConfigParamAuthFile,
 				slog.Any("error", err),
 			)
 			os.Exit(1)
 		}
-		godotenv.Load(K.String(ConfigPathAuthFile))
+		godotenv.Load(K.String(ConfigParamAuthFile))
 	}
 
 	// Load env vars and merge (override) config

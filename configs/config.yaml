@@ -64,8 +64,10 @@ features:
 grafana:
   #
   # Grafana auth type to use
-  # Either "basicauth" or "satoken"
+  # Either "basicauth" or "token"
   # Default: "basicauth"
+  #
+  # WARNING: "token" does not allow to use the "admin API" which is necessary to create new users. If you want to use "token" auth, you should set "features.disableUserSync" to "true"
   #
   # auth: "basicauth"
 

@@ -30,9 +30,10 @@ func New() {
 	grafanaLog := slog.With(slog.String("package", "grafana"))
 	grafanaLog.Info("initializing Grafana")
 
-	getScheme := fromConfigOrDefault("grafana.connection.scheme", "http")
-	getHost := fromConfigOrDefault("grafana.connection.host", "localhost:3000")
-	getBasePath := fromConfigOrDefault("grafana.connection.basePath", "/api")
+	getAuth := fromConfigOrDefault(config.ConfigParamGrafana+".auth", "basicauth")
+	getScheme := fromConfigOrDefault(config.ConfigParamGrafana+".connection.scheme", "http")
+	getHost := fromConfigOrDefault(config.ConfigParamGrafana+".connection.host", "localhost:3000")
+	getBasePath := fromConfigOrDefault(config.ConfigParamGrafana+".connection.basePath", "/api")
 
 	cfg := client.TransportConfig{
 		// Host is the doman name or IP address of the host that serves the API.
@@ -41,10 +42,17 @@ func New() {
 		BasePath: getBasePath,
 		// Schemes are the transfer protocols used by the API (http or https).
 		Schemes: []string{getScheme},
-		// APIKey is an optional API key or service account token.
-		APIKey: os.Getenv("API_ACCESS_TOKEN"),
-		// BasicAuth is optional basic auth credentials.
-		BasicAuth: url.UserPassword("admin", "admin"),
+	}
+
+	if getAuth == "token" {
+		// APIKey is an API key or service account token
+		cfg.APIKey = config.K.MustString(config.ConfigParamAuthToken)
+		if !config.Feature.DisableUserSync {
+			grafanaLog.Warn("token auth does not support creating new users. Switch to basic auth or disable the user sync feature")
+		}
+	} else {
+		// BasicAuth is basic auth credentials.
+		cfg.BasicAuth = url.UserPassword(config.K.MustString(config.ConfigParamAuthBasicUsername), config.K.MustString(config.ConfigParamAuthBasicPassword))
 	}
 
 	client := client.NewHTTPClientWithConfig(strfmt.Default, &cfg)
@@ -52,7 +60,7 @@ func New() {
 	var health *health.GetHealthOK
 	var healthErr error
 	retryLoop := 0
-	retryMax := config.K.Int(config.ConfigPathGrafana + ".connection.retry")
+	retryMax := config.K.Int(config.ConfigParamGrafana + ".connection.retry")
 
 	grafanaLog.Info("connecting to Grafana instance",
 		slog.Int("retry", retryMax),

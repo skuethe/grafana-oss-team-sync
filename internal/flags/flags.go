@@ -25,6 +25,16 @@ const (
 	FlagSourceDefault string = "entraid"
 	FlagSourceHelp    string = "specify the source `plugin` you want to use\nAllowed: entraid"
 
+	FlagBasicAuthUsernameFull    string = "username"
+	FlagBasicAuthUsernameShort   string = "u"
+	FlagBasicAuthUsernameDefault string = ""
+	FlagBasicAuthUsernameHelp    string = "specify the basic auth `user` you want to use to authenticate against Grafana"
+
+	FlagBasicAuthPasswordFull    string = "password"
+	FlagBasicAuthPasswordShort   string = "p"
+	FlagBasicAuthPasswordDefault string = ""
+	FlagBasicAuthPasswordHelp    string = "specify the basic auth `password` you want to use to authenticate against Grafana"
+
 	FlagDisableFoldersFull    string = "features.disableFolders"
 	FlagDisableFoldersDefault bool   = false
 	FlagDisableFoldersHelp    string = "disable the folder sync feature"
@@ -42,7 +52,7 @@ const (
 	FlagGrafanaConnectionSchemeHelp    string = "the scheme of your Grafana instance\nAllowed: http or https"
 
 	FlagGrafanaConnectionHostFull    string = "grafana.connection.host"
-	FlagGrafanaConnectionHostShort   string = "h"
+	FlagGrafanaConnectionHostShort   string = "H"
 	FlagGrafanaConnectionHostDefault string = "localhost:3000"
 	FlagGrafanaConnectionHostHelp    string = "the host of your Grafana instance"
 
@@ -61,6 +71,9 @@ var (
 
 	Config string
 	Source string
+
+	BasicAuthUsername string
+	BasicAuthPassword string
 
 	FeatureDisableFolders       bool
 	FeatureDisableUserss        bool
@@ -84,6 +97,10 @@ func Load() {
 
 	// Add "--source", "-s" flag
 	Instance.StringVarP(&Source, FlagSourceFull, FlagSourceShort, FlagSourceDefault, FlagSourceHelp)
+
+	// Add basic auth flags
+	Instance.StringVarP(&BasicAuthUsername, FlagBasicAuthUsernameFull, FlagBasicAuthUsernameShort, FlagBasicAuthUsernameDefault, FlagBasicAuthUsernameHelp)
+	Instance.StringVarP(&BasicAuthPassword, FlagBasicAuthPasswordFull, FlagBasicAuthPasswordShort, FlagBasicAuthPasswordDefault, FlagBasicAuthPasswordHelp)
 
 	// Add the feature specific flags
 	Instance.BoolVar(&FeatureDisableFolders, FlagDisableFoldersFull, FlagDisableFoldersDefault, FlagDisableFoldersHelp)

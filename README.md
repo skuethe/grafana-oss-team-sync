@@ -100,21 +100,21 @@ Details on **Grafana** and **source** specific requirements can be found below.
 
 You can configure these either in the `config.yaml` or via environment variables starting with `GOTS_`.
 
-| Configuration                     | Config File YAML Path           | Description |
+| Configuration                     | Config via                      | Description |
 |-----------------------------------|---------------------------------|-------------|
-| Log level                         | `loglevel`                      | Configure the log level<br>**Type**: `int`<br>**Env var**: `GOTS_LOGLEVEL`<br>**Allowed**: `0` (INFO), `1` (WARN), `2` (ERROR), `99` (DEBUG)<br>**Default**: `0` (INFO) |
-| Source plugin                     | `source`                        | Configure the source plugin you want to use<br>**Type**: `string`<br>**Env var**: `GOTS_SOURCE`<br>**Allowed**: `entraid` |
-| Auth file                         | `authFile`                      | Configure an optional file to load authentication data from<br>**Type**: `string`<br>**Env var**: `GOTS_AUTHFILE` |
-| Feature: disable folder sync      | `features.disableFolders`       | Control the folder sync feature<br>**Type**: `bool`<br>**Env var**: `GOTS_FEATURE_DISABLEFOLDERS`<br>**Default**: `false` |
-| Feature: disable user sync        | `features.disableUserSync`      | Control the user sync feature<br>**Type**: `bool`<br>**Env var**: `GOTS_FEATURE_DISABLEUSERSYNC`<br>**Default**: `false` |
-| Feature: add local admin to teams | `features.addLocalAdminToTeams` | Control adding Grafana local admin to each team<br>**Type**: `bool`<br>**Env var**: `GOTS_FEATURE_ADDLOCALADMINTOTEAMS`<br>**Default**: `true` |
+| Log level                         | **config.yaml**: `loglevel`<br>**flag**: `--loglevel` or `-l`<br>**env var**: `GOTS_LOGLEVEL` | Configure the log level<br><br>**Type**: `int`<br>**Allowed**: `0` (INFO), `1` (WARN), `2` (ERROR), `99` (DEBUG)<br>**Default**: `0` (INFO) |
+| Source plugin                     | **config.yaml**: `source`<br>**flag**: `--source` or `-s`<br>**env var**: `GOTS_SOURCE`       | Configure the source plugin you want to use<br><br>**Type**: `string`<br>**Allowed**: `entraid` |
+| Auth file                         | **config.yaml**: `authFile`<br>**flag**: `--authFile`<br>**env var**: `GOTS_AUTHFILE` | Configure an optional file to load authentication data from. File content needs to be in `.env` syntax (so `key=value` per line)<br><br>**Type**: `string` |
+| Feature: disable folder sync      | **config.yaml**: `features.disableFolders`<br>**flag**: `--features.disableFolders`<br>**env var**: `GOTS_FEATURE_DISABLEFOLDERS` | Control the folder sync feature<br><br>**Type**: `bool`<br>**Default**: `false` |
+| Feature: disable user sync        | **config.yaml**: `features.disableUserSync`<br>**flag**: `--features.disableUserSync`<br>**env var**: `GOTS_FEATURE_DISABLEUSERSYNC` | Control the user sync feature<br><br>**Type**: `bool`<br>**Default**: `false` |
+| Feature: add local admin to teams | **config.yaml**: `features.addLocalAdminToTeams`<br>**flag**: `--features.addLocalAdminToTeams`<br>**env var**: `GOTS_FEATURE_ADDLOCALADMINTOTEAMS` | Control adding Grafana local admin to each team<br><br>**Type**: `bool`<br>**Default**: `true` |
 | Grafana connection                |                                 | |
-|                                   | `grafana.connection.scheme`     | Configure the scheme to use<br>**Type**: `string`<br>**Env var**: `GOTS_GRAFANA_CONNECTION_SCHEME`<br>**Allowed**: `http`, `https`<br>**Default**: `http` |
-|                                   | `grafana.connection.host`       | Configure the host to use<br>**Type**: `string`<br>**Env var**: `GOTS_GRAFANA_CONNECTION_HOST`<br>**Default**: `localhost:3000` |
-|                                   | `grafana.connection.basePath`   | Configure the base path to use<br>**Type**: `string`<br>**Env var**: `GOTS_GRAFANA_CONNECTION_BASEPATH`<br>**Default**: `/api` |
-|                                   | `grafana.connection.retry`      | Configure the connection retry, waiting 2 seconds in between each<br>**Type**: `int`<br>**Env var**: `GOTS_GRAFANA_CONNECTION_RETRY`<br>**Default**: `0` |
-| Team sync                         | `teams`                         | Configure the list of teams to sync<br>**Type**: `[]string`<br>**Env var**: `GOTS_TEAMS` |
-| Folder sync                       | `folders`                       | Configure the list of folders to sync<br>**Type**: `[]interface`<br>**Env var**: `GOTS_FOLDERS` |
+|                                   | **config.yaml**: `grafana.connection.scheme`<br>**flag**: `--grafana.connection.scheme`<br>**env var**: `GOTS_GRAFANA_CONNECTION_SCHEME`     | Configure the scheme to use<br><br>**Type**: `string`<br>**Allowed**: `http`, `https`<br>**Default**: `http` |
+|                                   | **config.yaml**: `grafana.connection.host`<br>**flag**: `--grafana.connection.host` or `-h`<br>**env var**: `GOTS_GRAFANA_CONNECTION_HOST`       | Configure the host to use<br>**Type**: `string`<br>**Default**: `localhost:3000` |
+|                                   | **config.yaml**: `grafana.connection.basePath`<br>**flag**: `--grafana.connection.basePath`<br>**env var**: `GOTS_GRAFANA_CONNECTION_BASEPATH`   | Configure the base path to use<br><br>**Type**: `string`<br>**Default**: `/api` |
+|                                   | **config.yaml**: `grafana.connection.retry`<br>**flag**: `--grafana.connection.retry` or `-r`<br>**env var**: `GOTS_GRAFANA_CONNECTION_RETRY`      | Configure the connection retry, waiting 2 seconds in between each<br><br>**Type**: `int`<br>**Default**: `0` |
+| Team sync                         | **config.yaml**: `teams`<br>**flag**: `--teams` or `-t`<br>**env var**: `GOTS_TEAMS` | Configure the list of teams to sync<br><br>**Type**: `[]string` |
+| Folder sync                       | **config.yaml**: `folders`<br>**flag**: `--folders` or `-f`<br>**env var**: `GOTS_FOLDERS` | Configure the list of folders to sync<br><br>**Type**: `[]interface` |
 
 <!-- Configuration - Grafana -->
 ### Grafana

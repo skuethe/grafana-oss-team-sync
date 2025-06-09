@@ -37,9 +37,6 @@
 
 
 - config
-    - add "authfile" feature to load authentication variables from an optional file instead of env variables or the config.yaml
-        -> need to load these as ENV variables (for source auth) AND as config input (for Grafana auth)
-        -> validate the file format we need for this (optimize it for k8s secrets mounted as file from secret)
     - validate all possible ENV VAR input
 
 

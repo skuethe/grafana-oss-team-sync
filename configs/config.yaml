@@ -27,10 +27,11 @@ source: "entraid"
 
 
 #
-# AuthFile
-# Optional: if you want to load sensitive data from another file, specify it's path here
+# AuthFile (optional)
+# If you want to load sensitive data from another file, specify it's path here
+# The file content should be .env formated (so "key=value" entries)
 #
-authFile: "configs/sensitive.yaml"
+# authFile: ""
 
 
 

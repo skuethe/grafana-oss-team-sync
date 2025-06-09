@@ -41,6 +41,8 @@ func New() {
 		BasePath: getBasePath,
 		// Schemes are the transfer protocols used by the API (http or https).
 		Schemes: []string{getScheme},
+		// APIKey is an optional API key or service account token.
+		APIKey: os.Getenv("API_ACCESS_TOKEN"),
 		// BasicAuth is optional basic auth credentials.
 		BasicAuth: url.UserPassword("admin", "admin"),
 	}

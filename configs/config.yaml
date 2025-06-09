@@ -62,6 +62,16 @@ features:
 #
 
 grafana:
+  #
+  # Grafana auth type to use
+  # Either "basicauth" or "satoken"
+  # Default: "basicauth"
+  #
+  # auth: "basicauth"
+
+  #
+  # Grafana connection specific configuration
+  #
   connection:
     #
     # Scheme to use

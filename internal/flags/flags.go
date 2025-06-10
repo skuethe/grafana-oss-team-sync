@@ -67,55 +67,55 @@ const (
 )
 
 var (
-	Instance *flag.FlagSet
+	FlagSet *flag.FlagSet
 
-	Config string
-	Source string
+	FlagInputConfig string
+	FlagInputSource string
 
-	BasicAuthUsername string
-	BasicAuthPassword string
+	FlagInputBasicAuthUsername string
+	FlagInputBasicAuthPassword string
 
-	FeatureDisableFolders       bool
-	FeatureDisableUserss        bool
-	FeatureAddLocalAdminToTeams bool
+	FlagInputFeatureDisableFolders       bool
+	FlagInputFeatureDisableUserss        bool
+	FlagInputFeatureAddLocalAdminToTeams bool
 
-	GrafanaConnectionScheme   string
-	GrafanaConnectionHost     string
-	GrafanaConnectionBasePath string
-	GrafanaConnectionRetry    int
+	FlagInputGrafanaConnectionScheme   string
+	FlagInputGrafanaConnectionHost     string
+	FlagInputGrafanaConnectionBasePath string
+	FlagInputGrafanaConnectionRetry    int
 
-	Loglevel int
-	Version  bool
+	FlagInputLoglevel int
+	FlagInputVersion  bool
 )
 
-func Load() {
-	Instance = flag.NewFlagSet("grafana-oss-team-sync", flag.ExitOnError)
-	Instance.SortFlags = false
+func LoadFlags() {
+	FlagSet = flag.NewFlagSet("grafana-oss-team-sync", flag.ExitOnError)
+	FlagSet.SortFlags = false
 
 	// Add "--config", "-c" flag
-	Instance.StringVarP(&Config, FlagConfigFull, FlagConfigShort, FlagConfigDefault, FlagConfigHelp)
+	FlagSet.StringVarP(&FlagInputConfig, FlagConfigFull, FlagConfigShort, FlagConfigDefault, FlagConfigHelp)
 
 	// Add "--source", "-s" flag
-	Instance.StringVarP(&Source, FlagSourceFull, FlagSourceShort, FlagSourceDefault, FlagSourceHelp)
+	FlagSet.StringVarP(&FlagInputSource, FlagSourceFull, FlagSourceShort, FlagSourceDefault, FlagSourceHelp)
 
 	// Add basic auth flags
-	Instance.StringVarP(&BasicAuthUsername, FlagBasicAuthUsernameFull, FlagBasicAuthUsernameShort, FlagBasicAuthUsernameDefault, FlagBasicAuthUsernameHelp)
-	Instance.StringVarP(&BasicAuthPassword, FlagBasicAuthPasswordFull, FlagBasicAuthPasswordShort, FlagBasicAuthPasswordDefault, FlagBasicAuthPasswordHelp)
+	FlagSet.StringVarP(&FlagInputBasicAuthUsername, FlagBasicAuthUsernameFull, FlagBasicAuthUsernameShort, FlagBasicAuthUsernameDefault, FlagBasicAuthUsernameHelp)
+	FlagSet.StringVarP(&FlagInputBasicAuthPassword, FlagBasicAuthPasswordFull, FlagBasicAuthPasswordShort, FlagBasicAuthPasswordDefault, FlagBasicAuthPasswordHelp)
 
 	// Add the feature specific flags
-	Instance.BoolVar(&FeatureDisableFolders, FlagDisableFoldersFull, FlagDisableFoldersDefault, FlagDisableFoldersHelp)
-	Instance.BoolVar(&FeatureDisableUserss, FlagDisableUsersFull, FlagDisableUsersDefault, FlagDisableUsersHelp)
-	Instance.BoolVar(&FeatureAddLocalAdminToTeams, FlagAddLocalAdminToTeamsFull, FlagAddLocalAdminToTeamsDefault, FlagAddLocalAdminToTeamsHelp)
+	FlagSet.BoolVar(&FlagInputFeatureDisableFolders, FlagDisableFoldersFull, FlagDisableFoldersDefault, FlagDisableFoldersHelp)
+	FlagSet.BoolVar(&FlagInputFeatureDisableUserss, FlagDisableUsersFull, FlagDisableUsersDefault, FlagDisableUsersHelp)
+	FlagSet.BoolVar(&FlagInputFeatureAddLocalAdminToTeams, FlagAddLocalAdminToTeamsFull, FlagAddLocalAdminToTeamsDefault, FlagAddLocalAdminToTeamsHelp)
 
 	// Add the Grafana.connection specific flags
-	Instance.StringVar(&GrafanaConnectionScheme, FlagGrafanaConnectionSchemeFull, FlagGrafanaConnectionSchemeDefault, FlagGrafanaConnectionSchemeHelp)
-	Instance.StringVarP(&GrafanaConnectionHost, FlagGrafanaConnectionHostFull, FlagGrafanaConnectionHostShort, FlagGrafanaConnectionHostDefault, FlagGrafanaConnectionHostHelp)
-	Instance.StringVar(&GrafanaConnectionBasePath, FlagGrafanaConnectionBasePathFull, FlagGrafanaConnectionBasePathDefault, FlagGrafanaConnectionBasePathHelp)
-	Instance.IntVarP(&GrafanaConnectionRetry, FlagGrafanaConnectionRetryFull, FlagGrafanaConnectionRetryShort, FlagGrafanaConnectionRetryDefault, FlagGrafanaConnectionRetryHelp)
+	FlagSet.StringVar(&FlagInputGrafanaConnectionScheme, FlagGrafanaConnectionSchemeFull, FlagGrafanaConnectionSchemeDefault, FlagGrafanaConnectionSchemeHelp)
+	FlagSet.StringVarP(&FlagInputGrafanaConnectionHost, FlagGrafanaConnectionHostFull, FlagGrafanaConnectionHostShort, FlagGrafanaConnectionHostDefault, FlagGrafanaConnectionHostHelp)
+	FlagSet.StringVar(&FlagInputGrafanaConnectionBasePath, FlagGrafanaConnectionBasePathFull, FlagGrafanaConnectionBasePathDefault, FlagGrafanaConnectionBasePathHelp)
+	FlagSet.IntVarP(&FlagInputGrafanaConnectionRetry, FlagGrafanaConnectionRetryFull, FlagGrafanaConnectionRetryShort, FlagGrafanaConnectionRetryDefault, FlagGrafanaConnectionRetryHelp)
 
 	// Add "--loglevel", "-l" flag
-	Instance.IntVarP(&Loglevel, FlagLoglevelFull, FlagLoglevelShort, FlagLoglevelDefault, FlagLoglevelHelp)
+	FlagSet.IntVarP(&FlagInputLoglevel, FlagLoglevelFull, FlagLoglevelShort, FlagLoglevelDefault, FlagLoglevelHelp)
 
 	// Add "--version", "-v" flag
-	Instance.BoolVarP(&Version, FlagVersionFull, FlagVersionShort, FlagVersionDefault, FlagVersionHelp)
+	FlagSet.BoolVarP(&FlagInputVersion, FlagVersionFull, FlagVersionShort, FlagVersionDefault, FlagVersionHelp)
 }

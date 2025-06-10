@@ -92,7 +92,7 @@ grafana:
     # Set base path for accessing Grafana API
     # Default "/api"
     #
-    # basePath: "/api"
+    # basepath: "/api"
 
     #
     # Amount of retries to connect to your Grafana instance

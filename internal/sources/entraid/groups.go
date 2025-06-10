@@ -82,7 +82,7 @@ func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 
 	g := groups{
 		client:        instance.EntraID,
-		requestFilter: "displayName in ('" + strings.Join(config.Teams.List, "', '") + "')",
+		requestFilter: "displayName in ('" + strings.Join(config.Instance.Teams, "', '") + "')",
 	}
 
 	groupList, err := g.getGroupData()
@@ -133,17 +133,17 @@ func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 			},
 			Users: grafanaUserList,
 		})
-		config.Teams.List = helpers.RemoveFromSlice(config.Teams.List, groupDisplayName, false)
+		config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, groupDisplayName, false)
 	}
 
-	if len(config.Teams.List) > 0 {
-		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Teams.List, ","))
+	if len(config.Instance.Teams) > 0 {
+		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Instance.Teams, ","))
 	}
 
 	groupsLog.Info("finished processing EntraID groups",
 		slog.Group("stats",
 			slog.Int64("found", countFound),
-			slog.Int("skipped", len(config.Teams.List)),
+			slog.Int("skipped", len(config.Instance.Teams)),
 		),
 	)
 

@@ -19,6 +19,7 @@
 - look into:
     - Go "data streams" aka channels?
     - Go contexts and their benefits
+    - Go use "panic(err)" instead of "os.Exit()"
 
 
 - future features

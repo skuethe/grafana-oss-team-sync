@@ -62,7 +62,7 @@ func (t *Team) addUsersToTeam() (*[]string, error) {
 	adminMemberList := &[]string{}
 	teamMemberList := &[]string{}
 
-	if config.Feature.AddLocalAdminToTeams {
+	if config.Instance.Features.AddLocalAdminToTeams {
 		*adminMemberList = append(*adminMemberList, "admin@localhost")
 	}
 

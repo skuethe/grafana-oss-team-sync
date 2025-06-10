@@ -4,6 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config/types"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/plugin"
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources/entraid"
@@ -17,8 +18,8 @@ func CallPlugin() *grafana.Teams {
 	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
 
 	// Execute specific source plugin, which need to return a *grafana.Teams instance
-	switch config.GetSource() {
-	case config.SourceEntraID:
+	switch config.Instance.GetSource() {
+	case types.SourceEntraID:
 		// EntraID: create new msgraph client
 		instance = entraid.New()
 		// EntraID: search for all specified groups and users

@@ -26,11 +26,11 @@ var (
 
 func main() {
 	// Handle Flags
-	flags.Load()
-	flags.Instance.Parse(os.Args[1:])
+	flags.LoadFlags()
+	flags.FlagSet.Parse(os.Args[1:])
 
 	// Handle version printing
-	if flags.Version {
+	if flags.FlagInputVersion {
 		fmt.Printf("Version: %s\nCommit: %s\nBuild date: %s\n", version, commit, date)
 		os.Exit(0)
 	}
@@ -53,7 +53,7 @@ func main() {
 	config.Load()
 
 	// Further configure logger
-	logLevelFromConfig := config.GetLogLevel()
+	logLevelFromConfig := config.Instance.GetLogLevel()
 	loggerLevel.Set(logLevelFromConfig)
 	slog.SetDefault(logger)
 
@@ -65,7 +65,7 @@ func main() {
 
 	// Grafana: continue to process teams
 	if len(*grafanaTeamList) > 0 {
-		if !config.Feature.DisableUserSync {
+		if !config.Instance.Features.DisableUserSync {
 			grafanaTeamList.ProcessUsers()
 		} else {
 			slog.Info("user sync disabled in config, skipping Grafana users package")
@@ -76,7 +76,7 @@ func main() {
 	}
 
 	// Grafana: continue to process folders
-	if !config.Feature.DisableFolders {
+	if !config.Instance.Features.DisableFolders {
 		grafana.Instance.ProcessFolders()
 	} else {
 		slog.Info("folder feature disabled in config, skipping Grafana folders package")

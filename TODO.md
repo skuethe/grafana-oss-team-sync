@@ -16,18 +16,6 @@
         - 
 
 
-- look into:
-    - Go "data streams" aka channels?
-    - Go contexts and their benefits
-    - Go use "panic(err)" instead of "os.Exit()"
-
-
-- future features
-    - allow folder permissions to add individual users
-    - allow folder permissions to add roles
-    - allow to assign admin permissions to team members
-
-
 - cli
     - optimize flags usage for "features" and "grafana"
 
@@ -44,11 +32,7 @@
 
 - config
     - validate all possible ENV VAR input
-
-
-- grafana
-    - should we really save authentication data to a global "K" var (or even the "flags.BasicAuthPassword" var?)
-    
+    - implement solution to load config from OS ENV / --config flag
 
 
 - entraid
@@ -74,3 +58,16 @@
     - write _test files
     - integration tests
         - run against multiple Grafana versions in CI
+
+
+
+- look into:
+    - Go "data streams" aka channels?
+    - Go contexts and their benefits
+    - Go use "panic(err)" instead of "os.Exit()"?
+
+
+- future features
+    - allow folder permissions to add individual users
+    - allow folder permissions to add roles
+    - allow to assign admin permissions to team members

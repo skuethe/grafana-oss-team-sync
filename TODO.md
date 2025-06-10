@@ -2,11 +2,18 @@
 
 - repo release
     - add golang specific github actions
+        - ref: https://github.com/jkroepke/openvpn-auth-oauth2
+
     - add badges
         - `https://goreportcard.com/`
         - `https://github.com/badges/shields`
         - `https://www.bestpractices.dev/en` ?
 
+    - add renovatebot
+        - https://docs.renovatebot.com/golang/
+        - https://docs.renovatebot.com/upgrade-best-practices/
+        - https://docs.renovatebot.com/presets-group/#groupgoopenapi
+        - 
 
 
 - look into:

@@ -46,7 +46,6 @@
 
 
 - grafana
-    - look into retry mechanism of grafana go client
     - should we really save authentication data to a global "K" var (or even the "flags.BasicAuthPassword" var?)
     
 

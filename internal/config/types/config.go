@@ -13,7 +13,7 @@ type Config struct {
 
 const (
 	ConfigDefault   string = ""
-	ConfigFlagHelp  string = "the path to your config.yaml file (required)"
+	ConfigFlagHelp  string = "the file path to your config (required)"
 	ConfigFlagShort string = "c"
 	ConfigParameter string = "config"
 	ConfigVariable  string = "GOTS_CONFIG"

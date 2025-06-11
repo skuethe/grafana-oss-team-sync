@@ -37,6 +37,39 @@ func getConfigFilePath() (*string, error) {
 	return &config, nil
 }
 
+func loadYamlFile(k *koanf.Koanf) error {
+	// Handle config file definitions from flag and environment variables
+	configFile, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
+
+	// Load main YAML config
+	if err := k.Load(file.Provider(*configFile), yaml.Parser()); err != nil {
+		return err
+	}
+	return nil
+}
+
+func loadEnvironmentVariables(k *koanf.Koanf) {
+	k.Load(env.Provider("GOTS_", ".", func(s string) string {
+		return strings.Replace(strings.ToLower(
+			strings.TrimPrefix(s, "GOTS_")), "_", ".", -1)
+	}), nil)
+}
+
+func loadCLIParameter(k *koanf.Koanf) {
+	k.Load(posflag.Provider(flags.Instance, ".", k), nil)
+}
+
+func loadOptionalAuthFile(k *koanf.Koanf) {
+	authfile := k.String(types.AuthFileParameter)
+	if authfile != "" {
+		godotenv.Load(authfile)
+		loadEnvironmentVariables(k)
+	}
+}
+
 func Load() {
 	configLog := slog.With(slog.String("package", "config"))
 	configLog.Info("loading config")
@@ -44,41 +77,25 @@ func Load() {
 	// Handle .env files
 	godotenv.Load()
 
-	// Handle config file definitions from flag and environment variables
-	configFile, err := getConfigFilePath()
-	if err != nil {
-		configLog.Error("could not load config",
-			slog.Any("error", err),
-		)
-		os.Exit(1)
-	}
-
 	// Global koanf instance for input handling
 	var k = koanf.New(".")
 
 	// Load main YAML config
-	if err := k.Load(file.Provider(*configFile), yaml.Parser()); err != nil {
-		configLog.Error("could not load config",
-			slog.Any("error", err),
-		)
-		os.Exit(1)
-	}
+	if err := loadYamlFile(k); err != nil {
+		configLog.Error("could not load config file")
+		panic(err)
 
-	// Load optional authfile as config and environment variables
-	authfile := k.String(types.AuthFileParameter)
-	if authfile != "" {
-		godotenv.Load(authfile)
 	}
 
 	// Load env vars and merge (override) config
-	k.Load(env.Provider("GOTS_", ".", func(s string) string {
-		return strings.Replace(strings.ToLower(
-			strings.TrimPrefix(s, "GOTS_")), "_", ".", -1)
-	}), nil)
+	loadEnvironmentVariables(k)
 
 	// Load flags and merge (override) config
 	// This will also load default values specified in the flags package
-	k.Load(posflag.Provider(flags.Instance, ".", k), nil)
+	loadCLIParameter(k)
+
+	// Load optional authfile as config and environment variables
+	loadOptionalAuthFile(k)
 
 	// Create new Config instance from the different inputs
 	k.UnmarshalWithConf("", &Instance, koanf.UnmarshalConf{

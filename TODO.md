@@ -18,7 +18,8 @@
 
 - cli
     - optimize flags usage for "features" and "grafana"
-    - add "authfile", "token", "teams" and "folders
+    - add "token", "teams" and "folders
+    - add "help"?
 
 
 - add README info
@@ -29,6 +30,11 @@
         - disable registration ?
         - ...
     - how to setup EntraID app with permissions
+    - describe parameter hirarchy
+        -> config.yaml
+        -> env vars
+        -> cli flags
+        -> optional "auth file" if defined (WILL NOT OVERWRITE EXISTING)
 
 
 - config

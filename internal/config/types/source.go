@@ -8,7 +8,7 @@ type Source string
 
 const (
 	SourceDefault   string = "entraid"
-	SourceFlagHelp  string = "specify the source `plugin` you want to use\nAllowed: entraid"
+	SourceFlagHelp  string = "the source `plugin` you want to use\nAllowed: entraid"
 	SourceFlagShort string = "s"
 	SourceParameter string = "source"
 	SourceVariable  string = "GOTS_SOURCE"

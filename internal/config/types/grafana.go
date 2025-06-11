@@ -38,11 +38,11 @@ const (
 	// GrafanaConnectionBasePathVariable  string = "GOTS_"
 	GrafanaConnectionBasePathDefault   string = "/api"
 	GrafanaConnectionBasePathFlagHelp  string = "the base path of your Grafana instance"
-	GrafanaConnectionBasePathParameter string = "grafana.connection.basePath"
+	GrafanaConnectionBasePathParameter string = "grafana.connection.basepath"
 
 	// GrafanaConnectionRetryVariable  string = "GOTS_"
 	GrafanaConnectionRetryDefault   int    = 0
-	GrafanaConnectionRetryFlagHelp  string = "configure the amount of retries to connect to your Grafana instance\nRetries are paused by 2 seconds\nDefault: 0"
+	GrafanaConnectionRetryFlagHelp  string = "the amount of retries to connect to your Grafana instance\nRetry timeout is set to 2 seconds\nDefault: 0"
 	GrafanaConnectionRetryFlagShort string = "r"
 	GrafanaConnectionRetryParameter string = "grafana.connection.retry"
 

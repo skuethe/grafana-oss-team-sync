@@ -6,7 +6,7 @@ type LogLevel int
 
 const (
 	LogLevelDefault   int    = 0
-	LogLevelFlagHelp  string = "configure the log level.\nAllowed: 0 (INFO), 1 (WARN), 2 (ERROR), 99 (DEBUG)\nDefault: 0 (INFO)"
+	LogLevelFlagHelp  string = "the log-level.\nAllowed: 0 (INFO), 1 (WARN), 2 (ERROR), 99 (DEBUG)\nDefault: 0 (INFO)"
 	LogLevelFlagShort string = "l"
 	LogLevelParameter string = "loglevel"
 	LogLevelVariable  string = "GOTS_LOGLEVEL"

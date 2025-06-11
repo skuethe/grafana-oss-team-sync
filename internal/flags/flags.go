@@ -9,12 +9,12 @@ const (
 	flagBasicAuthUsernameFull    string = "username"
 	flagBasicAuthUsernameShort   string = "u"
 	flagBasicAuthUsernameDefault string = ""
-	flagBasicAuthUsernameHelp    string = "specify the basic auth `user` you want to use to authenticate against Grafana"
+	flagBasicAuthUsernameHelp    string = "the basic auth user you want to use to authenticate against Grafana"
 
 	flagBasicAuthPasswordFull    string = "password"
 	flagBasicAuthPasswordShort   string = "p"
 	flagBasicAuthPasswordDefault string = ""
-	flagBasicAuthPasswordHelp    string = "specify the basic auth `password` you want to use to authenticate against Grafana"
+	flagBasicAuthPasswordHelp    string = "the basic auth password you want to use to authenticate against Grafana"
 )
 
 var (
@@ -33,20 +33,15 @@ func Load() {
 	Instance = flag.NewFlagSet("grafana-oss-team-sync", flag.ExitOnError)
 	Instance.SortFlags = false
 
-	// Add "--config", "-c" flag
+	// Add "config" flag
 	Instance.StringVarP(&Config, types.ConfigParameter, types.ConfigFlagShort, types.ConfigDefault, types.ConfigFlagHelp)
 
-	// Add "--source", "-s" flag
-	Instance.StringP(types.SourceParameter, types.SourceFlagShort, types.SourceDefault, types.SourceFlagHelp)
+	// Add "authfile" flag
+	Instance.StringP(types.AuthFileParameter, types.AuthFileFlagShort, types.AuthFileDefault, types.AuthFileFlagHelp)
 
 	// Add basic auth flags
 	Instance.StringVarP(&basicAuthUsername, flagBasicAuthUsernameFull, flagBasicAuthUsernameShort, flagBasicAuthUsernameDefault, flagBasicAuthUsernameHelp)
 	Instance.StringVarP(&basicAuthPassword, flagBasicAuthPasswordFull, flagBasicAuthPasswordShort, flagBasicAuthPasswordDefault, flagBasicAuthPasswordHelp)
-
-	// Add the feature specific flags
-	Instance.Bool(types.FeaturesDisableFoldersParameter, types.FeaturesDisableFoldersDefault, types.FeaturesDisableFoldersFlagHelp)
-	Instance.Bool(types.FeaturesDisableUsersParameter, types.FeaturesDisableUsersDefault, types.FeaturesDisableUsersFlagHelp)
-	Instance.Bool(types.FeaturesDisableUsersParameter, types.FeaturesAddLocalAdminToTeamsDefault, types.FeaturesDisableUsersFlagHelp)
 
 	// Add the Grafana.connection specific flags
 	Instance.String(types.GrafanaConnectionSchemeParameter, types.GrafanaConnectionSchemeDefault, types.GrafanaConnectionSchemeFlagHelp)
@@ -54,9 +49,17 @@ func Load() {
 	Instance.String(types.GrafanaConnectionBasePathParameter, types.GrafanaConnectionBasePathDefault, types.GrafanaConnectionBasePathFlagHelp)
 	Instance.IntP(types.GrafanaConnectionRetryParameter, types.GrafanaConnectionRetryFlagShort, types.GrafanaConnectionRetryDefault, types.GrafanaConnectionRetryFlagHelp)
 
-	// Add "--loglevel", "-l" flag
+	// Add the feature specific flags
+	Instance.Bool(types.FeaturesDisableFoldersParameter, types.FeaturesDisableFoldersDefault, types.FeaturesDisableFoldersFlagHelp)
+	Instance.Bool(types.FeaturesDisableUsersParameter, types.FeaturesDisableUsersDefault, types.FeaturesDisableUsersFlagHelp)
+	Instance.Bool(types.FeaturesAddLocalAdminToTeamsParameter, types.FeaturesAddLocalAdminToTeamsDefault, types.FeaturesAddLocalAdminToTeamsFlagHelp)
+
+	// Add "source" flag
+	Instance.StringP(types.SourceParameter, types.SourceFlagShort, types.SourceDefault, types.SourceFlagHelp)
+
+	// Add "loglevel" flag
 	Instance.IntP(types.LogLevelParameter, types.LogLevelFlagShort, types.LogLevelDefault, types.LogLevelFlagHelp)
 
-	// Add "--version", "-v" flag
+	// Add "version" flag
 	Instance.BoolVarP(&Version, types.VersionParameter, types.VersionFlagShort, types.VersionDefault, types.VersionFlagHelp)
 }

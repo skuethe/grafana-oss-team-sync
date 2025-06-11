@@ -135,7 +135,7 @@ The following hirarchy is used when merging the different config sources, overri
 | Auth          | Using either one of the [available authentication options][availableauthoptions] `basic auth` or `service account token` [^grafanatokenauth] |
 
 [^grafanaversion]: Minimum Grafana version is `11.1.0` as it introduced [a new bulk team membership endpoint][newbulkendpoint] we are currently using.  
-[^grafanatokenauth]: Please note that `service account token` auth only works if you disable the `UserSync` feature, as creating new users in Grafana is using the Admin API, [which require the usage of basic auth][requirebasicauth].
+[^grafanatokenauth]: Please note that `service account token` auth only works if you disable the `UserSync` feature, as creating new users in Grafana uses the Admin API, [which require the usage of basic auth][requirebasicauth].
 
 
 

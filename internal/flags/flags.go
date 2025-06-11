@@ -74,7 +74,6 @@ func Load() {
 
 	// Handle help printing
 	if Help {
-		// Instance.PrintDefaults()
 		fmt.Printf("Usage of %s:\n\r\n\r", Instance.Name())
 		fmt.Println(Instance.FlagUsages())
 		os.Exit(0)

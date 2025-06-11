@@ -19,7 +19,7 @@ func CallPlugin() *grafana.Teams {
 
 	// Execute specific source plugin, which need to return a *grafana.Teams instance
 	switch config.Instance.GetSource() {
-	case types.SourceEntraID:
+	case types.SourcePluginEntraID:
 		// EntraID: create new msgraph client
 		instance = entraid.New()
 		// EntraID: search for all specified groups and users

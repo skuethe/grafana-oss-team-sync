@@ -20,12 +20,35 @@ type GrafanaConnection struct {
 type GrafanaPermission int
 
 const (
+	// GrafanaConnectionSchemeFlagShort string = ""
+	// GrafanaConnectionSchemeVariable  string = "GOTS_"
+	GrafanaConnectionSchemeDefault      string = "http"
+	GrafanaConnectionSchemeFlagHelp     string = "the scheme of your Grafana instance\nAllowed: http or https"
+	GrafanaConnectionSchemeParameter    string = "grafana.connection.scheme"
+	GrafanaConnectionSchemeAllowedHTTP  string = "http"
+	GrafanaConnectionSchemeAllowedHTTPS string = "https"
+
+	// GrafanaConnectionHostVariable  string = "GOTS_"
+	GrafanaConnectionHostDefault   string = "localhost:3000"
+	GrafanaConnectionHostFlagHelp  string = "the host of your Grafana instance"
+	GrafanaConnectionHostFlagShort string = "H"
+	GrafanaConnectionHostParameter string = "grafana.connection.host"
+
+	// GrafanaConnectionBasePathFlagShort string = ""
+	// GrafanaConnectionBasePathVariable  string = "GOTS_"
+	GrafanaConnectionBasePathDefault   string = "/api"
+	GrafanaConnectionBasePathFlagHelp  string = "the base path of your Grafana instance"
+	GrafanaConnectionBasePathParameter string = "grafana.connection.basePath"
+
+	// GrafanaConnectionRetryVariable  string = "GOTS_"
+	GrafanaConnectionRetryDefault   int    = 0
+	GrafanaConnectionRetryFlagHelp  string = "configure the amount of retries to connect to your Grafana instance\nRetries are paused by 2 seconds\nDefault: 0"
+	GrafanaConnectionRetryFlagShort string = "r"
+	GrafanaConnectionRetryParameter string = "grafana.connection.retry"
+
 	GrafanaAuthVariableToken    string = "GOTS_TOKEN"
 	GrafanaAuthVariableUsername string = "GOTS_USERNAME"
 	GrafanaAuthVariablePassword string = "GOTS_PASSWORD"
-
-	GrafanaConnectionSchemeHTTP  string = "http"
-	GrafanaConnectionSchemeHTTPS string = "https"
 
 	GrafanaAuthTypeToken     string = "token"
 	GrafanaAuthTypeBasicAuth string = "basicauth"
@@ -52,11 +75,11 @@ func ValidateGrafanaPermission(in GrafanaPermission) error {
 
 func (c *Config) ValdidateGrafanaScheme() error {
 	switch c.Grafana.Connection.Scheme {
-	case GrafanaConnectionSchemeHTTP:
+	case GrafanaConnectionSchemeAllowedHTTP:
 		return nil
-	case GrafanaConnectionSchemeHTTPS:
+	case GrafanaConnectionSchemeAllowedHTTPS:
 		return nil
 	}
 
-	return errors.New("invalid source: " + c.Source.String())
+	return errors.New("invalid connection scheme defined: " + c.Grafana.Connection.Scheme)
 }

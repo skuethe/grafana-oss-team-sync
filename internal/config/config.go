@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"os"
 	"strings"
 
@@ -18,6 +19,24 @@ import (
 
 var Instance *types.Config
 
+func getConfigFilePath() (*string, error) {
+	var config string
+
+	// Load possible env vars first
+	config = os.Getenv(types.ConfigVariable)
+
+	// Merge possible input from flags
+	if flags.Config != "" {
+		config = flags.Config
+	}
+
+	if config == "" {
+		return nil, errors.New("no config file defined")
+	}
+
+	return &config, nil
+}
+
 func Load() {
 	configLog := slog.With(slog.String("package", "config"))
 	configLog.Info("loading config")
@@ -26,14 +45,19 @@ func Load() {
 	godotenv.Load()
 
 	// Handle config file definitions from flag and environment variables
-	// TODO: implement solution to load config from OS ENV / --config flag
-	// mainConfig := os.Getenv("GOTS_CONFIG")
+	configFile, err := getConfigFilePath()
+	if err != nil {
+		configLog.Error("could not load config",
+			slog.Any("error", err),
+		)
+		os.Exit(1)
+	}
 
 	// Global koanf instance for input handling
 	var k = koanf.New(".")
 
 	// Load main YAML config
-	if err := k.Load(file.Provider(flags.FlagInputConfig), yaml.Parser()); err != nil {
+	if err := k.Load(file.Provider(*configFile), yaml.Parser()); err != nil {
 		configLog.Error("could not load config",
 			slog.Any("error", err),
 		)
@@ -41,8 +65,9 @@ func Load() {
 	}
 
 	// Load optional authfile as config and environment variables
-	if k.String(types.ConfigParamAuthFile) != "" {
-		godotenv.Load(k.String(types.ConfigParamAuthFile))
+	authfile := k.String(types.AuthFileParameter)
+	if authfile != "" {
+		godotenv.Load(authfile)
 	}
 
 	// Load env vars and merge (override) config
@@ -53,16 +78,22 @@ func Load() {
 
 	// Load flags and merge (override) config
 	// This will also load default values specified in the flags package
-	k.Load(posflag.Provider(flags.FlagSet, ".", k), nil)
+	k.Load(posflag.Provider(flags.Instance, ".", k), nil)
 
 	// Create new Config instance from the different inputs
 	k.UnmarshalWithConf("", &Instance, koanf.UnmarshalConf{
 		Tag: "yaml",
 	})
 
+	// Validate Grafana connection scheme input
+	if err := Instance.ValdidateGrafanaScheme(); err != nil {
+		configLog.Error("error validating Grafana connection scheme input")
+		panic(err)
+	}
+
 	// Validate source input
 	if err := Instance.ValdidateSourcePlugin(); err != nil {
-		configLog.Error("error validating source config")
+		configLog.Error("error validating source input")
 		panic(err)
 	}
 

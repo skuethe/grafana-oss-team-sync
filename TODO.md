@@ -18,6 +18,7 @@
 
 - cli
     - optimize flags usage for "features" and "grafana"
+    - add "authfile", "token", "teams" and "folders
 
 
 - add README info
@@ -48,6 +49,7 @@
 
 
 - logging
+    - use "-v" / "--verbose" flag for debugging?
     - make detailed results from entraid all "DEBUG"
     - make "skipped" results from Grafana "DEBUG"
     - make "created" results from Grafana "INFO"

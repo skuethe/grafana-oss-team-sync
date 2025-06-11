@@ -12,5 +12,9 @@ type Config struct {
 }
 
 const (
-	ConfigParamAuthFile string = "authfile"
+	ConfigDefault   string = ""
+	ConfigFlagHelp  string = "the path to your config.yaml file (required)"
+	ConfigFlagShort string = "c"
+	ConfigParameter string = "config"
+	ConfigVariable  string = "GOTS_CONFIG"
 )

@@ -26,11 +26,11 @@ var (
 
 func main() {
 	// Handle Flags
-	flags.LoadFlags()
-	flags.FlagSet.Parse(os.Args[1:])
+	flags.Load()
+	flags.Instance.Parse(os.Args[1:])
 
 	// Handle version printing
-	if flags.FlagInputVersion {
+	if flags.Version {
 		fmt.Printf("Version: %s\nCommit: %s\nBuild date: %s\n", version, commit, date)
 		os.Exit(0)
 	}
@@ -44,6 +44,11 @@ func main() {
 	slog.Info("starting Grafana OSS Team Sync",
 		slog.Group("release",
 			slog.String("version", version),
+		),
+	)
+	// Print build details for debug output
+	slog.Info("build details",
+		slog.Group("build",
 			slog.String("commit", commit),
 			slog.String("date", date),
 		),

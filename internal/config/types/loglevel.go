@@ -4,6 +4,14 @@ import "log/slog"
 
 type LogLevel int
 
+const (
+	LogLevelDefault   int    = 0
+	LogLevelFlagHelp  string = "configure the log level.\nAllowed: 0 (INFO), 1 (WARN), 2 (ERROR), 99 (DEBUG)\nDefault: 0 (INFO)"
+	LogLevelFlagShort string = "l"
+	LogLevelParameter string = "loglevel"
+	LogLevelVariable  string = "GOTS_LOGLEVEL"
+)
+
 func (c *Config) GetLogLevel() slog.Level {
 	switch c.LogLevel {
 	case 0:

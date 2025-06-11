@@ -7,7 +7,13 @@ import (
 type Source string
 
 const (
-	SourceEntraID Source = "entraid"
+	SourceDefault   string = "entraid"
+	SourceFlagHelp  string = "specify the source `plugin` you want to use\nAllowed: entraid"
+	SourceFlagShort string = "s"
+	SourceParameter string = "source"
+	SourceVariable  string = "GOTS_SOURCE"
+
+	SourcePluginEntraID Source = "entraid"
 )
 
 func (s Source) String() string {
@@ -16,11 +22,11 @@ func (s Source) String() string {
 
 func (c *Config) ValdidateSourcePlugin() error {
 	switch c.Source {
-	case SourceEntraID:
+	case SourcePluginEntraID:
 		return nil
 	}
 
-	return errors.New("invalid source: " + c.Source.String())
+	return errors.New("invalid source plugin defined: " + c.Source.String())
 }
 
 func (c *Config) GetSource() Source {

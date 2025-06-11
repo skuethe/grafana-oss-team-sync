@@ -8,18 +8,6 @@ import (
 	flag "github.com/spf13/pflag"
 )
 
-const (
-	flagBasicAuthUsernameFull    string = "username"
-	flagBasicAuthUsernameShort   string = "u"
-	flagBasicAuthUsernameDefault string = ""
-	flagBasicAuthUsernameHelp    string = "the basic auth user you want to use to authenticate against Grafana"
-
-	flagBasicAuthPasswordFull    string = "password"
-	flagBasicAuthPasswordShort   string = "p"
-	flagBasicAuthPasswordDefault string = ""
-	flagBasicAuthPasswordHelp    string = "the basic auth password you want to use to authenticate against Grafana"
-)
-
 var (
 	Instance *flag.FlagSet
 
@@ -27,12 +15,13 @@ var (
 	Version bool
 	Help    bool
 
-	basicAuthUsername string
-	basicAuthPassword string
+	Token             string
+	BasicAuthUsername string
+	BasicAuthPassword string
 )
 
 func Load() {
-	// TODO: add "authfile", "token", "teams", "folders"
+	// TODO: add "teams", "folders"
 	Instance = flag.NewFlagSet("grafana-oss-team-sync", flag.ExitOnError)
 	Instance.SortFlags = false
 
@@ -43,8 +32,14 @@ func Load() {
 	Instance.StringP(types.AuthFileParameter, types.AuthFileFlagShort, types.AuthFileDefault, types.AuthFileFlagHelp)
 
 	// Add basic auth flags
-	Instance.StringVarP(&basicAuthUsername, flagBasicAuthUsernameFull, flagBasicAuthUsernameShort, flagBasicAuthUsernameDefault, flagBasicAuthUsernameHelp)
-	Instance.StringVarP(&basicAuthPassword, flagBasicAuthPasswordFull, flagBasicAuthPasswordShort, flagBasicAuthPasswordDefault, flagBasicAuthPasswordHelp)
+	Instance.StringVarP(&BasicAuthUsername, types.GrafanaBasicAuthUsernameParameter, types.GrafanaBasicAuthUsernameFlagShort, types.GrafanaBasicAuthUsernameDefault, types.GrafanaBasicAuthUsernameFlagHelp)
+	Instance.StringVarP(&BasicAuthPassword, types.GrafanaBasicAuthPasswordParameter, types.GrafanaBasicAuthPasswordFlagShort, types.GrafanaBasicAuthPasswordDefault, types.GrafanaBasicAuthPasswordFlagHelp)
+
+	// Add token auth flags
+	Instance.StringVarP(&Token, types.GrafanaTokenAuthParameter, types.GrafanaTokenAuthFlagShort, types.GrafanaTokenAuthDefault, types.GrafanaTokenAuthFlagHelp)
+
+	// Add "authtype" flag
+	Instance.String(types.GrafanaAuthTypeParameter, types.GrafanaAuthTypeDefault, types.GrafanaAuthTypeFlagHelp)
 
 	// Add the Grafana.connection specific flags
 	Instance.String(types.GrafanaConnectionSchemeParameter, types.GrafanaConnectionSchemeDefault, types.GrafanaConnectionSchemeFlagHelp)
@@ -74,7 +69,7 @@ func Load() {
 
 	// Handle help printing
 	if Help {
-		fmt.Printf("Usage of %s:\n\r\n\r", Instance.Name())
+		fmt.Printf("Usage of %s:\r\n\r\n", Instance.Name())
 		fmt.Println(Instance.FlagUsages())
 		os.Exit(0)
 	}

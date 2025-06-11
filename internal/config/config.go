@@ -37,7 +37,7 @@ func getConfigFilePath() (*string, error) {
 	return &config, nil
 }
 
-func loadYamlFile(k *koanf.Koanf) error {
+func loadYAMLFile(k *koanf.Koanf) error {
 	// Handle config file definitions from flag and environment variables
 	configFile, err := getConfigFilePath()
 	if err != nil {
@@ -81,7 +81,7 @@ func Load() {
 	var k = koanf.New(".")
 
 	// Load main YAML config
-	if err := loadYamlFile(k); err != nil {
+	if err := loadYAMLFile(k); err != nil {
 		configLog.Error("could not load config file")
 		panic(err)
 
@@ -101,6 +101,12 @@ func Load() {
 	k.UnmarshalWithConf("", &Instance, koanf.UnmarshalConf{
 		Tag: "yaml",
 	})
+
+	// Validate Grafana authtype input
+	if err := Instance.ValdidateGrafanaAuthType(); err != nil {
+		configLog.Error("error validating Grafana authtype input")
+		panic(err)
+	}
 
 	// Validate Grafana connection scheme input
 	if err := Instance.ValdidateGrafanaScheme(); err != nil {

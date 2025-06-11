@@ -20,6 +20,30 @@ type GrafanaConnection struct {
 type GrafanaPermission int
 
 const (
+	// GrafanaAuthTypeFlagShort string = ""
+	GrafanaAuthTypeDefault   string = "basicauth"
+	GrafanaAuthTypeFlagHelp  string = "the auth type you want to use to authenticate against Grafana\nAllowed: basicauth or token"
+	GrafanaAuthTypeParameter string = "grafana.authtype"
+	GrafanaAuthTypeVariable  string = "GOTS_GRAFANA_AUTHTYPE"
+
+	GrafanaBasicAuthUsernameDefault   string = ""
+	GrafanaBasicAuthUsernameFlagHelp  string = "the basic auth user you want to use to authenticate against Grafana\nOnly used if authtype is set to basicauth"
+	GrafanaBasicAuthUsernameFlagShort string = "u"
+	GrafanaBasicAuthUsernameParameter string = "username"
+	GrafanaBasicAuthUsernameVariable  string = "GOTS_USERNAME"
+
+	GrafanaBasicAuthPasswordDefault   string = ""
+	GrafanaBasicAuthPasswordFlagHelp  string = "the basic auth password you want to use to authenticate against Grafana\nOnly used if authtype is set to basicauth"
+	GrafanaBasicAuthPasswordFlagShort string = "p"
+	GrafanaBasicAuthPasswordParameter string = "password"
+	GrafanaBasicAuthPasswordVariable  string = "GOTS_PASSWORD"
+
+	GrafanaTokenAuthDefault   string = ""
+	GrafanaTokenAuthFlagHelp  string = "the service account token you want to use to authenticate against Grafana\nOnly used if authtype is set to token"
+	GrafanaTokenAuthFlagShort string = "t"
+	GrafanaTokenAuthParameter string = "token"
+	GrafanaTokenAuthVariable  string = "GOTS_TOKEN"
+
 	// GrafanaConnectionSchemeFlagShort string = ""
 	// GrafanaConnectionSchemeVariable  string = "GOTS_"
 	GrafanaConnectionSchemeDefault      string = "http"
@@ -46,10 +70,6 @@ const (
 	GrafanaConnectionRetryFlagShort string = "r"
 	GrafanaConnectionRetryParameter string = "grafana.connection.retry"
 
-	GrafanaAuthVariableToken    string = "GOTS_TOKEN"
-	GrafanaAuthVariableUsername string = "GOTS_USERNAME"
-	GrafanaAuthVariablePassword string = "GOTS_PASSWORD"
-
 	GrafanaAuthTypeToken     string = "token"
 	GrafanaAuthTypeBasicAuth string = "basicauth"
 )
@@ -71,6 +91,17 @@ func ValidateGrafanaPermission(in GrafanaPermission) error {
 	}
 
 	return errors.New("invalid permission defined: " + fmt.Sprint(in))
+}
+
+func (c *Config) ValdidateGrafanaAuthType() error {
+	switch c.Grafana.AuthType {
+	case GrafanaAuthTypeToken:
+		return nil
+	case GrafanaAuthTypeBasicAuth:
+		return nil
+	}
+
+	return errors.New("invalid authtype defined: " + c.Grafana.AuthType)
 }
 
 func (c *Config) ValdidateGrafanaScheme() error {

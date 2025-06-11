@@ -69,7 +69,7 @@ grafana:
   #
   # WARNING: "token" does not allow to use the "admin API" which is necessary to create new users. If you want to use "token" auth, you should set "features.disableUserSync" to "true"
   #
-  # auth: "basicauth"
+  # authtype: "basicauth"
 
   #
   # Grafana connection specific configuration

@@ -18,8 +18,7 @@
 
 - cli
     - optimize flags usage for "features" and "grafana"
-    - figure out solution for "username" and "password" flags
-    - add "token", "teams" and "folders
+    - add "teams" and "folders
 
 
 - add README info
@@ -34,7 +33,10 @@
 
 - config
     - validate all possible ENV VAR input
-    - implement solution to load config from OS ENV / --config flag
+
+
+- grafana
+    - can we "test" auth early before doing anything source related and then failing?
 
 
 - entraid

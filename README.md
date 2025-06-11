@@ -56,7 +56,7 @@
 I created this project to get into Go development and as such, it is probably far from being perfect. Keep an open mind to that and feel free to [contribute](#contributing) if you want to optimize or extend its functionality.  
 
 The idea is to use `grafana-oss-team-sync` as an FOSS tool to create **teams**, **users** and even **folders** in Grafana and keep them (and their permissions) in sync with a configured source.  
-This functionality _does_ exist in Grafana itself ("Team Sync"), but is a is an [enterprise feature][1] and as such only usable with an appropriate license key.
+This functionality _does_ exist in Grafana itself ("Team Sync"), but is a is an [enterprise feature][enterprisefeature] and as such only usable with an appropriate license key.
 
 Sources are internally setup as plugins, which can be easily extended to others in the future.  
 Currently the following sources are supported:  
@@ -98,7 +98,14 @@ This tool works with Grafana versions `>=11.1.0`.
 The following tool specific configuration is available.  
 Details on **Grafana** and **source** specific requirements can be found below.
 
-You can configure these either in the `config.yaml` or via environment variables starting with `GOTS_`.
+You can configure these either in the `config.yaml`, via environment variables (starting with `GOTS_`) or via cli flags.  
+The following hirarchy is used when merging the different config sources, overriding existing data:  
+1. The `config.yaml` you specify
+2. Environment variables set (also respecting a `.env` file)
+3. CLI flags passed
+4. (Optional) content from an `authfile`[^authfilehirarchy]
+
+[^authfilehirarchy]: We are using [godotenv][godotenv], which will NOT override existing environment variables.  
 
 | Configuration                     | Config via                      | Description |
 |-----------------------------------|---------------------------------|-------------|
@@ -125,10 +132,10 @@ You can configure these either in the `config.yaml` or via environment variables
 | Configuration | Requirements  |
 |---------------|---------------|
 | Version       | `>= 11.1.0` [^grafanaversion]  |
-| Auth          | Using either one of the [available authentication options][2] `basic auth` or `service account token` [^grafanatokenauth] |
+| Auth          | Using either one of the [available authentication options][availableauthoptions] `basic auth` or `service account token` [^grafanatokenauth] |
 
-[^grafanaversion]: Minimum Grafana version is `11.1.0` as it introduced [a new bulk team membership endpoint][3] we are currently using.  
-[^grafanatokenauth]: Please note that `service account token` auth only works if you disable the `UserSync` feature, as creating new users in Grafana is using the Admin API, [which require the usage of basic auth][4].
+[^grafanaversion]: Minimum Grafana version is `11.1.0` as it introduced [a new bulk team membership endpoint][newbulkendpoint] we are currently using.  
+[^grafanatokenauth]: Please note that `service account token` auth only works if you disable the `UserSync` feature, as creating new users in Grafana is using the Admin API, [which require the usage of basic auth][requirebasicauth].
 
 
 
@@ -155,7 +162,7 @@ Please note the following opinionated behaviour of this tool.
 - this tool should be the single point of truth for creating groups in Grafana. For that matter, we are enforcing the following:
   - `Teams`: all members of each configured team are completely overridden with matching users from the source. If you, f.e. added other additional users or canged their permission (to "admin" f.e.), these changes will be lost during the next sync operation. This also helps with keeping the groups up to date with your configured source (when removing users f.e.)
   - `Folders`: the permissions of each folder are completely overridden with the input from your config. If you don't want this to happen, you can always disable the folder sync feature via config / env variable or cli flag
-- if the user sync feature is enabled, all newly created users will get a randomly generated password assigned. This password is not available afterwards, as it should not be used in the first place. Ideally you have [setup SSO authentication][5] with the same source as your group and user sync
+- if the user sync feature is enabled, all newly created users will get a randomly generated password assigned. This password is not available afterwards, as it should not be used in the first place. Ideally you have [setup SSO authentication][setupssoauth] with the same source as your group and user sync
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 
@@ -189,8 +196,9 @@ See [`LICENSE`](LICENSE.md) for more information.
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[1]: <https://grafana.com/docs/grafana/v12.0/introduction/grafana-enterprise/#team-sync> "Grafana Enterprise - Team Sync"
-[2]: <https://grafana.com/docs/grafana/latest/developers/http_api/authentication/> "Authentication options for the HTTP API"
-[3]: <https://github.com/grafana/grafana/pull/87441> "Team: Add an endpoint for bulk team membership updates"
-[4]: <https://grafana.com/docs/grafana/latest/developers/http_api/admin/> "Admin API"
-[5]: <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/> "Configure authentication"
+[godotenv]:             <https://github.com/joho/godotenv> "GoDotEnv"
+[enterprisefeature]:    <https://grafana.com/docs/grafana/v12.0/introduction/grafana-enterprise/#team-sync> "Grafana Enterprise - Team Sync"
+[availableauthoptions]: <https://grafana.com/docs/grafana/latest/developers/http_api/authentication/> "Authentication options for the HTTP API"
+[newbulkendpoint]:      <https://github.com/grafana/grafana/pull/87441> "Team: Add an endpoint for bulk team membership updates"
+[requirebasicauth]:     <https://grafana.com/docs/grafana/latest/developers/http_api/admin/> "Admin API"
+[setupssoauth]:         <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/> "Configure authentication"

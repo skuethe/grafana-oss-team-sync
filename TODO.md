@@ -30,11 +30,6 @@
         - disable registration ?
         - ...
     - how to setup EntraID app with permissions
-    - describe parameter hirarchy
-        -> config.yaml
-        -> env vars
-        -> cli flags
-        -> optional "auth file" if defined (WILL NOT OVERWRITE EXISTING)
 
 
 - config

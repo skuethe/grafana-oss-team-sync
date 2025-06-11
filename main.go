@@ -27,7 +27,6 @@ var (
 func main() {
 	// Handle Flags
 	flags.Load()
-	flags.Instance.Parse(os.Args[1:])
 
 	// Handle version printing
 	if flags.Version {

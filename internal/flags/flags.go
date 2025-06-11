@@ -1,6 +1,9 @@
 package flags
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/types"
 	flag "github.com/spf13/pflag"
 )
@@ -20,12 +23,12 @@ const (
 var (
 	Instance *flag.FlagSet
 
-	Config string
+	Config  string
+	Version bool
+	Help    bool
 
 	basicAuthUsername string
 	basicAuthPassword string
-
-	Version bool
 )
 
 func Load() {
@@ -62,4 +65,18 @@ func Load() {
 
 	// Add "version" flag
 	Instance.BoolVarP(&Version, types.VersionParameter, types.VersionFlagShort, types.VersionDefault, types.VersionFlagHelp)
+
+	// Add "help" flag
+	Instance.BoolVarP(&Help, types.HelpParameter, types.HelpFlagShort, types.HelpDefault, types.HelpFlagHelp)
+
+	// Parse cli input
+	Instance.Parse(os.Args[1:])
+
+	// Handle help printing
+	if Help {
+		// Instance.PrintDefaults()
+		fmt.Printf("Usage of %s:\n\r\n\r", Instance.Name())
+		fmt.Println(Instance.FlagUsages())
+		os.Exit(0)
+	}
 }

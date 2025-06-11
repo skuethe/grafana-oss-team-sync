@@ -18,8 +18,8 @@
 
 - cli
     - optimize flags usage for "features" and "grafana"
+    - figure out solution for "username" and "password" flags
     - add "token", "teams" and "folders
-    - add "help"?
 
 
 - add README info

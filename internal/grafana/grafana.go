@@ -137,6 +137,4 @@ func New() {
 	Instance = &GrafanaInstance{
 		api: client,
 	}
-
-	os.Exit(0)
 }

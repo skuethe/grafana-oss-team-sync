@@ -3,7 +3,6 @@ package entraid
 import (
 	"context"
 	"log/slog"
-	"os"
 	"strings"
 
 	abstractions "github.com/microsoft/kiota-abstractions-go"
@@ -87,10 +86,8 @@ func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 
 	groupList, err := g.getGroupData()
 	if err != nil {
-		groupsLog.Error("could not get group results from EntraID",
-			slog.Any("error", err),
-		)
-		os.Exit(1)
+		groupsLog.Error("could not get group results from EntraID")
+		panic(err)
 	}
 
 	countFound := *groupList.GetOdataCount()
@@ -118,10 +115,8 @@ func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
 		// Get all users from current group
 		userList, err := g.getUsersFromGroup(groupId)
 		if err != nil {
-			groupLog.Error("could not get user results from EntraID",
-				slog.Any("error", err),
-			)
-			os.Exit(1)
+			groupLog.Error("could not get user results from EntraID")
+			panic(err)
 		}
 
 		grafanaUserList = ProcessUsers(userList)

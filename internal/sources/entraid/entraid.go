@@ -20,19 +20,15 @@ func New() *plugin.SourceInstance {
 
 	credential, err := azidentity.NewClientSecretCredential(tenantId, clientId, clientSecret, nil)
 	if err != nil {
-		entraidLog.Error("unable to create secret credential for msgraph client",
-			slog.Any("error", err),
-		)
-		os.Exit(1)
+		entraidLog.Error("unable to create secret credential for msgraph client")
+		panic(err)
 	}
 
 	client, err := graph.NewGraphServiceClientWithCredentials(
 		credential, []string{"https://graph.microsoft.com/.default"})
 	if err != nil {
-		entraidLog.Error("unable to create msgraph client",
-			slog.Any("error", err),
-		)
-		os.Exit(1)
+		entraidLog.Error("unable to create msgraph client")
+		panic(err)
 	}
 
 	return &plugin.SourceInstance{

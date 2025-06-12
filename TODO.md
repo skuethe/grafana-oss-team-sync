@@ -22,7 +22,6 @@
 
 
 - add README info
-    - add "build it yourself" docs
     - how to setup Grafana
         - "Azure AD" auth
             - minimum permissions required?

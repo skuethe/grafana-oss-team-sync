@@ -42,6 +42,7 @@
         <li><a href="#source-entraid">Source: EntraID</a></li>
       </ul>
     <li><a href="#opinionated-behaviour">Opinionated Behaviour</a></li>
+    <li><a href="#build-it-yourself">Build It Yourself</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
   </ul>
@@ -165,6 +166,26 @@ Please note the following opinionated behaviour of this tool.
 - if the user sync feature is enabled, all newly created users will get a randomly generated password assigned. This password is not available afterwards, as it should not be used in the first place. Ideally you have [setup SSO authentication][setupssoauth] with the same source as your group and user sync
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
+
+
+<!-- BUILD IT YOURSELF -->
+## Build It Yourself
+
+If you want to build the project yourself, do the following
+
+1. Clone this repo
+  ```bash
+  $ git clone https://github.com/skuethe/grafana-oss-team-sync.git
+  $ cd grafana-oss-team-sync
+  ```
+2. Build the binary
+  ```bash
+  $ CGO_ENABLED=0 go build .
+  ```
+3. Create the container image (use your preferred tool to create a container image)
+  ```bash
+  $ podman build -t localhost/grafana-oss-team-sync:dev -f Dockerfile  .
+  ```
 
 
 <!-- CONTRIBUTING -->

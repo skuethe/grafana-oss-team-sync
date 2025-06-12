@@ -174,16 +174,16 @@ Please note the following opinionated behaviour of this tool.
 If you want to build the project yourself, do the following
 
 1. Clone this repo
-  ```shell
+  ```console
   $ git clone https://github.com/skuethe/grafana-oss-team-sync.git
   $ cd grafana-oss-team-sync
   ```
 2. Build the binary
-  ```shell
+  ```console
   $ CGO_ENABLED=0 go build .
   ```
 3. Create the container image (use your preferred tool to create a container image)
-  ```shell
+  ```console
   $ podman build -t localhost/grafana-oss-team-sync:dev -f Dockerfile  .
   ```
 

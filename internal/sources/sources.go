@@ -12,21 +12,26 @@ import (
 
 func CallPlugin() *grafana.Teams {
 	pluginLog := slog.With(slog.String("package", "sources"))
-	pluginLog.Info("processing source plugin")
 
 	var instance *plugin.SourceInstance
 	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
 
-	// Execute specific source plugin, which need to return a *grafana.Teams instance
-	switch config.Instance.GetSource() {
-	case types.SourcePluginEntraID:
-		// EntraID: create new msgraph client
-		instance = entraid.New()
-		// EntraID: search for all specified groups and users
-		grafanaTeamList = entraid.ProcessGroups(instance)
-	}
+	if len(config.Instance.Teams) == 0 {
+		pluginLog.Info("your team input is empty, skipping")
+	} else {
+		pluginLog.Info("processing source plugin")
 
-	pluginLog.Info("finished processing source plugin")
+		// Execute specific source plugin, which need to return a *grafana.Teams instance
+		switch config.Instance.GetSource() {
+		case types.SourcePluginEntraID:
+			// EntraID: create new msgraph client
+			instance = entraid.New()
+			// EntraID: search for all specified groups and users
+			grafanaTeamList = entraid.ProcessGroups(instance)
+		}
+
+		pluginLog.Info("finished processing source plugin")
+	}
 
 	return grafanaTeamList
 }

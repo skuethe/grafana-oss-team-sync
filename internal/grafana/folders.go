@@ -79,55 +79,61 @@ func (f *Folder) manageFolderPermissions(permissions types.FolderPermissions) er
 }
 
 func (g *GrafanaInstance) ProcessFolders() {
-
 	foldersLog := slog.With(slog.String("package", "grafana.folders"))
-	foldersLog.Info("processing Grafana folders")
 
-	countSkipped := 0
-	countCreated := 0
+	if config.Instance.Features.DisableFolders {
+		foldersLog.Info("folder feature disabled, skipping")
+	} else if len(config.Instance.Folders) == 0 {
+		foldersLog.Info("your folders input is empty, skipping")
+	} else {
+		foldersLog.Info("processing Grafana folders")
 
-	for folderUID, folder := range config.Instance.Folders {
+		countSkipped := 0
+		countCreated := 0
 
-		folderLog := slog.With(
-			slog.Group("folder",
-				slog.String("uid", folderUID),
-				slog.String("title", folder.Title),
-			),
-		)
+		for folderUID, folder := range config.Instance.Folders {
 
-		f := Folder{
-			UID:         strings.ToLower(folderUID),
-			Title:       folder.Title,
-			Description: folder.Description,
-		}
+			folderLog := slog.With(
+				slog.Group("folder",
+					slog.String("uid", folderUID),
+					slog.String("title", folder.Title),
+				),
+			)
 
-		if f.doesFolderExist() {
-			countSkipped++
-			folderLog.Debug("skipping Grafana folder because it already exists")
-		} else {
-			if err := f.createFolder(); err != nil {
-				folderLog.Error("could not create Grafana folder",
+			f := Folder{
+				UID:         strings.ToLower(folderUID),
+				Title:       folder.Title,
+				Description: folder.Description,
+			}
+
+			if f.doesFolderExist() {
+				countSkipped++
+				folderLog.Debug("skipping Grafana folder because it already exists")
+			} else {
+				if err := f.createFolder(); err != nil {
+					folderLog.Error("could not create Grafana folder",
+						slog.Any("error", err),
+					)
+				} else {
+					folderLog.Info("created Grafana folder")
+					countCreated++
+				}
+			}
+
+			if err := f.manageFolderPermissions(folder.Permissions); err != nil {
+				folderLog.Error("could not update Grafana folder permissions",
 					slog.Any("error", err),
 				)
 			} else {
-				folderLog.Info("created Grafana folder")
-				countCreated++
+				folderLog.Info("Grafana folder permissions updated")
 			}
 		}
 
-		if err := f.manageFolderPermissions(folder.Permissions); err != nil {
-			folderLog.Error("could not update Grafana folder permissions",
-				slog.Any("error", err),
-			)
-		} else {
-			folderLog.Info("Grafana folder permissions updated")
-		}
+		foldersLog.Info("finished processing Grafana folders",
+			slog.Group("stats",
+				slog.Int("created", countCreated),
+				slog.Int("skipped", countSkipped),
+			),
+		)
 	}
-
-	foldersLog.Info("finished processing Grafana folders",
-		slog.Group("stats",
-			slog.Int("created", countCreated),
-			slog.Int("skipped", countSkipped),
-		),
-	)
 }

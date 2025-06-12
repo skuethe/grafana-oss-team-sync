@@ -83,58 +83,68 @@ func (t *Team) addUsersToTeam() (*[]string, error) {
 
 func (t *Teams) ProcessTeams() {
 	teamsLog := slog.With(slog.String("package", "grafana.teams"))
-	teamsLog.Info("processing Grafana teams")
 
-	countSkipped := 0
-	countCreated := 0
+	if len(*t) == 0 {
+		teamsLog.Info("no teams to process, skipping")
+	} else {
+		teamsLog.Info("processing teams")
 
-	for _, team := range *t {
+		countSkipped := 0
+		countCreated := 0
 
-		teamLog := slog.With(
-			slog.Group("team",
-				slog.String("name", team.Parameter.Name),
-			),
-		)
+		for _, team := range *t {
 
-		exists, err := team.doesTeamExist()
-		if err != nil {
-			teamLog.Error("could not search for Grafana team",
-				slog.Any("error", err),
+			teamLog := slog.With(
+				slog.Group("team",
+					slog.String("name", team.Parameter.Name),
+				),
 			)
-		} else {
-			if exists {
-				countSkipped++
-				teamLog.Debug("skipped Grafana team")
-			} else {
-				err := team.createTeam()
-				if err != nil {
-					teamLog.Error("could not create Grafana team",
-						slog.Any("error", err),
-					)
-					continue
-				} else {
-					teamLog.Info("created Grafana team")
-					countCreated++
-				}
-			}
-			teamLog.Info("processing team members")
-			userList, err := team.addUsersToTeam()
+
+			exists, err := team.doesTeamExist()
 			if err != nil {
-				teamLog.Error("could not add Grafana users to Grafana team",
+				teamLog.Error("could not search for team",
 					slog.Any("error", err),
 				)
 			} else {
-				teamLog.Debug("added users to team",
-					slog.Any("list", *userList),
-				)
+				if exists {
+					countSkipped++
+					teamLog.Debug("skipped team")
+				} else {
+					err := team.createTeam()
+					if err != nil {
+						teamLog.Error("could not create team",
+							slog.Any("error", err),
+						)
+						continue
+					} else {
+						teamLog.Info("created team")
+						countCreated++
+					}
+				}
+				// Add users to team, if userSync feature is enabled
+				if !config.Instance.Features.DisableUserSync {
+					teamLog.Info("processing team members")
+
+					if userList, err := team.addUsersToTeam(); err != nil {
+						teamLog.Error("could not add users to team",
+							slog.Any("error", err),
+						)
+					} else {
+						teamLog.Debug("added users to team",
+							slog.Any("list", *userList),
+						)
+					}
+
+					teamLog.Info("finished processing team members")
+				}
 			}
-			teamLog.Info("finished processing team members")
 		}
+
+		teamsLog.Info("finished processing teams",
+			slog.Group("stats",
+				slog.Int("created", countCreated),
+				slog.Int("skipped", countSkipped),
+			),
+		)
 	}
-	teamsLog.Info("finished processing Grafana teams",
-		slog.Group("stats",
-			slog.Int("created", countCreated),
-			slog.Int("skipped", countSkipped),
-		),
-	)
 }

@@ -63,37 +63,18 @@ func main() {
 
 	// Initialize Grafana
 	grafana.New()
-	grafanaTeamList := &grafana.Teams{}
 
 	// Call the configured source plugin
-	if len(config.Instance.Teams) == 0 {
-		slog.Info("your team input is empty, skipping sources.plugin package")
-	} else {
-		grafanaTeamList = sources.CallPlugin()
-	}
+	grafanaTeamList := sources.CallPlugin()
+
+	// Grafana: continue to process users
+	grafanaTeamList.ProcessUsers()
 
 	// Grafana: continue to process teams
-	if len(*grafanaTeamList) > 0 {
-		if !config.Instance.Features.DisableUserSync {
-			grafanaTeamList.ProcessUsers()
-		} else {
-			slog.Info("usersync feature disabled, skipping grafana.users package")
-		}
-		grafanaTeamList.ProcessTeams()
-	} else {
-		slog.Info("no groups to process, skipping grafana.teams package")
-	}
+	grafanaTeamList.ProcessTeams()
 
 	// Grafana: continue to process folders
-	if len(config.Instance.Folders) > 0 {
-		if !config.Instance.Features.DisableFolders {
-			grafana.Instance.ProcessFolders()
-		} else {
-			slog.Info("foldersync feature disabled, skipping grafana.folders package")
-		}
-	} else {
-		slog.Info("your folders input is empty, skipping grafana.folders package")
-	}
+	grafana.Instance.ProcessFolders()
 
 	//
 	//

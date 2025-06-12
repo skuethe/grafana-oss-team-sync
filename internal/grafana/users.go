@@ -8,13 +8,13 @@ import (
 
 	"github.com/grafana/grafana-openapi-client-go/client/users"
 	"github.com/grafana/grafana-openapi-client-go/models"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 )
 
 type User models.AdminCreateUserForm
 type Users []User
 
 func generateSecurePassword() string {
-
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+"
 	const length = 32
 
@@ -41,14 +41,6 @@ func (u *User) doesUserExist() bool {
 	return err == nil
 }
 
-func (u *User) getUserID() (*int64, error) {
-	result, err := u.searchUser()
-	if err != nil {
-		return nil, err
-	}
-	return &result.Payload.ID, nil
-}
-
 func (u *User) createUser() error {
 	_, err := Instance.api.AdminUsers.AdminCreateUser(&models.AdminCreateUserForm{
 		Email:    u.Email,
@@ -64,56 +56,64 @@ func (u *User) createUser() error {
 
 func (t *Teams) ProcessUsers() {
 	usersLog := slog.With(slog.String("package", "grafana.users"))
-	usersLog.Info("processing Grafana users")
 
-	countCreated := 0
-	countDuplicate := 0
-	countSkipped := 0
+	if config.Instance.Features.DisableUserSync {
+		usersLog.Info("usersync feature disabled, skipping")
+	} else if len(*t) == 0 {
+		usersLog.Info("no teams and therefore users to process, skipping")
+	} else {
+		usersLog.Info("processing users")
 
-	var globalUserList *Users = &Users{}
+		countCreated := 0
+		countDuplicate := 0
+		countSkipped := 0
 
-	for _, team := range *t {
-		for _, user := range *team.Users {
-			userExists := false
-			if slices.Contains(*globalUserList, user) {
-				userExists = true
-				usersLog.Debug("skipping duplicate user")
-				countDuplicate++
-			}
-			if !userExists {
-				*globalUserList = append(*globalUserList, user)
+		var globalUserList *Users = &Users{}
+
+		for _, team := range *t {
+			for _, user := range *team.Users {
+				userExists := false
+				if slices.Contains(*globalUserList, user) {
+					userExists = true
+					usersLog.Debug("skipping duplicate user")
+					countDuplicate++
+				}
+				if !userExists {
+					*globalUserList = append(*globalUserList, user)
+				}
 			}
 		}
-	}
 
-	for _, user := range *globalUserList {
+		for _, user := range *globalUserList {
 
-		userLog := slog.With(
-			slog.Group("user",
-				slog.String("login", user.Login),
-				slog.String("email", user.Email),
+			userLog := slog.With(
+				slog.Group("user",
+					slog.String("login", user.Login),
+					slog.String("email", user.Email),
+				),
+			)
+			if user.doesUserExist() {
+				countSkipped++
+				userLog.Debug("skipping already existing user")
+			} else {
+				err := user.createUser()
+				if err != nil {
+					userLog.Error("could not create user",
+						slog.Any("error", err),
+					)
+				} else {
+					userLog.Info("created user")
+					countCreated++
+				}
+			}
+		}
+
+		usersLog.Info("finished processing users",
+			slog.Group("stats",
+				slog.Int("created", countCreated),
+				slog.Int("skipped", countSkipped),
 			),
 		)
-		if user.doesUserExist() {
-			countSkipped++
-			userLog.Debug("skipping already existing Grafana user")
-		} else {
-			err := user.createUser()
-			if err != nil {
-				userLog.Error("could not create Grafana user",
-					slog.Any("error", err),
-				)
-			} else {
-				userLog.Info("created Grafana user")
-				countCreated++
-			}
-		}
 	}
 
-	usersLog.Info("finished processing Grafana users",
-		slog.Group("stats",
-			slog.Int("created", countCreated),
-			slog.Int("skipped", countSkipped),
-		),
-	)
 }

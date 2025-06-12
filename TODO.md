@@ -57,7 +57,7 @@
 
 - tests
     - write _test files
-    - integration tests
+    - integration / end2end tests
         - run against multiple Grafana versions in CI
 
 

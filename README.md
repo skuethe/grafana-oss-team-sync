@@ -63,6 +63,8 @@ Sources are internally setup as plugins, which can be easily extended to others 
 Currently the following sources are supported:  
 - **Entra ID** (formerly "Azure Active Directory")
 
+
+<!-- ABOUT THE PROJECT - CURRENT FEATURE LIST -->
 ### Current feature list
 
 The list of features include:  
@@ -71,6 +73,8 @@ The list of features include:
 - (optional) create `users` from each configured source group
 - (optional) create `folders` from config input and add groups to the `permission` list as either a `viewer`, `editor` or `admin` role
 
+
+<!-- ABOUT THE PROJECT - POSSIBLE FUTURE IMPROVEMENTS -->
 ### Possible future improvements
 
 Things which potentially will be added in the future:
@@ -83,7 +87,8 @@ Things which potentially will be added in the future:
 <p align="right">( <a href="#top">Back to top</a> )</p>
 
 
-<!-- Requirements -->
+
+<!-- REQUIREMENTS -->
 ## Requirements
 
 In it's current state, only `Microsoft Entra ID` is available as a source for groups and users.  
@@ -92,8 +97,11 @@ Feel free to contribute your desired source.
 
 This tool works with Grafana versions `>=11.1.0`.  
 
+<p align="right">( <a href="#top">Back to top</a> )</p>
 
-<!-- Configuration -->
+
+
+<!-- CONFIGURATION -->
 ## Configuration
 
 The following tool specific configuration is available.  
@@ -127,7 +135,7 @@ The following hirarchy is used when merging the different config sources, overri
 | Team sync                         | **config.yaml**: `teams`<br>**flag**: `--teams` or `-t`<br>**env var**: `GOTS_TEAMS` | Configure the list of teams to sync<br><br>**Type**: `[]string` |
 | Folder sync                       | **config.yaml**: `folders`<br>**flag**: `--folders` or `-f`<br>**env var**: `GOTS_FOLDERS` | Configure the list of folders to sync<br><br>**Type**: `[]interface` |
 
-<!-- Configuration - Grafana -->
+<!-- CONFIGURATION - GRAFANA -->
 ### Grafana
 
 | Configuration | Requirements  |
@@ -140,7 +148,7 @@ The following hirarchy is used when merging the different config sources, overri
 
 
 
-<!-- Configuration - entraid -->
+<!-- CONFIGURATION - ENTRAID -->
 ### Source: `entraid`
 
 | Configuration   | Requirements  |
@@ -155,7 +163,8 @@ This tool is opinionated in a few ways, which result in special configuration re
 <p align="right">( <a href="#top">Back to top</a> )</p>
 
 
-<!-- Opinionated Behaviour -->
+
+<!-- OPINIONATED BEHAVIOUR -->
 ## Opinionated Behaviour
 
 Please note the following opinionated behaviour of this tool.
@@ -166,6 +175,7 @@ Please note the following opinionated behaviour of this tool.
 - if the user sync feature is enabled, all newly created users will get a randomly generated password assigned. This password is not available afterwards, as it should not be used in the first place. Ideally you have [setup SSO authentication][setupssoauth] with the same source as your group and user sync
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
+
 
 
 <!-- BUILD IT YOURSELF -->
@@ -187,6 +197,9 @@ If you want to build the project yourself, do the following
   podman build -t localhost/grafana-oss-team-sync:dev -f Dockerfile  .
   ```
 
+<p align="right">( <a href="#top">Back to top</a> )</p>
+
+
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -197,7 +210,6 @@ If you have a suggestion that would make this better, please fork the repo and c
 Don't forget to give the project a star! Thanks again!
 
 See [`CONTRIBUTING`](CONTRIBUTING.md) for more information.
-
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 

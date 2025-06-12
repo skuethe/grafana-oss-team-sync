@@ -99,7 +99,7 @@ func New() {
 		RetryTimeout: (2 * time.Second),
 	}
 
-	// Handle authentication
+	// Add authentication data based on config input
 	if err := setAuthData(cfg); err != nil {
 		grafanaLog.Error("could not enable authentication")
 		panic(err)
@@ -110,18 +110,33 @@ func New() {
 	grafanaLog.Info("connecting to Grafana instance",
 		slog.Int("retry", config.Instance.Grafana.Connection.Retry),
 	)
-	health, err := client.Health.GetHealth()
-	if err != nil {
-		grafanaLog.Error("Grafana instance is not healthy",
-			slog.Any("error", err),
+
+	// Validate Grafana health
+	if health, err := client.Health.GetHealth(); err != nil {
+		grafanaLog.Error("Grafana instance is not healthy")
+		panic(err)
+	} else {
+		grafanaLog.Info("validated instance health",
+			slog.String("version", health.Payload.Version),
 		)
-		os.Exit(1)
 	}
-	grafanaLog.Info("validated instance health",
-		slog.String("version", health.Payload.Version),
-	)
+
+	// Fetching current org here for additional information AND to fail fast on auth errors
+	if currentOrg, err := client.Org.GetCurrentOrg(); err != nil {
+		grafanaLog.Error("could not fetch current users org")
+		panic(err)
+	} else {
+		grafanaLog.Info("got current users org",
+			slog.Group("org",
+				slog.Int64("id", currentOrg.Payload.ID),
+				slog.String("name", currentOrg.Payload.Name),
+			),
+		)
+	}
 
 	Instance = &GrafanaInstance{
 		api: client,
 	}
+
+	os.Exit(0)
 }

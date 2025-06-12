@@ -18,24 +18,21 @@
 
 - cli
     - optimize flags usage for "features" and "grafana"
-    - add "teams" and "folders
+    - add "teams" and "folders"
 
 
 - add README info
     - how to setup Grafana
         - "Azure AD" auth
             - minimum permissions required?
-        - disable registration ?
+        - disable "allow sign up"
+            -> If not enabled, only existing Grafana users can log in using OAuth.
         - ...
     - how to setup EntraID app with permissions
 
 
 - config
     - validate all possible ENV VAR input
-
-
-- grafana
-    - can we "test" auth early before doing anything source related and then failing?
 
 
 - entraid

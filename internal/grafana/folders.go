@@ -7,7 +7,7 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
-	"github.com/skuethe/grafana-oss-team-sync/internal/config/types"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 )
 
 type Folder models.CreateFolderCommand
@@ -30,7 +30,7 @@ func (f *Folder) createFolder() error {
 	return nil
 }
 
-func (f *Folder) manageFolderPermissions(permissions types.FolderPermissions) error {
+func (f *Folder) manageFolderPermissions(permissions configtypes.FolderPermissions) error {
 
 	var permissionList []*models.DashboardACLUpdateItem
 
@@ -53,7 +53,7 @@ func (f *Folder) manageFolderPermissions(permissions types.FolderPermissions) er
 		}
 
 		// Validate defined permission for team
-		if err := types.ValidateGrafanaPermission(teamPermission); err != nil {
+		if err := configtypes.ValidateGrafanaPermission(teamPermission); err != nil {
 			slog.Error("skipping folder permissions for team",
 				slog.String("team", teamName),
 				slog.Any("error", err),

@@ -1,4 +1,4 @@
-package types
+package configtypes
 
 type Config struct {
 	ConfigFile string   `yaml:"config"`

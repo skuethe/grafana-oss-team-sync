@@ -7,10 +7,10 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	graph "github.com/microsoftgraph/msgraph-sdk-go"
 
-	"github.com/skuethe/grafana-oss-team-sync/internal/plugin"
+	"github.com/skuethe/grafana-oss-team-sync/internal/sources/sourcetypes"
 )
 
-func New() *plugin.SourceInstance {
+func New() *sourcetypes.SourcePlugin {
 	entraidLog := slog.With(slog.String("package", "entraid"))
 	entraidLog.Info("initializing EntraID")
 
@@ -31,7 +31,7 @@ func New() *plugin.SourceInstance {
 		panic(err)
 	}
 
-	return &plugin.SourceInstance{
+	return &sourcetypes.SourcePlugin{
 		EntraID: client,
 	}
 }

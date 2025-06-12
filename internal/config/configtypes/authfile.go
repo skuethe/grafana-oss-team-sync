@@ -1,4 +1,4 @@
-package types
+package configtypes
 
 type AuthFile string
 

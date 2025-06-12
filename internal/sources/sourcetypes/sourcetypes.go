@@ -1,9 +1,9 @@
-package plugin
+package sourcetypes
 
 import (
 	msgraph "github.com/microsoftgraph/msgraph-sdk-go"
 )
 
-type SourceInstance struct {
+type SourcePlugin struct {
 	EntraID *msgraph.GraphServiceClient
 }

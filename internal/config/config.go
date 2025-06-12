@@ -13,17 +13,17 @@ import (
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
-	"github.com/skuethe/grafana-oss-team-sync/internal/config/types"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
 )
 
-var Instance *types.Config
+var Instance *configtypes.Config
 
 func getConfigFilePath() (*string, error) {
 	var config string
 
 	// Load possible env vars first
-	config = os.Getenv(types.ConfigVariable)
+	config = os.Getenv(configtypes.ConfigVariable)
 
 	// Merge possible input from flags
 	if flags.Config != "" {
@@ -63,7 +63,7 @@ func loadCLIParameter(k *koanf.Koanf) {
 }
 
 func loadOptionalAuthFile(k *koanf.Koanf) {
-	authfile := k.String(types.AuthFileParameter)
+	authfile := k.String(configtypes.AuthFileParameter)
 	if authfile != "" {
 		godotenv.Load(authfile)
 		loadEnvironmentVariables(k)

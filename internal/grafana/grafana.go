@@ -10,7 +10,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
-	"github.com/skuethe/grafana-oss-team-sync/internal/config/types"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
 )
 
@@ -24,11 +24,11 @@ var Instance *GrafanaInstance
 func setAuthData(c *client.TransportConfig) error {
 	switch config.Instance.Grafana.AuthType {
 	// Handle token auth
-	case types.GrafanaAuthTypeToken:
+	case configtypes.GrafanaAuthTypeToken:
 		var token string = ""
 
 		// First fetch from OS env
-		token = os.Getenv(types.GrafanaTokenAuthVariable)
+		token = os.Getenv(configtypes.GrafanaTokenAuthVariable)
 
 		// Override if flag is set
 		if flags.Token != "" {
@@ -47,13 +47,13 @@ func setAuthData(c *client.TransportConfig) error {
 			slog.Warn("token auth does not support creating new users. Switch to basic auth or disable the user sync feature")
 		}
 	// Handle basic auth
-	case types.GrafanaAuthTypeBasicAuth:
+	case configtypes.GrafanaAuthTypeBasicAuth:
 		var username string = ""
 		var password string = ""
 
 		// First fetch from OS env
-		username = os.Getenv(types.GrafanaBasicAuthUsernameVariable)
-		password = os.Getenv(types.GrafanaBasicAuthPasswordVariable)
+		username = os.Getenv(configtypes.GrafanaBasicAuthUsernameVariable)
+		password = os.Getenv(configtypes.GrafanaBasicAuthPasswordVariable)
 
 		// Override if flag is set
 		if flags.BasicAuthUsername != "" {

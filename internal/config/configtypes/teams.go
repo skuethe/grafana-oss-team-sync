@@ -1,3 +1,3 @@
-package types
+package configtypes
 
 type Teams []string

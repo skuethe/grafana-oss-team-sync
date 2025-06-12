@@ -13,7 +13,7 @@ import (
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
-	"github.com/skuethe/grafana-oss-team-sync/internal/plugin"
+	"github.com/skuethe/grafana-oss-team-sync/internal/sources/sourcetypes"
 )
 
 type groups struct {
@@ -72,7 +72,7 @@ func (g *groups) getUsersFromGroup(groupID string) (models.UserCollectionRespons
 	return result, nil
 }
 
-func ProcessGroups(instance *plugin.SourceInstance) *grafana.Teams {
+func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 	groupsLog := slog.With(slog.String("package", "entraid.groups"))
 	groupsLog.Info("processing entraid groups")
 

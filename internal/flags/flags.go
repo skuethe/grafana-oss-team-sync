@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/skuethe/grafana-oss-team-sync/internal/config/types"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 	flag "github.com/spf13/pflag"
 )
 
@@ -26,43 +26,43 @@ func Load() {
 	Instance.SortFlags = false
 
 	// Add "config" flag
-	Instance.StringVarP(&Config, types.ConfigParameter, types.ConfigFlagShort, types.ConfigDefault, types.ConfigFlagHelp)
+	Instance.StringVarP(&Config, configtypes.ConfigParameter, configtypes.ConfigFlagShort, configtypes.ConfigDefault, configtypes.ConfigFlagHelp)
 
 	// Add "authfile" flag
-	Instance.StringP(types.AuthFileParameter, types.AuthFileFlagShort, types.AuthFileDefault, types.AuthFileFlagHelp)
+	Instance.StringP(configtypes.AuthFileParameter, configtypes.AuthFileFlagShort, configtypes.AuthFileDefault, configtypes.AuthFileFlagHelp)
 
 	// Add basic auth flags
-	Instance.StringVarP(&BasicAuthUsername, types.GrafanaBasicAuthUsernameParameter, types.GrafanaBasicAuthUsernameFlagShort, types.GrafanaBasicAuthUsernameDefault, types.GrafanaBasicAuthUsernameFlagHelp)
-	Instance.StringVarP(&BasicAuthPassword, types.GrafanaBasicAuthPasswordParameter, types.GrafanaBasicAuthPasswordFlagShort, types.GrafanaBasicAuthPasswordDefault, types.GrafanaBasicAuthPasswordFlagHelp)
+	Instance.StringVarP(&BasicAuthUsername, configtypes.GrafanaBasicAuthUsernameParameter, configtypes.GrafanaBasicAuthUsernameFlagShort, configtypes.GrafanaBasicAuthUsernameDefault, configtypes.GrafanaBasicAuthUsernameFlagHelp)
+	Instance.StringVarP(&BasicAuthPassword, configtypes.GrafanaBasicAuthPasswordParameter, configtypes.GrafanaBasicAuthPasswordFlagShort, configtypes.GrafanaBasicAuthPasswordDefault, configtypes.GrafanaBasicAuthPasswordFlagHelp)
 
 	// Add token auth flags
-	Instance.StringVarP(&Token, types.GrafanaTokenAuthParameter, types.GrafanaTokenAuthFlagShort, types.GrafanaTokenAuthDefault, types.GrafanaTokenAuthFlagHelp)
+	Instance.StringVarP(&Token, configtypes.GrafanaTokenAuthParameter, configtypes.GrafanaTokenAuthFlagShort, configtypes.GrafanaTokenAuthDefault, configtypes.GrafanaTokenAuthFlagHelp)
 
 	// Add "authtype" flag
-	Instance.String(types.GrafanaAuthTypeParameter, types.GrafanaAuthTypeDefault, types.GrafanaAuthTypeFlagHelp)
+	Instance.String(configtypes.GrafanaAuthTypeParameter, configtypes.GrafanaAuthTypeDefault, configtypes.GrafanaAuthTypeFlagHelp)
 
 	// Add the Grafana.connection specific flags
-	Instance.String(types.GrafanaConnectionSchemeParameter, types.GrafanaConnectionSchemeDefault, types.GrafanaConnectionSchemeFlagHelp)
-	Instance.StringP(types.GrafanaConnectionHostParameter, types.GrafanaConnectionHostFlagShort, types.GrafanaConnectionHostDefault, types.GrafanaConnectionHostFlagHelp)
-	Instance.String(types.GrafanaConnectionBasePathParameter, types.GrafanaConnectionBasePathDefault, types.GrafanaConnectionBasePathFlagHelp)
-	Instance.IntP(types.GrafanaConnectionRetryParameter, types.GrafanaConnectionRetryFlagShort, types.GrafanaConnectionRetryDefault, types.GrafanaConnectionRetryFlagHelp)
+	Instance.String(configtypes.GrafanaConnectionSchemeParameter, configtypes.GrafanaConnectionSchemeDefault, configtypes.GrafanaConnectionSchemeFlagHelp)
+	Instance.StringP(configtypes.GrafanaConnectionHostParameter, configtypes.GrafanaConnectionHostFlagShort, configtypes.GrafanaConnectionHostDefault, configtypes.GrafanaConnectionHostFlagHelp)
+	Instance.String(configtypes.GrafanaConnectionBasePathParameter, configtypes.GrafanaConnectionBasePathDefault, configtypes.GrafanaConnectionBasePathFlagHelp)
+	Instance.IntP(configtypes.GrafanaConnectionRetryParameter, configtypes.GrafanaConnectionRetryFlagShort, configtypes.GrafanaConnectionRetryDefault, configtypes.GrafanaConnectionRetryFlagHelp)
 
 	// Add the feature specific flags
-	Instance.Bool(types.FeaturesDisableFoldersParameter, types.FeaturesDisableFoldersDefault, types.FeaturesDisableFoldersFlagHelp)
-	Instance.Bool(types.FeaturesDisableUsersParameter, types.FeaturesDisableUsersDefault, types.FeaturesDisableUsersFlagHelp)
-	Instance.Bool(types.FeaturesAddLocalAdminToTeamsParameter, types.FeaturesAddLocalAdminToTeamsDefault, types.FeaturesAddLocalAdminToTeamsFlagHelp)
+	Instance.Bool(configtypes.FeaturesDisableFoldersParameter, configtypes.FeaturesDisableFoldersDefault, configtypes.FeaturesDisableFoldersFlagHelp)
+	Instance.Bool(configtypes.FeaturesDisableUsersParameter, configtypes.FeaturesDisableUsersDefault, configtypes.FeaturesDisableUsersFlagHelp)
+	Instance.Bool(configtypes.FeaturesAddLocalAdminToTeamsParameter, configtypes.FeaturesAddLocalAdminToTeamsDefault, configtypes.FeaturesAddLocalAdminToTeamsFlagHelp)
 
 	// Add "source" flag
-	Instance.StringP(types.SourceParameter, types.SourceFlagShort, types.SourceDefault, types.SourceFlagHelp)
+	Instance.StringP(configtypes.SourceParameter, configtypes.SourceFlagShort, configtypes.SourceDefault, configtypes.SourceFlagHelp)
 
 	// Add "loglevel" flag
-	Instance.IntP(types.LogLevelParameter, types.LogLevelFlagShort, types.LogLevelDefault, types.LogLevelFlagHelp)
+	Instance.IntP(configtypes.LogLevelParameter, configtypes.LogLevelFlagShort, configtypes.LogLevelDefault, configtypes.LogLevelFlagHelp)
 
 	// Add "version" flag
-	Instance.BoolVarP(&Version, types.VersionParameter, types.VersionFlagShort, types.VersionDefault, types.VersionFlagHelp)
+	Instance.BoolVarP(&Version, configtypes.VersionParameter, configtypes.VersionFlagShort, configtypes.VersionDefault, configtypes.VersionFlagHelp)
 
 	// Add "help" flag
-	Instance.BoolVarP(&Help, types.HelpParameter, types.HelpFlagShort, types.HelpDefault, types.HelpFlagHelp)
+	Instance.BoolVarP(&Help, configtypes.HelpParameter, configtypes.HelpFlagShort, configtypes.HelpDefault, configtypes.HelpFlagHelp)
 
 	// Parse cli input
 	Instance.Parse(os.Args[1:])

@@ -4,16 +4,16 @@ import (
 	"log/slog"
 
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
-	"github.com/skuethe/grafana-oss-team-sync/internal/config/types"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
-	"github.com/skuethe/grafana-oss-team-sync/internal/plugin"
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources/entraid"
+	"github.com/skuethe/grafana-oss-team-sync/internal/sources/sourcetypes"
 )
 
 func CallPlugin() *grafana.Teams {
 	pluginLog := slog.With(slog.String("package", "sources"))
 
-	var instance *plugin.SourceInstance
+	var instance *sourcetypes.SourcePlugin
 	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
 
 	if len(config.Instance.Teams) == 0 {
@@ -23,7 +23,7 @@ func CallPlugin() *grafana.Teams {
 
 		// Execute specific source plugin, which need to return a *grafana.Teams instance
 		switch config.Instance.GetSource() {
-		case types.SourcePluginEntraID:
+		case configtypes.SourcePluginEntraID:
 			// EntraID: create new msgraph client
 			instance = entraid.New()
 			// EntraID: search for all specified groups and users

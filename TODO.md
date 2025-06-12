@@ -21,6 +21,10 @@
     - add "teams" and "folders"
 
 
+- general
+    - move the "empty inputs" validation for teams and folders to the packages, to have cleaner code on "main"
+
+
 - add README info
     - how to setup Grafana
         - "Azure AD" auth

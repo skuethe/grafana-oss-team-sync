@@ -9,6 +9,7 @@ import (
 	"github.com/grafana/grafana-openapi-client-go/client/users"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 )
 
 type User models.AdminCreateUserForm
@@ -61,6 +62,8 @@ func (t *Teams) ProcessUsers() {
 		usersLog.Info("usersync feature disabled, skipping")
 	} else if len(*t) == 0 {
 		usersLog.Info("no teams and therefore users to process, skipping")
+	} else if config.Instance.Grafana.AuthType == configtypes.GrafanaAuthTypeToken {
+		usersLog.Warn("can not process users with token auth, skipping")
 	} else {
 		usersLog.Info("processing users")
 

@@ -52,13 +52,34 @@ func loadYAMLFile(k *koanf.Koanf) error {
 }
 
 func loadEnvironmentVariables(k *koanf.Koanf) {
-	k.Load(env.Provider("GOTS_", ".", func(s string) string {
-		return strings.Replace(strings.ToLower(
-			strings.TrimPrefix(s, "GOTS_")), "_", ".", -1)
+	k.Load(env.ProviderWithValue("GOTS_", ".", func(k string, v string) (string, any) {
+		key := strings.Replace(strings.ToLower(strings.TrimPrefix(k, "GOTS_")), "_", ".", -1)
+
+		// Special handling for "teams" input -> allow comma seperated list
+		if k == configtypes.TeamsVariable {
+			return key, strings.Split(v, ",")
+		}
+
+		// Otherwise, return the plain string.
+		return key, v
 	}), nil)
 }
 
 func loadCLIParameter(k *koanf.Koanf) {
+	// k.Load(posflag.ProviderWithFlag(flags.Instance, ".", nil, func(f *pflag.Flag) (string, any) {
+	// 	key := f.Name
+	// 	val := posflag.FlagVal(flags.Instance, f)
+
+	// 	// // Special handling for "teams" input -> allow comma seperated list
+	// 	// if key == configtypes.TeamsParameter {
+	// 	// 	slog.Warn("triggered cli teams", "DEBUG", strings.Split(v, ","))
+	// 	// 	return key, strings.Split(val, ",")
+	// 	// }
+
+	// 	// Otherwise, return the plain string.
+	// 	return key, val
+	// }), nil)
+
 	k.Load(posflag.Provider(flags.Instance, ".", k), nil)
 }
 
@@ -101,6 +122,8 @@ func Load() {
 	k.UnmarshalWithConf("", &Instance, koanf.UnmarshalConf{
 		Tag: "yaml",
 	})
+
+	slog.Warn("DEBUG", "teams", Instance.Teams)
 
 	// Validate Grafana authtype input
 	if err := Instance.ValdidateGrafanaAuthType(); err != nil {

@@ -66,6 +66,7 @@ func main() {
 
 	// Call the configured source plugin
 	grafanaTeamList := sources.CallPlugin()
+	os.Exit(0)
 
 	// Grafana: continue to process users
 	grafanaTeamList.ProcessUsers()

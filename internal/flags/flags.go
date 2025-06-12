@@ -55,6 +55,9 @@ func Load() {
 	// Add "source" flag
 	Instance.StringP(configtypes.SourceParameter, configtypes.SourceFlagShort, configtypes.SourceDefault, configtypes.SourceFlagHelp)
 
+	// Add "teams" flag
+	Instance.String(configtypes.TeamsParameter, configtypes.TeamsDefault, configtypes.TeamsFlagHelp)
+
 	// Add "loglevel" flag
 	Instance.IntP(configtypes.LogLevelParameter, configtypes.LogLevelFlagShort, configtypes.LogLevelDefault, configtypes.LogLevelFlagHelp)
 

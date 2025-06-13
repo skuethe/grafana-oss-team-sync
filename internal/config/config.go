@@ -176,8 +176,6 @@ func Load() {
 		panic(err)
 	}
 
-	slog.Warn("DEBUG", "grafana", Instance.Grafana)
-
 	// Validate Grafana authtype input
 	if err := Instance.ValdidateGrafanaAuthType(); err != nil {
 		configLog.Error("error validating Grafana authtype input")

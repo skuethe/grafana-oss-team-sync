@@ -19,7 +19,8 @@
 - tests
     - write _test files
         - cli flags
-        - env flags?
+        - env flags
+            -> move "config -> k.unmarschal" into own func and write test for "minimal" and "full" supported config
     - integration / end2end tests
         - run against multiple Grafana versions in CI
     - add mock data to test against grafana (teams, users, folders)

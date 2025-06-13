@@ -20,6 +20,8 @@
     - write _test files
     - integration / end2end tests
         - run against multiple Grafana versions in CI
+    - add mock data to test against grafana (teams, users, folders)
+        -> allow mock to be used as source?
 
 
 - add README info

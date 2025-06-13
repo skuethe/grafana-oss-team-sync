@@ -16,6 +16,12 @@
         - 
 
 
+- tests
+    - write _test files
+    - integration / end2end tests
+        - run against multiple Grafana versions in CI
+
+
 - add README info
     - how to setup Grafana
         - "Azure AD" auth
@@ -44,13 +50,6 @@
     - make "skipped" results from Grafana "DEBUG"
     - make "created" results from Grafana "INFO"
     - Use OpenTelemetry standards / go libs?
-
-
-- tests
-    - write _test files
-    - integration / end2end tests
-        - run against multiple Grafana versions in CI
-
 
 
 - look into:

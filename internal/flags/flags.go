@@ -21,7 +21,6 @@ var (
 )
 
 func Load() {
-	// TODO: add "teams", "folders"
 	Instance = flag.NewFlagSet("grafana-oss-team-sync", flag.ExitOnError)
 	Instance.SortFlags = false
 

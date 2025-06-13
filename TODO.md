@@ -18,7 +18,6 @@
 
 - cli
     - optimize flags usage for "features" and "grafana"
-    - add "teams" and "folders"
 
 
 - add README info

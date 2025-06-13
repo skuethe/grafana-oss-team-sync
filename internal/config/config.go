@@ -15,6 +15,7 @@ import (
 	"github.com/knadh/koanf/v2"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
+	"github.com/spf13/pflag"
 )
 
 var Instance *configtypes.Config
@@ -60,27 +61,22 @@ func loadEnvironmentVariables(k *koanf.Koanf) {
 			return key, strings.Split(v, ",")
 		}
 
-		// Otherwise, return the plain string.
 		return key, v
 	}), nil)
 }
 
 func loadCLIParameter(k *koanf.Koanf) {
-	// k.Load(posflag.ProviderWithFlag(flags.Instance, ".", nil, func(f *pflag.Flag) (string, any) {
-	// 	key := f.Name
-	// 	val := posflag.FlagVal(flags.Instance, f)
+	k.Load(posflag.ProviderWithFlag(flags.Instance, ".", k, func(f *pflag.Flag) (string, any) {
+		key := f.Name
+		val := posflag.FlagVal(flags.Instance, f)
 
-	// 	// // Special handling for "teams" input -> allow comma seperated list
-	// 	// if key == configtypes.TeamsParameter {
-	// 	// 	slog.Warn("triggered cli teams", "DEBUG", strings.Split(v, ","))
-	// 	// 	return key, strings.Split(val, ",")
-	// 	// }
+		// Special handling for "teams" input -> allow comma seperated list
+		if key == configtypes.TeamsParameter {
+			return key, strings.Split(val.(string), ",")
+		}
 
-	// 	// Otherwise, return the plain string.
-	// 	return key, val
-	// }), nil)
-
-	k.Load(posflag.Provider(flags.Instance, ".", k), nil)
+		return key, val
+	}), nil)
 }
 
 func loadOptionalAuthFile(k *koanf.Koanf) {

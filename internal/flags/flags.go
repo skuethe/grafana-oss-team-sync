@@ -30,6 +30,9 @@ func Load() {
 	// Add "authfile" flag
 	Instance.StringP(configtypes.AuthFileParameter, configtypes.AuthFileFlagShort, configtypes.AuthFileDefault, configtypes.AuthFileFlagHelp)
 
+	// Add "authtype" flag
+	Instance.String(configtypes.GrafanaAuthTypeOptimized, configtypes.GrafanaAuthTypeDefault, configtypes.GrafanaAuthTypeFlagHelp)
+
 	// Add basic auth flags
 	Instance.StringVarP(&BasicAuthUsername, configtypes.GrafanaBasicAuthUsernameParameter, configtypes.GrafanaBasicAuthUsernameFlagShort, configtypes.GrafanaBasicAuthUsernameDefault, configtypes.GrafanaBasicAuthUsernameFlagHelp)
 	Instance.StringVarP(&BasicAuthPassword, configtypes.GrafanaBasicAuthPasswordParameter, configtypes.GrafanaBasicAuthPasswordFlagShort, configtypes.GrafanaBasicAuthPasswordDefault, configtypes.GrafanaBasicAuthPasswordFlagHelp)
@@ -37,14 +40,11 @@ func Load() {
 	// Add token auth flags
 	Instance.StringVarP(&Token, configtypes.GrafanaTokenAuthParameter, configtypes.GrafanaTokenAuthFlagShort, configtypes.GrafanaTokenAuthDefault, configtypes.GrafanaTokenAuthFlagHelp)
 
-	// Add "authtype" flag
-	Instance.String(configtypes.GrafanaAuthTypeParameter, configtypes.GrafanaAuthTypeDefault, configtypes.GrafanaAuthTypeFlagHelp)
-
 	// Add the Grafana.connection specific flags
-	Instance.String(configtypes.GrafanaConnectionSchemeParameter, configtypes.GrafanaConnectionSchemeDefault, configtypes.GrafanaConnectionSchemeFlagHelp)
-	Instance.StringP(configtypes.GrafanaConnectionHostParameter, configtypes.GrafanaConnectionHostFlagShort, configtypes.GrafanaConnectionHostDefault, configtypes.GrafanaConnectionHostFlagHelp)
-	Instance.String(configtypes.GrafanaConnectionBasePathParameter, configtypes.GrafanaConnectionBasePathDefault, configtypes.GrafanaConnectionBasePathFlagHelp)
-	Instance.IntP(configtypes.GrafanaConnectionRetryParameter, configtypes.GrafanaConnectionRetryFlagShort, configtypes.GrafanaConnectionRetryDefault, configtypes.GrafanaConnectionRetryFlagHelp)
+	Instance.String(configtypes.GrafanaConnectionSchemeOptimized, configtypes.GrafanaConnectionSchemeDefault, configtypes.GrafanaConnectionSchemeFlagHelp)
+	Instance.StringP(configtypes.GrafanaConnectionHostOptimized, configtypes.GrafanaConnectionHostFlagShort, configtypes.GrafanaConnectionHostDefault, configtypes.GrafanaConnectionHostFlagHelp)
+	Instance.String(configtypes.GrafanaConnectionBasePathOptimized, configtypes.GrafanaConnectionBasePathDefault, configtypes.GrafanaConnectionBasePathFlagHelp)
+	Instance.IntP(configtypes.GrafanaConnectionRetryOptimized, configtypes.GrafanaConnectionRetryFlagShort, configtypes.GrafanaConnectionRetryDefault, configtypes.GrafanaConnectionRetryFlagHelp)
 
 	// Add the feature specific flags
 	Instance.Bool(configtypes.FeaturesAddLocalAdminToTeamsOptimized, configtypes.FeaturesAddLocalAdminToTeamsDefault, configtypes.FeaturesAddLocalAdminToTeamsFlagHelp)

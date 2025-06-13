@@ -26,10 +26,6 @@
     - how to setup EntraID app with permissions
 
 
-- config
-    - validate all possible ENV VAR input
-
-
 - entraid
     - modify graph sdk via kiota and verify if that gives us a smaller package size
         -> https://learn.microsoft.com/en-gb/graph/sdks/customize-client?tabs=go

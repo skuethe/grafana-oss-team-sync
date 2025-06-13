@@ -57,18 +57,35 @@ func loadEnvironmentVariables(k *koanf.Koanf) {
 		key := strings.Replace(strings.ToLower(strings.TrimPrefix(k, "GOTS_")), "_", ".", -1)
 
 		switch key {
-		// "teams" input -> allow comma seperated list
-		case configtypes.TeamsParameter:
-			return key, strings.Split(v, ",")
-		// Features - addLocalAdminToTeams: return full parameter, to map it to the config object
+		// Grafana flags - return full parameter, to map it to the config object
+		case configtypes.GrafanaAuthTypeOptimized:
+			return configtypes.GrafanaAuthTypeParameter, v
+
+		case configtypes.GrafanaConnectionSchemeOptimized:
+			return configtypes.GrafanaConnectionSchemeParameter, v
+
+		case configtypes.GrafanaConnectionHostOptimized:
+			return configtypes.GrafanaConnectionHostParameter, v
+
+		case configtypes.GrafanaConnectionBasePathOptimized:
+			return configtypes.GrafanaConnectionBasePathParameter, v
+
+		case configtypes.GrafanaConnectionRetryOptimized:
+			return configtypes.GrafanaConnectionRetryParameter, v
+
+		// Features - return full parameter, to map it to the config object
 		case configtypes.FeaturesAddLocalAdminToTeamsOptimized:
 			return configtypes.FeaturesAddLocalAdminToTeamsParameter, v
-		// Features - disableFolders: return full parameter, to map it to the config object
+
 		case configtypes.FeaturesDisableFoldersOptimized:
 			return configtypes.FeaturesDisableFoldersParameter, v
-		// Features - disableUserSync: return full parameter, to map it to the config object
+
 		case configtypes.FeaturesDisableUsersOptimized:
 			return configtypes.FeaturesDisableUsersParameter, v
+
+		// "teams" - respect comma seperated list
+		case configtypes.TeamsParameter:
+			return key, strings.Split(v, ",")
 		}
 
 		return key, v
@@ -83,16 +100,33 @@ func loadCLIParameter(k *koanf.Koanf) {
 		slog.Warn("DEBUG", "key", key, "val", val)
 
 		switch key {
-		// Features - addLocalAdminToTeams: return full parameter, to map it to the config object
+		// Grafana flags - return full parameter, to map it to the config object
+		case configtypes.GrafanaAuthTypeOptimized:
+			return configtypes.GrafanaAuthTypeParameter, val
+
+		case configtypes.GrafanaConnectionSchemeOptimized:
+			return configtypes.GrafanaConnectionSchemeParameter, val
+
+		case configtypes.GrafanaConnectionHostOptimized:
+			return configtypes.GrafanaConnectionHostParameter, val
+
+		case configtypes.GrafanaConnectionBasePathOptimized:
+			return configtypes.GrafanaConnectionBasePathParameter, val
+
+		case configtypes.GrafanaConnectionRetryOptimized:
+			return configtypes.GrafanaConnectionRetryParameter, val
+
+		// Feature flags - return full parameter, to map it to the config object
 		case configtypes.FeaturesAddLocalAdminToTeamsOptimized:
 			return configtypes.FeaturesAddLocalAdminToTeamsParameter, val
-		// Features - disableFolders: return full parameter, to map it to the config object
+
 		case configtypes.FeaturesDisableFoldersOptimized:
 			return configtypes.FeaturesDisableFoldersParameter, val
-		// Features - disableUserSync: return full parameter, to map it to the config object
+
 		case configtypes.FeaturesDisableUsersOptimized:
 			return configtypes.FeaturesDisableUsersParameter, val
-		// Special handling for "teams" input -> allow comma seperated list
+
+		// "teams" - respect comma seperated list
 		case configtypes.TeamsParameter:
 			return key, strings.Split(val.(string), ",")
 		}
@@ -137,11 +171,14 @@ func Load() {
 	loadOptionalAuthFile(k)
 
 	// Create new Config instance from the different inputs
-	k.UnmarshalWithConf("", &Instance, koanf.UnmarshalConf{
+	if err := k.UnmarshalWithConf("", &Instance, koanf.UnmarshalConf{
 		Tag: "yaml",
-	})
+	}); err != nil {
+		configLog.Error("could not parse config")
+		panic(err)
+	}
 
-	slog.Warn("DEBUG", "features", Instance.Features)
+	slog.Warn("DEBUG", "grafana", Instance.Grafana)
 
 	// Validate Grafana authtype input
 	if err := Instance.ValdidateGrafanaAuthType(); err != nil {

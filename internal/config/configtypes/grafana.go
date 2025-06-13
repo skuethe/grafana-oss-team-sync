@@ -23,8 +23,8 @@ const (
 	// GrafanaAuthTypeFlagShort string = ""
 	GrafanaAuthTypeDefault   string = "basicauth"
 	GrafanaAuthTypeFlagHelp  string = "the auth type you want to use to authenticate against Grafana\nAllowed: basicauth or token"
+	GrafanaAuthTypeOptimized string = "authtype"
 	GrafanaAuthTypeParameter string = "grafana.authtype"
-	GrafanaAuthTypeVariable  string = "GOTS_GRAFANA_AUTHTYPE"
 
 	GrafanaBasicAuthUsernameDefault   string = ""
 	GrafanaBasicAuthUsernameFlagHelp  string = "the basic auth user you want to use to authenticate against Grafana\nOnly used if authtype is set to basicauth"
@@ -45,29 +45,30 @@ const (
 	GrafanaTokenAuthVariable  string = "GOTS_TOKEN"
 
 	// GrafanaConnectionSchemeFlagShort string = ""
-	// GrafanaConnectionSchemeVariable  string = "GOTS_"
-	GrafanaConnectionSchemeDefault      string = "http"
-	GrafanaConnectionSchemeFlagHelp     string = "the scheme of your Grafana instance\nAllowed: http or https"
-	GrafanaConnectionSchemeParameter    string = "grafana.connection.scheme"
+	GrafanaConnectionSchemeDefault   string = "http"
+	GrafanaConnectionSchemeFlagHelp  string = "the scheme of your Grafana instance\nAllowed: http or https"
+	GrafanaConnectionSchemeOptimized string = "scheme"
+	GrafanaConnectionSchemeParameter string = "grafana.connection.scheme"
+
 	GrafanaConnectionSchemeAllowedHTTP  string = "http"
 	GrafanaConnectionSchemeAllowedHTTPS string = "https"
 
-	// GrafanaConnectionHostVariable  string = "GOTS_"
 	GrafanaConnectionHostDefault   string = "localhost:3000"
 	GrafanaConnectionHostFlagHelp  string = "the host of your Grafana instance"
 	GrafanaConnectionHostFlagShort string = "H"
+	GrafanaConnectionHostOptimized string = "host"
 	GrafanaConnectionHostParameter string = "grafana.connection.host"
 
 	// GrafanaConnectionBasePathFlagShort string = ""
-	// GrafanaConnectionBasePathVariable  string = "GOTS_"
 	GrafanaConnectionBasePathDefault   string = "/api"
 	GrafanaConnectionBasePathFlagHelp  string = "the base path of your Grafana instance"
+	GrafanaConnectionBasePathOptimized string = "basepath"
 	GrafanaConnectionBasePathParameter string = "grafana.connection.basepath"
 
-	// GrafanaConnectionRetryVariable  string = "GOTS_"
 	GrafanaConnectionRetryDefault   int    = 0
 	GrafanaConnectionRetryFlagHelp  string = "the amount of retries to connect to your Grafana instance\nRetry timeout is set to 2 seconds\nDefault: 0"
 	GrafanaConnectionRetryFlagShort string = "r"
+	GrafanaConnectionRetryOptimized string = "retry"
 	GrafanaConnectionRetryParameter string = "grafana.connection.retry"
 
 	GrafanaAuthTypeToken     string = "token"

@@ -92,12 +92,10 @@ func loadEnvironmentVariables(k *koanf.Koanf) {
 	}), nil)
 }
 
-func loadCLIParameter(k *koanf.Koanf) {
-	k.Load(posflag.ProviderWithFlag(flags.Instance, ".", k, func(f *pflag.Flag) (string, any) {
+func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) {
+	k.Load(posflag.ProviderWithFlag(fs, ".", k, func(f *pflag.Flag) (string, any) {
 		key := f.Name
-		val := posflag.FlagVal(flags.Instance, f)
-
-		slog.Warn("DEBUG", "key", key, "val", val)
+		val := posflag.FlagVal(fs, f)
 
 		switch key {
 		// Grafana flags - return full parameter, to map it to the config object
@@ -165,7 +163,7 @@ func Load() {
 
 	// Load flags and merge (override) config
 	// This will also load default values specified in the flags package
-	loadCLIParameter(k)
+	loadCLIParameter(k, flags.Instance)
 
 	// Load optional authfile as config and environment variables
 	loadOptionalAuthFile(k)

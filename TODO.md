@@ -16,10 +16,6 @@
         - 
 
 
-- cli
-    - optimize flags usage for "features" and "grafana"
-
-
 - add README info
     - how to setup Grafana
         - "Azure AD" auth

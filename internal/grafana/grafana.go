@@ -123,10 +123,10 @@ func New() {
 
 	// Fetching current org here for additional information AND to fail fast on auth errors
 	if currentOrg, err := client.Org.GetCurrentOrg(); err != nil {
-		grafanaLog.Error("could not fetch current users org")
+		grafanaLog.Error("could not fetch Grafana Org from specified auth")
 		panic(err)
 	} else {
-		grafanaLog.Info("got current users org",
+		grafanaLog.Info("got Grafana Org",
 			slog.Group("org",
 				slog.Int64("id", currentOrg.Payload.ID),
 				slog.String("name", currentOrg.Payload.Name),

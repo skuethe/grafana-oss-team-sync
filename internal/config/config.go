@@ -56,9 +56,19 @@ func loadEnvironmentVariables(k *koanf.Koanf) {
 	k.Load(env.ProviderWithValue("GOTS_", ".", func(k string, v string) (string, any) {
 		key := strings.Replace(strings.ToLower(strings.TrimPrefix(k, "GOTS_")), "_", ".", -1)
 
-		// Special handling for "teams" input -> allow comma seperated list
-		if k == configtypes.TeamsVariable {
+		switch key {
+		// "teams" input -> allow comma seperated list
+		case configtypes.TeamsParameter:
 			return key, strings.Split(v, ",")
+		// Features - addLocalAdminToTeams: return full parameter, to map it to the config object
+		case configtypes.FeaturesAddLocalAdminToTeamsOptimized:
+			return configtypes.FeaturesAddLocalAdminToTeamsParameter, v
+		// Features - disableFolders: return full parameter, to map it to the config object
+		case configtypes.FeaturesDisableFoldersOptimized:
+			return configtypes.FeaturesDisableFoldersParameter, v
+		// Features - disableUserSync: return full parameter, to map it to the config object
+		case configtypes.FeaturesDisableUsersOptimized:
+			return configtypes.FeaturesDisableUsersParameter, v
 		}
 
 		return key, v
@@ -70,8 +80,20 @@ func loadCLIParameter(k *koanf.Koanf) {
 		key := f.Name
 		val := posflag.FlagVal(flags.Instance, f)
 
+		slog.Warn("DEBUG", "key", key, "val", val)
+
+		switch key {
+		// Features - addLocalAdminToTeams: return full parameter, to map it to the config object
+		case configtypes.FeaturesAddLocalAdminToTeamsOptimized:
+			return configtypes.FeaturesAddLocalAdminToTeamsParameter, val
+		// Features - disableFolders: return full parameter, to map it to the config object
+		case configtypes.FeaturesDisableFoldersOptimized:
+			return configtypes.FeaturesDisableFoldersParameter, val
+		// Features - disableUserSync: return full parameter, to map it to the config object
+		case configtypes.FeaturesDisableUsersOptimized:
+			return configtypes.FeaturesDisableUsersParameter, val
 		// Special handling for "teams" input -> allow comma seperated list
-		if key == configtypes.TeamsParameter {
+		case configtypes.TeamsParameter:
 			return key, strings.Split(val.(string), ",")
 		}
 
@@ -119,7 +141,7 @@ func Load() {
 		Tag: "yaml",
 	})
 
-	slog.Warn("DEBUG", "teams", Instance.Teams)
+	slog.Warn("DEBUG", "features", Instance.Features)
 
 	// Validate Grafana authtype input
 	if err := Instance.ValdidateGrafanaAuthType(); err != nil {

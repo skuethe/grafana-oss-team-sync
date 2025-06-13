@@ -7,21 +7,21 @@ type Features struct {
 }
 
 const (
+	// FeaturesAddLocalAdminToTeamsFlagShort string = ""
+	FeaturesAddLocalAdminToTeamsDefault   bool   = true
+	FeaturesAddLocalAdminToTeamsFlagHelp  string = "feature: add the local Grafana admin user to each team you create"
+	FeaturesAddLocalAdminToTeamsParameter string = "features.addLocalAdminToTeams"
+	FeaturesAddLocalAdminToTeamsOptimized string = "addlocaladmintoteams"
+
 	// FeaturesDisableFoldersFlagShort string = ""
-	// FeaturesDisableFoldersVariable  string = "GOTS_"
 	FeaturesDisableFoldersDefault   bool   = false
-	FeaturesDisableFoldersFlagHelp  string = "disable the folder sync feature"
+	FeaturesDisableFoldersFlagHelp  string = "feature: disable folders"
 	FeaturesDisableFoldersParameter string = "features.disableFolders"
+	FeaturesDisableFoldersOptimized string = "disablefolders"
 
 	// FeaturesDisableUsersFlagShort string = ""
-	// FeaturesDisableUsersVariable  string = "GOTS_"
 	FeaturesDisableUsersDefault   bool   = false
-	FeaturesDisableUsersFlagHelp  string = "disable the user sync feature"
-	FeaturesDisableUsersParameter string = "features.disableUsers"
-
-	// FeaturesAddLocalAdminToTeamsFlagShort string = ""
-	// FeaturesAddLocalAdminToTeamsVariable  string = "GOTS_"
-	FeaturesAddLocalAdminToTeamsDefault   bool   = true
-	FeaturesAddLocalAdminToTeamsFlagHelp  string = "add the local Grafana admin user to each team you create"
-	FeaturesAddLocalAdminToTeamsParameter string = "features.addLocalAdminToTeams"
+	FeaturesDisableUsersFlagHelp  string = "feature: disable the user sync"
+	FeaturesDisableUsersParameter string = "features.disableUserSync"
+	FeaturesDisableUsersOptimized string = "disableusersync"
 )

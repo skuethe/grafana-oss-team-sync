@@ -47,9 +47,9 @@ func Load() {
 	Instance.IntP(configtypes.GrafanaConnectionRetryParameter, configtypes.GrafanaConnectionRetryFlagShort, configtypes.GrafanaConnectionRetryDefault, configtypes.GrafanaConnectionRetryFlagHelp)
 
 	// Add the feature specific flags
-	Instance.Bool(configtypes.FeaturesDisableFoldersParameter, configtypes.FeaturesDisableFoldersDefault, configtypes.FeaturesDisableFoldersFlagHelp)
-	Instance.Bool(configtypes.FeaturesDisableUsersParameter, configtypes.FeaturesDisableUsersDefault, configtypes.FeaturesDisableUsersFlagHelp)
-	Instance.Bool(configtypes.FeaturesAddLocalAdminToTeamsParameter, configtypes.FeaturesAddLocalAdminToTeamsDefault, configtypes.FeaturesAddLocalAdminToTeamsFlagHelp)
+	Instance.Bool(configtypes.FeaturesAddLocalAdminToTeamsOptimized, configtypes.FeaturesAddLocalAdminToTeamsDefault, configtypes.FeaturesAddLocalAdminToTeamsFlagHelp)
+	Instance.Bool(configtypes.FeaturesDisableFoldersOptimized, configtypes.FeaturesDisableFoldersDefault, configtypes.FeaturesDisableFoldersFlagHelp)
+	Instance.Bool(configtypes.FeaturesDisableUsersOptimized, configtypes.FeaturesDisableUsersDefault, configtypes.FeaturesDisableUsersFlagHelp)
 
 	// Add "source" flag
 	Instance.StringP(configtypes.SourceParameter, configtypes.SourceFlagShort, configtypes.SourceDefault, configtypes.SourceFlagHelp)

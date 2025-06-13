@@ -41,6 +41,11 @@ source: "entraid"
 
 features:
   #
+  # Grafana: add the local Grafana admin user ("admin@localhost") to each created team as a member
+  #
+  addLocalAdminToTeams: true
+
+  #
   # Grafana: disable creating folders and managing their permissions
   #
   disableFolders: false
@@ -49,11 +54,6 @@ features:
   # Grafana: disable creating users
   #
   disableUserSync: false
-
-  #
-  # Grafana: add the local Grafana admin user ("admin@localhost") to each created team as a member
-  #
-  addLocalAdminToTeams: true
 
 
 

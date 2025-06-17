@@ -41,6 +41,8 @@
     - modify graph sdk via kiota and verify if that gives us a smaller package size
         -> https://learn.microsoft.com/en-gb/graph/sdks/customize-client?tabs=go
         -> https://stackoverflow.com/questions/78355878/how-to-disable-backingstore-and-dirty-tracking-in-graph-beta-sdk-for-java
+    - rework structs
+        -> current "groups" struct uneccesarry: client can be used by the "source plugin instance"
 
 
 - groups / teams

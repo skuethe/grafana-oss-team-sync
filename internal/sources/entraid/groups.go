@@ -17,83 +17,13 @@ import (
 )
 
 type groups struct {
-	client        *graph.GraphServiceClient
-	requestFilter string
+	client       *graph.GraphServiceClient
+	headers      *abstractions.RequestHeaders
+	grafanaTeams *grafana.Teams
 }
 
-func (g *groups) getGroupData() (models.GroupCollectionResponseable, error) {
-
-	headers := abstractions.NewRequestHeaders()
-	headers.Add("ConsistencyLevel", "eventual")
-
-	// requestSearch := "\"displayName:" + a.name + "\""
-	// requestTop := int32(5)
-	requestCount := true
-	requestFilter := g.requestFilter
-	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
-		Filter: &requestFilter,
-		Select: []string{"id", "displayName", "mail"},
-		Count:  &requestCount,
-		// Expand: []string{"members($select=id,displayName)"},
-		// Top: &requestTop,
-		// Search: &requestSearch,
-	}
-	configuraton := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
-		Headers:         headers,
-		QueryParameters: requestParams,
-	}
-	result, err := g.client.Groups().Get(context.Background(), configuraton)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func (g *groups) getUsersFromGroup(groupID string) (models.UserCollectionResponseable, error) {
-
-	headers := abstractions.NewRequestHeaders()
-	headers.Add("ConsistencyLevel", "eventual")
-
-	// requestTop := int32(5)
-	requestCount := true
-	requestParams := &graphgroups.ItemTransitiveMembersGraphUserRequestBuilderGetQueryParameters{
-		Select: []string{"userPrincipalName", "displayName", "mail"},
-		Count:  &requestCount,
-		// Top: &requestTop,
-	}
-	configuraton := &graphgroups.ItemTransitiveMembersGraphUserRequestBuilderGetRequestConfiguration{
-		Headers:         headers,
-		QueryParameters: requestParams,
-	}
-	result, err := g.client.Groups().ByGroupId(groupID).TransitiveMembers().GraphUser().Get(context.Background(), configuraton)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
-	groupsLog := slog.With(slog.String("package", "entraid.groups"))
-	groupsLog.Info("processing entraid groups")
-
-	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
-	var grafanaUserList *grafana.Users = &grafana.Users{}
-
-	g := groups{
-		client:        instance.EntraID,
-		requestFilter: "displayName in ('" + strings.Join(config.Instance.Teams, "', '") + "')",
-	}
-
-	groupList, err := g.getGroupData()
-	if err != nil {
-		groupsLog.Error("could not get group results from EntraID")
-		panic(err)
-	}
-
-	countFound := *groupList.GetOdataCount()
-
-	for _, group := range groupList.GetValue() {
-
+func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) {
+	for _, group := range (*result).GetValue() {
 		groupDisplayName := *group.GetDisplayName()
 		groupId := *group.GetId()
 		groupMail := group.GetMail()
@@ -112,16 +42,10 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 		)
 		groupLog.Info("found EntraID group")
 
-		// Get all users from current group
-		userList, err := g.getUsersFromGroup(groupId)
-		if err != nil {
-			groupLog.Error("could not get user results from EntraID")
-			panic(err)
-		}
+		// Process users
+		grafanaUserList := g.ProcessUsers(&groupId)
 
-		grafanaUserList = ProcessUsers(userList)
-
-		*grafanaTeamList = append(*grafanaTeamList, grafana.Team{
+		*g.grafanaTeams = append(*g.grafanaTeams, grafana.Team{
 			Parameter: &grafana.TeamParameter{
 				Name:  groupDisplayName,
 				Email: mail,
@@ -130,6 +54,84 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 		})
 		config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, groupDisplayName, false)
 	}
+}
+
+func (g *groups) handleGroupPagination(nextLink *string) (*models.GroupCollectionResponseable, error) {
+	configuraton := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
+		Headers: g.headers,
+	}
+	result, err := g.client.Groups().WithUrl(*nextLink).Get(context.Background(), configuraton)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, error) {
+
+	// requestSearch := "\"displayName:" + a.name + "\""
+	// requestTop := int32(1)
+	requestCount := true
+	requestFilter := "displayName in ('" + strings.Join(config.Instance.Teams, "', '") + "')"
+	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
+		Filter: &requestFilter,
+		Select: []string{"id", "displayName", "mail"},
+		Count:  &requestCount,
+		// Top:    &requestTop,
+		// Expand: []string{"members($select=id,displayName)"},
+		// Search: &requestSearch,
+	}
+	configuraton := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
+		Headers:         g.headers,
+		QueryParameters: requestParams,
+	}
+	result, err := g.client.Groups().Get(context.Background(), configuraton)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
+	groupsLog := slog.With(slog.String("package", "entraid.groups"))
+	groupsLog.Info("processing EntraID groups")
+
+	headers := abstractions.NewRequestHeaders()
+	headers.Add("ConsistencyLevel", "eventual")
+
+	g := groups{
+		client:       instance.EntraID,
+		headers:      headers,
+		grafanaTeams: &grafana.Teams{},
+	}
+
+	gr, err := g.getInitialGroupRequest()
+	if err != nil {
+		groupsLog.Error("could not get initial group result from EntraID")
+		panic(err)
+	}
+
+	countFound := (*gr).GetOdataCount()
+
+	for {
+		// Handle group result
+		g.processGroupResult(gr)
+
+		// Handle possible pagination
+		nextPageUrl := (*gr).GetOdataNextLink()
+		if nextPageUrl != nil {
+			groupsLog.Debug("processing paginated group result")
+			gr, err = g.handleGroupPagination(nextPageUrl)
+			if err != nil {
+				groupsLog.Error("could not get paged group result from EntraID")
+				panic(err)
+			}
+		} else {
+			break
+		}
+	}
 
 	if len(config.Instance.Teams) > 0 {
 		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Instance.Teams, ","))
@@ -137,10 +139,10 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 
 	groupsLog.Info("finished processing EntraID groups",
 		slog.Group("stats",
-			slog.Int64("found", countFound),
+			slog.Int64("found", *countFound),
 			slog.Int("skipped", len(config.Instance.Teams)),
 		),
 	)
 
-	return grafanaTeamList
+	return g.grafanaTeams
 }

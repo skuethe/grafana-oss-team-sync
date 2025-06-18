@@ -15,6 +15,9 @@
         - https://docs.renovatebot.com/presets-group/#groupgoopenapi
         - 
 
+- main
+    - print "features" on startup, if they are NOT set to default
+
 
 - tests
     - write _test files
@@ -48,7 +51,6 @@
 - groups / teams
     - either make Azure group search results case sensitive OR
     - make Grafana team search case insensitive
-    - test entraid pagination behaviour -> request ~10 groups and see what happens
 
 
 - logging

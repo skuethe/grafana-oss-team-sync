@@ -137,7 +137,7 @@ func loadOptionalAuthFile(k *koanf.Koanf) {
 	authfile := k.String(configtypes.AuthFileParameter)
 	if authfile != "" {
 		if err := godotenv.Load(authfile); err != nil {
-			slog.Warn("could not load authfile content to environment variables")
+			slog.Warn("could not process configured authfile")
 		}
 		if err := loadEnvironmentVariables(k); err != nil {
 			slog.Warn("could not load environment variables")
@@ -150,9 +150,7 @@ func Load() {
 	configLog.Info("loading config")
 
 	// Handle .env files
-	if err := godotenv.Load(); err != nil {
-		configLog.Warn("could not load .env file")
-	}
+	_ = godotenv.Load()
 
 	// Global koanf instance for input handling
 	var k = koanf.New(".")

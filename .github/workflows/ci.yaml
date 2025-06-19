@@ -1,0 +1,48 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'internal/**'
+      - 'go.mod'
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          # renovate: github=golangci/golangci-lint
+          version: v2.1.6
+
+  build:
+    runs-on: ubuntu-latest
+    name: build and test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Build
+        run: go build
+
+      - name: Test
+        run: go test -race -covermode=atomic -coverprofile=coverage.out ./...

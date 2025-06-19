@@ -7,6 +7,7 @@ set -eo pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 ROOT_DIR="${SCRIPT_DIR}/../"
 
+GOLANGCI_LINT="v2.1.6"
 
 # HELPERS
 
@@ -29,6 +30,8 @@ function usage() {
   echo -e "\twill stop compose stack"
   echo -e "\n  logs"
   echo -e "\twill follow the logs of all containers of the compose stack"
+  echo -e "\n  lint"
+  echo -e "\twill run lint checks against the code"
   echo -e "\n"
 }
 
@@ -48,6 +51,9 @@ case "${1}" in
     ;;
   "logs")
     cd ${SCRIPT_DIR} && podman compose logs -f
+    ;;
+  "lint")
+    cd ${ROOT_DIR} && podman run --rm -v $(pwd):/app -w /app golangci/golangci-lint:${GOLANGCI_LINT} golangci-lint run
     ;;
   *)
     usage

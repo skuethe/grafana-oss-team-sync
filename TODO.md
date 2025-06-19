@@ -21,6 +21,9 @@
 
 - tests
     - write _test files
+        - res:
+            - https://www.digitalocean.com/community/tutorials/how-to-write-unit-tests-in-go-using-go-test-and-the-testing-package#step-5-mdash-writing-coverage-tests-in-go
+            - https://blog.jetbrains.com/go/2022/11/22/comprehensive-guide-to-testing-in-go/#errors-and-logs
         - cli flags
         - env flags
             -> move "config -> k.unmarschal" into own func and write test for "minimal" and "full" supported config
@@ -41,6 +44,17 @@
 
 
 - entraid
+    - use "dev proxy" to test app and get more insights:
+        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/test-my-app-with-random-errors
+        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/simulate-errors-microsoft-graph-apis
+        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/test-that-my-application-handles-throttling-properly
+        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/simulate-rate-limit-api-responses
+        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/detect-minimal-microsoft-graph-api-permissions
+
+        - use in:
+            - container: https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/use-dev-proxy-in-docker-container
+            - ci/cd:     https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/use-dev-proxy-in-ci-cd-overview
+
     - modify graph sdk via kiota and verify if that gives us a smaller package size
         -> https://learn.microsoft.com/en-gb/graph/sdks/customize-client?tabs=go
         -> https://stackoverflow.com/questions/78355878/how-to-disable-backingstore-and-dirty-tracking-in-graph-beta-sdk-for-java

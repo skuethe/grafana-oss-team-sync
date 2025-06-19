@@ -71,7 +71,7 @@ func (t *Teams) ProcessUsers() {
 		countDuplicate := 0
 		countSkipped := 0
 
-		var globalUserList *Users = &Users{}
+		globalUserList := &Users{}
 
 		for _, team := range *t {
 			for _, user := range *team.Users {

@@ -25,7 +25,7 @@ func setAuthData(c *client.TransportConfig) error {
 	switch config.Instance.Grafana.AuthType {
 	// Handle token auth
 	case configtypes.GrafanaAuthTypeToken:
-		var token string = ""
+		token := ""
 
 		// First fetch from OS env
 		token = os.Getenv(configtypes.GrafanaTokenAuthVariable)
@@ -48,8 +48,8 @@ func setAuthData(c *client.TransportConfig) error {
 		}
 	// Handle basic auth
 	case configtypes.GrafanaAuthTypeBasicAuth:
-		var username string = ""
-		var password string = ""
+		username := ""
+		password := ""
 
 		// First fetch from OS env
 		username = os.Getenv(configtypes.GrafanaBasicAuthUsernameVariable)

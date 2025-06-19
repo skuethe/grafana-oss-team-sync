@@ -39,9 +39,13 @@ func TestLoadEnvironmentVariables(t *testing.T) {
 
 			k := koanf.New(".")
 			os.Clearenv()
-			os.Setenv(test.variable, test.input)
+			if err := os.Setenv(test.variable, test.input); err != nil {
+				t.Fatal("could not set required environment variables", "variable", test.variable, "input", test.input, "error", err)
+			}
 
-			loadEnvironmentVariables(k)
+			if err := loadEnvironmentVariables(k); err != nil {
+				t.Fatal("could not load environment variables into config. Error:", err)
+			}
 
 			if output := k.String(test.path); output != test.expected {
 				t.Errorf("got %q, wanted %q", output, test.expected)
@@ -83,7 +87,9 @@ func TestLoadCLIParameter(t *testing.T) {
 			fs := pflag.NewFlagSet("grafana-oss-team-sync", pflag.ExitOnError)
 			fs.String(test.flag, test.input, "")
 
-			loadCLIParameter(k, fs)
+			if err := loadCLIParameter(k, fs); err != nil {
+				t.Fatal("could not load CLI input into config", "error", err)
+			}
 
 			if output := k.String(test.path); output != test.expected {
 				t.Errorf("got %q, wanted %q", output, test.expected)

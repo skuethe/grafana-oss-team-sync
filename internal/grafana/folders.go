@@ -61,7 +61,7 @@ func (f *Folder) manageFolderPermissions(permissions configtypes.FolderPermissio
 			continue
 		}
 
-		var permissionType models.PermissionType = models.PermissionType(teamPermission)
+		permissionType := models.PermissionType(teamPermission)
 
 		permissionList = append(permissionList, &models.DashboardACLUpdateItem{
 			Permission: permissionType,

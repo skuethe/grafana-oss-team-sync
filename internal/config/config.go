@@ -52,9 +52,9 @@ func loadYAMLFile(k *koanf.Koanf) error {
 	return nil
 }
 
-func loadEnvironmentVariables(k *koanf.Koanf) {
-	k.Load(env.ProviderWithValue("GOTS_", ".", func(k string, v string) (string, any) {
-		key := strings.Replace(strings.ToLower(strings.TrimPrefix(k, "GOTS_")), "_", ".", -1)
+func loadEnvironmentVariables(k *koanf.Koanf) error {
+	return k.Load(env.ProviderWithValue("GOTS_", ".", func(k string, v string) (string, any) {
+		key := strings.ReplaceAll(strings.ToLower(strings.TrimPrefix(k, "GOTS_")), "_", ".")
 
 		switch key {
 		// Grafana flags - return full parameter, to map it to the config object
@@ -92,8 +92,8 @@ func loadEnvironmentVariables(k *koanf.Koanf) {
 	}), nil)
 }
 
-func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) {
-	k.Load(posflag.ProviderWithFlag(fs, ".", k, func(f *pflag.Flag) (string, any) {
+func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) error {
+	return k.Load(posflag.ProviderWithFlag(fs, ".", k, func(f *pflag.Flag) (string, any) {
 		key := f.Name
 		val := posflag.FlagVal(fs, f)
 
@@ -136,8 +136,12 @@ func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) {
 func loadOptionalAuthFile(k *koanf.Koanf) {
 	authfile := k.String(configtypes.AuthFileParameter)
 	if authfile != "" {
-		godotenv.Load(authfile)
-		loadEnvironmentVariables(k)
+		if err := godotenv.Load(authfile); err != nil {
+			slog.Warn("could not load authfile content to environment variables")
+		}
+		if err := loadEnvironmentVariables(k); err != nil {
+			slog.Warn("could not load environment variables")
+		}
 	}
 }
 
@@ -146,7 +150,9 @@ func Load() {
 	configLog.Info("loading config")
 
 	// Handle .env files
-	godotenv.Load()
+	if err := godotenv.Load(); err != nil {
+		configLog.Warn("could not load .env file")
+	}
 
 	// Global koanf instance for input handling
 	var k = koanf.New(".")
@@ -155,15 +161,18 @@ func Load() {
 	if err := loadYAMLFile(k); err != nil {
 		configLog.Error("could not load config file")
 		panic(err)
-
 	}
 
 	// Load env vars and merge (override) config
-	loadEnvironmentVariables(k)
+	if err := loadEnvironmentVariables(k); err != nil {
+		configLog.Warn("could not load environment variables")
+	}
 
 	// Load flags and merge (override) config
 	// This will also load default values specified in the flags package
-	loadCLIParameter(k, flags.Instance)
+	if err := loadCLIParameter(k, flags.Instance); err != nil {
+		configLog.Warn("could not load CLI input")
+	}
 
 	// Load optional authfile as config and environment variables
 	loadOptionalAuthFile(k)

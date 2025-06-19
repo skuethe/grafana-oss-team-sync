@@ -14,7 +14,7 @@ func CallPlugin() *grafana.Teams {
 	pluginLog := slog.With(slog.String("package", "sources"))
 
 	var instance *sourcetypes.SourcePlugin
-	var grafanaTeamList *grafana.Teams = &grafana.Teams{}
+	grafanaTeamList := &grafana.Teams{}
 
 	if len(config.Instance.Teams) == 0 {
 		pluginLog.Info("your team input is empty, skipping")

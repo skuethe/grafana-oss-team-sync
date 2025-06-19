@@ -2,6 +2,7 @@ package flags
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
@@ -67,7 +68,9 @@ func Load() {
 	Instance.BoolVarP(&Help, configtypes.HelpParameter, configtypes.HelpFlagShort, configtypes.HelpDefault, configtypes.HelpFlagHelp)
 
 	// Parse cli input
-	Instance.Parse(os.Args[1:])
+	if err := Instance.Parse(os.Args[1:]); err != nil {
+		slog.Warn("could not parse CLI arguments")
+	}
 
 	// Handle help printing
 	if Help {

@@ -8,3 +8,17 @@ services:
      - '3000:3000'
     # volumes:
     #   - '$PWD/data:/var/lib/grafana'
+
+  devproxy:
+    image: ghcr.io/dotnet/dev-proxy:0.28.0
+    container_name: devproxy
+    # restart: unless-stopped
+    ports:
+    - '8000:8000'
+    - '8897:8897'
+    command:
+    - '--config-file'
+    - '/config/msgraph-rc.json'
+    volumes:
+      - '../development:/config:ro'
+      # - '$PWD/cert:/home/devproxy/.config/dev-proxy/rootCert'

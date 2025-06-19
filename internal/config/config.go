@@ -183,6 +183,13 @@ func Load() {
 		panic(err)
 	}
 
+	// Output feature configuration if non-defaults set
+	configLog.Info("feature status",
+		slog.Bool(configtypes.FeaturesDisableFoldersOptimized, Instance.Features.DisableFolders),
+		slog.Bool(configtypes.FeaturesDisableUsersOptimized, Instance.Features.DisableUserSync),
+		slog.Bool(configtypes.FeaturesAddLocalAdminToTeamsOptimized, Instance.Features.AddLocalAdminToTeams),
+	)
+
 	// Validate Grafana authtype input
 	if err := Instance.ValdidateGrafanaAuthType(); err != nil {
 		configLog.Error("error validating Grafana authtype input")

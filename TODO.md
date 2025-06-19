@@ -15,9 +15,6 @@
         - https://docs.renovatebot.com/presets-group/#groupgoopenapi
         - 
 
-- main
-    - print "features" on startup, if they are NOT set to default
-
 
 - tests
     - write _test files

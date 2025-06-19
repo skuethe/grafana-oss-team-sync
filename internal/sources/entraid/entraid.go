@@ -24,8 +24,7 @@ func New() *sourcetypes.SourcePlugin {
 		panic(err)
 	}
 
-	client, err := graph.NewGraphServiceClientWithCredentials(
-		credential, []string{"https://graph.microsoft.com/.default"})
+	client, err := graph.NewGraphServiceClientWithCredentials(credential, []string{"https://graph.microsoft.com/.default"})
 	if err != nil {
 		entraidLog.Error("unable to create msgraph client")
 		panic(err)

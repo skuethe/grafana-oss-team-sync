@@ -35,9 +35,8 @@ func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) 
 
 		groupLog := slog.With(
 			slog.Group("group",
-				slog.String("id", groupId),
 				slog.String("displayname", groupDisplayName),
-				slog.String("mail", mail),
+				slog.String("id", groupId),
 			),
 		)
 		groupLog.Info("found EntraID group")
@@ -138,7 +137,7 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 	}
 
 	groupsLog.Info("finished processing EntraID groups",
-		slog.Group("stats",
+		slog.Group("groups",
 			slog.Int64("found", *countFound),
 			slog.Int("skipped", len(config.Instance.Teams)),
 		),

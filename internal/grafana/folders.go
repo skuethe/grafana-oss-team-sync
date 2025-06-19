@@ -108,7 +108,7 @@ func (g *GrafanaInstance) ProcessFolders() {
 
 			if f.doesFolderExist() {
 				countSkipped++
-				folderLog.Debug("skipping Grafana folder because it already exists")
+				folderLog.Debug("skipping already existing Grafana folder")
 			} else {
 				if err := f.createFolder(); err != nil {
 					folderLog.Error("could not create Grafana folder",
@@ -130,9 +130,9 @@ func (g *GrafanaInstance) ProcessFolders() {
 		}
 
 		foldersLog.Info("finished processing Grafana folders",
-			slog.Group("stats",
+			slog.Group("folders",
 				slog.Int("created", countCreated),
-				slog.Int("skipped", countSkipped),
+				slog.Int("existing", countSkipped),
 			),
 		)
 	}

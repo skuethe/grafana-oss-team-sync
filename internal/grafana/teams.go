@@ -108,7 +108,7 @@ func (t *Teams) ProcessTeams() {
 			} else {
 				if exists {
 					countSkipped++
-					teamLog.Debug("skipped team")
+					teamLog.Debug("skipping already existing team")
 				} else {
 					err := team.createTeam()
 					if err != nil {
@@ -141,9 +141,9 @@ func (t *Teams) ProcessTeams() {
 		}
 
 		teamsLog.Info("finished processing teams",
-			slog.Group("stats",
+			slog.Group("teams",
 				slog.Int("created", countCreated),
-				slog.Int("skipped", countSkipped),
+				slog.Int("existing", countSkipped),
 			),
 		)
 	}

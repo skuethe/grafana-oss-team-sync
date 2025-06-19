@@ -130,8 +130,8 @@ func (g *groups) ProcessUsers(groupID *string) *grafana.Users {
 		}
 
 		usersLog.Info("finished processing EntraID users for group",
-			slog.Group("stats",
-				slog.Int64("gound", *countFound),
+			slog.Group("users",
+				slog.Int64("found", *countFound),
 			),
 		)
 		return u.grafanaUsers

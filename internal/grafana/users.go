@@ -112,9 +112,9 @@ func (t *Teams) ProcessUsers() {
 		}
 
 		usersLog.Info("finished processing users",
-			slog.Group("stats",
+			slog.Group("users",
 				slog.Int("created", countCreated),
-				slog.Int("skipped", countSkipped),
+				slog.Int("existing", countSkipped),
 			),
 		)
 	}

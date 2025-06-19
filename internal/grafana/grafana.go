@@ -126,7 +126,7 @@ func New() {
 		grafanaLog.Error("could not fetch Grafana Org from specified auth")
 		panic(err)
 	} else {
-		grafanaLog.Info("got Grafana Org",
+		grafanaLog.Info("successfully authenticated against Grafana",
 			slog.Group("org",
 				slog.Int64("id", currentOrg.Payload.ID),
 				slog.String("name", currentOrg.Payload.Name),

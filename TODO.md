@@ -64,9 +64,6 @@
 
 - logging
     - use "-v" / "--verbose" flag for debugging?
-    - make detailed results from entraid all "DEBUG"
-    - make "skipped" results from Grafana "DEBUG"
-    - make "created" results from Grafana "INFO"
     - Use OpenTelemetry standards / go libs?
 
 

@@ -52,6 +52,11 @@
             - container: https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/use-dev-proxy-in-docker-container
             - ci/cd:     https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/use-dev-proxy-in-ci-cd-overview
 
+        - mock data
+            - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/mock-responses#configure-dev-proxy-to-use-the-mock-responses
+            - generator: https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/technical-reference/mockgeneratorplugin
+
+
     - modify graph sdk via kiota and verify if that gives us a smaller package size
         -> https://learn.microsoft.com/en-gb/graph/sdks/customize-client?tabs=go
         -> https://stackoverflow.com/questions/78355878/how-to-disable-backingstore-and-dirty-tracking-in-graph-beta-sdk-for-java

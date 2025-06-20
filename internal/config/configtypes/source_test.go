@@ -1,6 +1,7 @@
 package configtypes
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -59,12 +60,12 @@ func TestValidateSourcePlugin(t *testing.T) {
 
 	var tests = []addTest{
 		{"existing source", Config{Source: SourcePluginEntraID}, nil},
-		// {"non-existing source", Config{Source: Source("invalid")}, errors.New("invalid source plugin defined: invalid")},
+		{"non-existing source", Config{Source: Source("invalid")}, ErrInvalidSourcePlugin},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			if output := test.input.ValdidateSourcePlugin(); output != test.expected {
+			if output := test.input.ValdidateSourcePlugin(); !errors.Is(output, test.expected) {
 				t.Errorf("got %v, wanted %v", output, test.expected)
 			}
 		})

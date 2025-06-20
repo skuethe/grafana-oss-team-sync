@@ -2,6 +2,7 @@ package configtypes
 
 import (
 	"errors"
+	"fmt"
 )
 
 type Source string
@@ -16,6 +17,10 @@ const (
 	SourcePluginEntraID Source = "entraid"
 )
 
+var (
+	ErrInvalidSourcePlugin = errors.New("invalid source plugin defined")
+)
+
 func (s Source) String() string {
 	return string(s)
 }
@@ -26,7 +31,7 @@ func (c *Config) ValdidateSourcePlugin() error {
 		return nil
 	}
 
-	return errors.New("invalid source plugin defined: " + c.Source.String())
+	return fmt.Errorf("%w: %q", ErrInvalidSourcePlugin, c.Source.String())
 }
 
 func (c *Config) GetSource() Source {

@@ -2,6 +2,7 @@ package grafana
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/url"
 	"os"
@@ -18,7 +19,14 @@ type GrafanaInstance struct {
 	api *client.GrafanaHTTPAPI
 }
 
-var Instance *GrafanaInstance
+var (
+	Instance *GrafanaInstance
+
+	ErrAuthTokenMissing         = errors.New("token auth specified, but token is missing")
+	ErrAuthBasicUsernameMissing = errors.New("basic auth specified, but username is missing")
+	ErrAuthBasicPasswordMissing = errors.New("basic auth specified, but password is missing")
+	ErrAuthUnsupported          = errors.New("unsupported authentication type defined")
+)
 
 // We are explicitly handling auth data here, because we do not want to add it to our global config.Instance
 func setAuthData(c *client.TransportConfig) error {
@@ -37,7 +45,7 @@ func setAuthData(c *client.TransportConfig) error {
 
 		// Return error if token not defined
 		if token == "" {
-			return errors.New("token auth specified, but token is missing")
+			return ErrAuthTokenMissing
 		}
 
 		// APIKey is an API key (deprecated) or service account token
@@ -65,10 +73,10 @@ func setAuthData(c *client.TransportConfig) error {
 
 		// Return error if token not defined
 		if username == "" {
-			return errors.New("basic auth specified, but username is missing")
+			return ErrAuthBasicUsernameMissing
 		}
 		if password == "" {
-			return errors.New("basic auth specified, but password is missing")
+			return ErrAuthBasicPasswordMissing
 		}
 
 		// BasicAuth is basic auth credentials.
@@ -76,7 +84,7 @@ func setAuthData(c *client.TransportConfig) error {
 
 	// Something went wrong, this should not happen...
 	default:
-		return errors.New("unsupported authentication type defined")
+		return fmt.Errorf("%w: %q", ErrAuthUnsupported, config.Instance.Grafana.AuthType)
 	}
 
 	return nil

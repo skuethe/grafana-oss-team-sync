@@ -3,6 +3,7 @@ package configtypes
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type Grafana struct {
@@ -81,6 +82,12 @@ const (
 	GrafanaPermissionAdmin
 )
 
+var (
+	ErrInvalidPermission       = errors.New("invalid permission defined")
+	ErrInvalidAuthType         = errors.New("invalid authtype defined")
+	ErrInvalidConnectionScheme = errors.New("invalid connection scheme defined")
+)
+
 func ValidateGrafanaPermission(in GrafanaPermission) error {
 	switch in {
 	case GrafanaPermissionViewer:
@@ -91,7 +98,7 @@ func ValidateGrafanaPermission(in GrafanaPermission) error {
 		return nil
 	}
 
-	return errors.New("invalid permission defined: " + fmt.Sprint(in))
+	return fmt.Errorf("%w: %d", ErrInvalidPermission, in)
 }
 
 func (c *Config) ValdidateGrafanaAuthType() error {
@@ -102,16 +109,16 @@ func (c *Config) ValdidateGrafanaAuthType() error {
 		return nil
 	}
 
-	return errors.New("invalid authtype defined: " + c.Grafana.AuthType)
+	return fmt.Errorf("%w: %q", ErrInvalidAuthType, c.Grafana.AuthType)
 }
 
 func (c *Config) ValdidateGrafanaScheme() error {
-	switch c.Grafana.Connection.Scheme {
+	switch strings.ToLower(c.Grafana.Connection.Scheme) {
 	case GrafanaConnectionSchemeAllowedHTTP:
 		return nil
 	case GrafanaConnectionSchemeAllowedHTTPS:
 		return nil
 	}
 
-	return errors.New("invalid connection scheme defined: " + c.Grafana.Connection.Scheme)
+	return fmt.Errorf("%w: %q", ErrInvalidConnectionScheme, c.Grafana.Connection.Scheme)
 }

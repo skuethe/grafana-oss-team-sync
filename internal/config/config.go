@@ -18,7 +18,11 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var Instance *configtypes.Config
+var (
+	Instance *configtypes.Config
+
+	ErrNoConfigFileDefined = errors.New("no config file defined")
+)
 
 func getConfigFilePath() (*string, error) {
 	var config string
@@ -32,7 +36,7 @@ func getConfigFilePath() (*string, error) {
 	}
 
 	if config == "" {
-		return nil, errors.New("no config file defined")
+		return nil, ErrNoConfigFileDefined
 	}
 
 	return &config, nil

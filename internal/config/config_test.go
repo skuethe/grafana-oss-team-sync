@@ -143,6 +143,8 @@ func TestLoadCLIParameter(t *testing.T) {
 
 func TestLoadOptionalAuthFile(t *testing.T) {
 
+	// TODO: need to somehow load file content.. mock file from repo? or fake file generated during test?
+
 	type addTest struct {
 		name                    string
 		inputauthfileconfigpath string
@@ -155,7 +157,12 @@ func TestLoadOptionalAuthFile(t *testing.T) {
 	}
 
 	var tests = []addTest{
-		{"empty authfile", configtypes.AuthFileParameter, "", "", "GOTS_TEST", "", "test", ""},
+		{"no authfile set", configtypes.AuthFileParameter, "", "", "GOTS_TEST", "", "test", ""},
+		{"authfile set but file does not exist", configtypes.AuthFileParameter, "doesnotexist.env", "", "GOTS_TEST", "", "test", ""},
+		{"authfile set with empty content", configtypes.AuthFileParameter, "authfile.env", "", "GOTS_TEST", "", "test", ""},
+		// {"authfile set with content", configtypes.AuthFileParameter, "authfile.env", "GOTS_TEST=valid", "GO_TEST", "valid", "test", "valid"},
+		// {"authfile set with content authfile via string input", "authfile", "authfile.env", "GOTS_TEST=valid", "GO_TEST", "valid", "test", "valid"},
+		{"wrong authfile reference set with content", "authFile", "authfile.env", "GOTS_TEST=invalid", "GO_TEST", "", "test", ""},
 	}
 
 	for _, test := range tests {
@@ -181,6 +188,13 @@ func TestLoadOptionalAuthFile(t *testing.T) {
 				}
 				if outputconfigset := k.Exists(test.expectedconfigpath); outputconfigset {
 					t.Errorf("no authfile set, but config path still present: %v", k.String(test.expectedconfigpath))
+				}
+			} else {
+				if outputvar := os.Getenv(test.expectedenvvar); outputvar != test.expectedenvcontent {
+					t.Errorf("wrong env var - got: %v; wanted: %v", outputvar, test.expectedenvcontent)
+				}
+				if outputconfig := k.String(test.expectedconfigpath); outputconfig != test.expectedconfigcontent {
+					t.Errorf("wrong config - got: %v; wanted: %v", outputconfig, test.expectedconfigcontent)
 				}
 			}
 

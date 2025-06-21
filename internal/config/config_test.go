@@ -1,12 +1,54 @@
 package config
 
 import (
+	"errors"
 	"os"
 	"testing"
 
 	"github.com/knadh/koanf/v2"
+	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
+	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
 	"github.com/spf13/pflag"
 )
+
+func TestGetConfigFilePath(t *testing.T) {
+
+	type addTest struct {
+		name         string
+		inputenv     string
+		inputflag    string
+		expectedpath string
+		expectederr  error
+	}
+
+	var tests = []addTest{
+		{"config via env var", "config.yaml", "", "config.yaml", nil},
+		{"config via flag", "", "config.yaml", "config.yaml", nil},
+		{"override config from env via flag", "config.yaml", "config2.yaml", "config2.yaml", nil},
+		{"no config", "", "", "config.yaml", ErrNoConfigFileDefined},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			os.Clearenv()
+			if err := os.Setenv(configtypes.ConfigVariable, test.inputenv); err != nil {
+				t.Fatal("could not set required environment variables", "variable", configtypes.ConfigVariable, "input", test.inputenv, "error", err)
+			}
+
+			flags.Config = test.inputflag
+
+			outputpath, outputerr := getConfigFilePath()
+			if !errors.Is(outputerr, test.expectederr) {
+				t.Errorf("got error: %v, wanted error: %v", outputerr, test.expectederr)
+			}
+			if outputpath != nil && *outputpath != test.expectedpath {
+				t.Errorf("got path: %q, wanted path: %q", *outputpath, test.expectedpath)
+			}
+		})
+	}
+
+}
 
 func TestLoadEnvironmentVariables(t *testing.T) {
 

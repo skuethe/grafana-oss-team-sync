@@ -20,5 +20,5 @@ services:
     - '--config-file'
     - '/config/msgraph-rc.json'
     volumes:
-      - '../development:/config:ro'
+      - '../test/devproxy:/config:ro'
       # - '$PWD/cert:/home/devproxy/.config/dev-proxy/rootCert'

@@ -6,6 +6,7 @@ set -eo pipefail
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 ROOT_DIR="${SCRIPT_DIR}/../"
+DEPLOY_DIR="${ROOT_DIR}/deploy/"
 
 GOLANGCI_LINT="v2.1.6"
 
@@ -44,13 +45,13 @@ requireCommand "podman-compose"
 
 case "${1}" in
   "start")
-    cd ${SCRIPT_DIR} && podman compose up -d
+    cd ${DEPLOY_DIR} && podman compose up -d
     ;;
   "stop")
-    cd ${SCRIPT_DIR} && podman compose down
+    cd ${DEPLOY_DIR} && podman compose down
     ;;
   "logs")
-    cd ${SCRIPT_DIR} && podman compose logs -f
+    cd ${DEPLOY_DIR} && podman compose logs -f
     ;;
   "lint")
     cd ${ROOT_DIR} && podman run --rm -v $(pwd):/app:ro -w /app docker.io/golangci/golangci-lint:${GOLANGCI_LINT} golangci-lint run

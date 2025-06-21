@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    # run only against tags
+    # run only against release tags
     tags:
       - "v*"
 
@@ -31,6 +31,6 @@ jobs:
         with:
           # renovate: github=goreleaser/goreleaser
           version: "~> v2"
-          args: release --clean
+          args: release --clean --config ./build/ci/.goreleaser.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

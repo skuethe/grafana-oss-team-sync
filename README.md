@@ -194,7 +194,7 @@ If you want to build the project yourself, do the following
   ```
 3. Create the container image (adapt to your preferred tool for creating images)
   ```shell
-  podman build -t localhost/grafana-oss-team-sync:dev -f Dockerfile  .
+  podman build -t localhost/grafana-oss-team-sync:dev -f build/package/Dockerfile  .
   ```
 
 <p align="right">( <a href="#top">Back to top</a> )</p>

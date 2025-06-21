@@ -170,9 +170,12 @@ func TestLoadOptionalAuthFile(t *testing.T) {
 
 			// Setup koanf instance
 			k := koanf.New(".")
-			k.Load(confmap.Provider(map[string]interface{}{
+			err := k.Load(confmap.Provider(map[string]interface{}{
 				test.inputauthfileconfigpath: test.inputauthfilename,
 			}, "."), nil)
+			if err != nil {
+				t.Fatal("could not load test data into koanf instance", "error", err)
+			}
 
 			// Clear OS env's
 			os.Clearenv()

@@ -53,7 +53,7 @@ case "${1}" in
     cd ${SCRIPT_DIR} && podman compose logs -f
     ;;
   "lint")
-    cd ${ROOT_DIR} && podman run --rm -v $(pwd):/app -w /app docker.io/golangci/golangci-lint:${GOLANGCI_LINT} golangci-lint run
+    cd ${ROOT_DIR} && podman run --rm -v $(pwd):/app:ro -w /app docker.io/golangci/golangci-lint:${GOLANGCI_LINT} golangci-lint run
     ;;
   *)
     usage

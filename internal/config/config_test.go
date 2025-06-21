@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/v2"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
@@ -136,6 +137,56 @@ func TestLoadCLIParameter(t *testing.T) {
 			if output := k.String(test.path); output != test.expected {
 				t.Errorf("got %q, wanted %q", output, test.expected)
 			}
+		})
+	}
+}
+
+func TestLoadOptionalAuthFile(t *testing.T) {
+
+	type addTest struct {
+		name                    string
+		inputauthfileconfigpath string
+		inputauthfilename       string
+		inputauthfilecontent    string
+		expectedenvvar          string
+		expectedenvcontent      string
+		expectedconfigpath      string
+		expectedconfigcontent   string
+	}
+
+	var tests = []addTest{
+		{"empty authfile", configtypes.AuthFileParameter, "", "", "GOTS_TEST", "", "test", ""},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			// Setup koanf instance
+			k := koanf.New(".")
+			k.Load(confmap.Provider(map[string]interface{}{
+				test.inputauthfileconfigpath: test.inputauthfilename,
+			}, "."), nil)
+
+			// Clear OS env's
+			os.Clearenv()
+
+			// Call func
+			loadOptionalAuthFile(k)
+
+			// Validate output
+			if test.inputauthfilename == "" {
+				// we did not specify an authfile -> env var and configpath should not be set
+				if _, outputvarset := os.LookupEnv(test.expectedenvvar); outputvarset {
+					t.Errorf("no authfile set, but env var still present: %v", os.Getenv(test.expectedenvvar))
+				}
+				if outputconfigset := k.Exists(test.expectedconfigpath); outputconfigset {
+					t.Errorf("no authfile set, but config path still present: %v", k.String(test.expectedconfigpath))
+				}
+			}
+
+			// if output := k.String(test.path); output != test.expected {
+			// 	t.Errorf("got %q, wanted %q", output, test.expected)
+			// }
 		})
 	}
 }

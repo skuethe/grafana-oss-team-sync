@@ -49,6 +49,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <li><a href="#opinionated-behaviour">Opinionated Behaviour</a></li>
     <li><a href="#build-it-yourself">Build It Yourself</a></li>
     <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#versioning">Versioning</a></li>
     <li><a href="#license">License</a></li>
   </ul>
 </details>
@@ -220,10 +221,21 @@ See [`CONTRIBUTING`](CONTRIBUTING.md) for more information.
 
 
 
+<!-- VERSIONING -->
+## Versioning
+
+This projects uses [Semantic Versioning ("SemVer")][semver] for releases.  
+All avialable versions can be found on the [releases page][githubreleases].
+
+<p align="right">( <a href="#top">Back to top</a> )</p>
+
+
+
 <!-- LICENSE -->
 ## License
 
-Distributed under the `GNU General Public License v3.0 ("GPL-3.0")`.
+Distributed under the `GNU General Public License v3.0 or later ("GPL-3.0-or-later")`.  
+This project adheres to the [`SPDX®` open standard][spdxopenstandard]. It is also [`REUSE`-compliant][reusecompliant]
 
 See [`LICENSE`](LICENSE.md) for more information.
 
@@ -240,3 +252,7 @@ See [`LICENSE`](LICENSE.md) for more information.
 [newbulkendpoint]:      <https://github.com/grafana/grafana/pull/87441> "Team: Add an endpoint for bulk team membership updates"
 [requirebasicauth]:     <https://grafana.com/docs/grafana/latest/developers/http_api/admin/> "Admin API"
 [setupssoauth]:         <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/> "Configure authentication"
+[semver]:               <https://semver.org/> "Semantic Versioning"
+[githubreleases]:       <https://github.com/skuethe/grafana-oss-team-sync/releases> "Releases"
+[spdxopenstandard]:     <https://spdx.dev> "The System Package Data Exchange™"
+[reusecompliant]:       <https://reuse.software/> "REUSE SOFTWARE - an initiative by the Free Software Foundation Europe"

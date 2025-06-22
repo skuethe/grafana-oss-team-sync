@@ -22,6 +22,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
         - https://docs.renovatebot.com/presets-group/#groupgoopenapi
         -
 
+- CI
+    - add service container for devproxy which runs integration tests on PRs
+
 
 - tests
     - write _test files
@@ -33,6 +36,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
             -> move "config -> k.unmarschal" into own func and write test for "minimal" and "full" supported config
     - integration / end2end tests
         - run against multiple Grafana versions in CI
+        - how to mark tests as integration tests?
     - add mock data to test against grafana (teams, users, folders)
         -> allow mock to be used as source?
 

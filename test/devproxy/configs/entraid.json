@@ -10,10 +10,11 @@
     }
   ],
   "urlsToWatch": [
-    "https://graph.microsoft.com/v1.0/*"
+    "https://graph.microsoft.com/v1.0/*",
+    "https://login.microsoftonline.com/*"
   ],
   "mockResponsePlugin": {
     "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v0.28.0/mockresponseplugin.schema.json",
-    "mocksFile": "msgraph-v1_0-mockresponse.json"
+    "mocksFile": "entraid-mocks.json"
   }
 }

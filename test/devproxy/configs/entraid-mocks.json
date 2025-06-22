@@ -1,0 +1,252 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v0.28.0/mockresponseplugin.mocksfile.schema.json",
+  "mocks": [
+    {
+      "request": {
+        "url": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https%3A%2F%2Flogin.microsoftonline.com%2F00000000-0000-0000-0000-000000000000%2Foauth2%2Fv2.0%2Fauthorize",
+        "method": "GET"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "tenant_discovery_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+          "api-version": "1.1",
+          "metadata": []
+        },
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "url": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration?",
+        "method": "GET"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+          "token_endpoint_auth_methods_supported": [
+            "client_secret_post",
+            "private_key_jwt",
+            "client_secret_basic"
+          ],
+          "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+          "response_modes_supported": [
+            "query",
+            "fragment",
+            "form_post"
+          ],
+          "subject_types_supported": [
+            "pairwise"
+          ],
+          "id_token_signing_alg_values_supported": [
+            "RS256"
+          ],
+          "response_types_supported": [
+            "code",
+            "id_token",
+            "code id_token",
+            "id_token token"
+          ],
+          "scopes_supported": [
+            "openid",
+            "profile",
+            "email",
+            "offline_access"
+          ],
+          "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+          "request_uri_parameter_supported": false,
+          "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+          "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+          "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+          "http_logout_supported": true,
+          "frontchannel_logout_supported": true,
+          "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+          "claims_supported": [
+            "sub",
+            "iss",
+            "cloud_instance_name",
+            "cloud_instance_host_name",
+            "cloud_graph_host_name",
+            "msgraph_host",
+            "aud",
+            "exp",
+            "iat",
+            "auth_time",
+            "acr",
+            "nonce",
+            "preferred_username",
+            "name",
+            "tid",
+            "ver",
+            "at_hash",
+            "c_hash",
+            "email"
+          ],
+          "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+          "tenant_region_scope": "EU",
+          "cloud_instance_name": "microsoftonline.com",
+          "cloud_graph_host_name": "graph.windows.net",
+          "msgraph_host": "graph.microsoft.com",
+          "rbac_url": "https://pas.windows.net"
+        },
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "url": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "method": "POST"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "token_type": "Bearer",
+          "expires_in": 86399,
+          "ext_expires_in": 86399,
+          "refresh_in": 43199,
+          "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.NHVaYe26MbtOYhSKkoKYdFVomg4i8ZJd8_-RU8VNbftc4TSMb4bXP3l3YlNWACwyXPGffz5aXHc6lty1Y2t4SWRqGteragsVdZufDn5BlnJl9pdR_kdVFUsra2rWKEofkZeIC4yWytE58sMIihvo9H1ScmmVwBcQP6XETqYd0aSHp1gOa9RdUPDvoXQ5oqygTqVtxaDr6wUFKrKItgBMzWIdNZ6y7O9E0DhEPTbE9rfBo6KTFsHAZnMg4k68CDp2woYIaXbmYTWcvbzIuHO7_37GT79XdIwkm95QJ7hYC9RiwrV7mesbY4PAahERJawntho0my942XheVLmGwLMBkQ"
+        },
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "url": "https://graph.microsoft.com/v1.0/groups?$count=true\u0026$filter=displayName%20in%20%28%27group-mock-1%27%2C%20%27group-mock-2%27%2C%20%27group-mock-3%27%29\u0026$select=id,displayName,mail",
+        "method": "GET"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#groups(id,displayName,mail)",
+          "@odata.count": 3,
+          "value": [
+            {
+              "id": "33333333-3333-3333-3333-333333333333",
+              "displayName": "group-mock-3",
+              "mail": null
+            },
+            {
+              "id": "22222222-2222-2222-2222-222222222222",
+              "displayName": "group-mock-2",
+              "mail": null
+            },
+            {
+              "id": "11111111-1111-1111-1111-111111111111",
+              "displayName": "group-mock-1",
+              "mail": null
+            }
+          ]
+        },
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json;charset=utf-8"
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "url": "https://graph.microsoft.com/v1.0/groups/11111111-1111-1111-1111-111111111111/transitiveMembers/graph.user?$count=true\u0026$select=userPrincipalName,displayName,mail",
+        "method": "GET"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users(userPrincipalName,displayName,mail)",
+          "@odata.count": 3,
+          "value": [
+            {
+              "userPrincipalName": "user1@example.com",
+              "displayName": "User One",
+              "mail": "user1@example.com"
+            },
+            {
+              "userPrincipalName": "user2@example.com",
+              "displayName": "User Two",
+              "mail": "user2@example.com"
+            },
+            {
+              "userPrincipalName": "user3@example.com",
+              "displayName": "User Three",
+              "mail": null
+            }
+          ]
+        },
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json;charset=utf-8"
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "url": "https://graph.microsoft.com/v1.0/groups/22222222-2222-2222-2222-222222222222/transitiveMembers/graph.user?$count=true\u0026$select=userPrincipalName,displayName,mail",
+        "method": "GET"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users(userPrincipalName,displayName,mail)",
+          "@odata.count": 2,
+          "value": [
+            {
+              "userPrincipalName": "user1@example.com",
+              "displayName": "User One",
+              "mail": "user1@example.com"
+            },
+            {
+              "userPrincipalName": "user4@example.com",
+              "displayName": "User Four",
+              "mail": "user4@example.com"
+            }
+          ]
+        },
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json;charset=utf-8"
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "url": "https://graph.microsoft.com/v1.0/groups/33333333-3333-3333-3333-333333333333/transitiveMembers/graph.user?$count=true\u0026$select=userPrincipalName,displayName,mail",
+        "method": "GET"
+      },
+      "response": {
+        "statusCode": 200,
+        "body": {
+          "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users(userPrincipalName,displayName,mail)",
+          "@odata.count": 0,
+          "value": []
+        },
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json;charset=utf-8"
+          }
+        ]
+      }
+    }
+  ]
+}

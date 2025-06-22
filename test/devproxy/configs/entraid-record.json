@@ -9,12 +9,18 @@
       "pluginPath": "~appFolder/plugins/dev-proxy-plugins.dll"
     },
     {
+      "name": "MockGeneratorPlugin",
+      "enabled": true,
+      "pluginPath": "~appFolder/plugins/dev-proxy-plugins.dll"
+    },
+    {
       "name": "JsonReporter",
       "enabled": true,
       "pluginPath": "~appFolder/plugins/dev-proxy-plugins.dll"
     }
   ],
   "urlsToWatch": [
-    "https://jsonplaceholder.typicode.com/*"
+    "https://graph.microsoft.com/v1.0/*",
+    "https://login.microsoftonline.com/*"
   ]
 }

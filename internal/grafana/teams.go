@@ -4,6 +4,7 @@
 package grafana
 
 import (
+	"fmt"
 	"log/slog"
 	"strconv"
 
@@ -70,15 +71,23 @@ func (t *Team) addUsersToTeam() (*[]string, error) {
 	}
 
 	for _, user := range *t.Users {
+		if user.Email == "" {
+			slog.Warn("skipping user with no mail",
+				slog.Group("user",
+					slog.String("login", user.Login),
+					slog.String("name", user.Name),
+				),
+			)
+			continue
+		}
 		*teamMemberList = append(*teamMemberList, user.Email)
 	}
 
-	_, mErr := Instance.api.Teams.SetTeamMemberships(strconv.FormatInt(*teamID, 10), &models.SetTeamMembershipsCommand{
+	if _, err := Instance.api.Teams.SetTeamMemberships(strconv.FormatInt(*teamID, 10), &models.SetTeamMembershipsCommand{
 		Admins:  *adminMemberList,
 		Members: *teamMemberList,
-	})
-	if mErr != nil {
-		return nil, mErr
+	}); err != nil {
+		return nil, fmt.Errorf("%w. Inputs: %v; %v", err, *adminMemberList, *teamMemberList)
 	}
 
 	return teamMemberList, nil

@@ -42,6 +42,10 @@ func (u *users) processUserResult(result *models.UserCollectionResponseable) {
 				slog.String("mail", mail),
 			),
 		)
+		if userMail == nil {
+			userLog.Warn("user is missing the required email - skipping")
+			continue
+		}
 		userLog.Debug("found EntraID user")
 
 		*u.grafanaUsers = append(*u.grafanaUsers, grafana.User{

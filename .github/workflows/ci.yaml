@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
 name: CI
 on:
   push:
@@ -7,7 +11,6 @@ on:
     paths:
       - 'internal/**'
       - 'go.mod'
-      - 'go.sum'
 
 permissions:
   contents: read
@@ -15,7 +18,6 @@ permissions:
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -33,7 +35,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: build and test
-
     steps:
       - uses: actions/checkout@v4
 

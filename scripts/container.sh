@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 set -eo pipefail
 
 # VARIABLES
@@ -8,7 +11,10 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 ROOT_DIR="${SCRIPT_DIR}/../"
 DEPLOY_DIR="${ROOT_DIR}/deploy/"
 
-GOLANGCI_LINT="v2.1.6"
+# renovate: github=golangci/golangci-lint
+GOLANGCI_LINT_VERSION="v2.1.6"
+# renovate: github=fsfe/reuse-tool
+REUSE_VERSION="5.0.2"
 
 # HELPERS
 
@@ -33,6 +39,8 @@ function usage() {
   echo -e "\twill follow the logs of all containers of the compose stack"
   echo -e "\n  lint"
   echo -e "\twill run lint checks against the code"
+  echo -e "\n  licenses"
+  echo -e "\twill run reuse lint checks against the code"
   echo -e "\n"
 }
 
@@ -54,7 +62,10 @@ case "${1}" in
     cd ${DEPLOY_DIR} && podman compose logs -f
     ;;
   "lint")
-    cd ${ROOT_DIR} && podman run --rm -v $(pwd):/app:ro -w /app docker.io/golangci/golangci-lint:${GOLANGCI_LINT} golangci-lint run
+    cd ${ROOT_DIR} && podman run --rm -v $(pwd):/app:ro -w /app docker.io/golangci/golangci-lint:${GOLANGCI_LINT_VERSION} golangci-lint run
+    ;;
+  "licenses")
+    cd ${ROOT_DIR} && podman run --rm -v $(pwd):/data:ro docker.io/fsfe/reuse:${REUSE_VERSION} lint
     ;;
   *)
     usage

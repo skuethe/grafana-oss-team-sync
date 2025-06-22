@@ -1,0 +1,25 @@
+version = 1
+
+# License information on test files
+[[annotations]]
+path = "test/**"
+precedence = "closest"
+SPDX-FileCopyrightText = "2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# msgraph mocks with sandbox data
+[[annotations]]
+path = "test/devproxy/msgraph-v1_0-mockresponse.json"
+precedence = "closest"
+SPDX-FileCopyrightText = "2023 contributors to project Dev Proxy samples <https://github.com/pnp/proxy-samples>"
+SPDX-License-Identifier = "MIT"
+SPDX-FileComment = "https://github.com/pnp/proxy-samples/blob/main/samples/microsoft-graph-sandbox-mocks/graph-v1_0-proxy-mocks-sandbox.json"
+
+# Computer-generated files.
+[[annotations]]
+path = [
+    "go.mod",
+    "go.sum"
+]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "GPL-3.0-or-later"

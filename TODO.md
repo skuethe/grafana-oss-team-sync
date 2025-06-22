@@ -8,6 +8,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 - repo release
     - add golang specific github actions
         - ref: https://github.com/jkroepke/openvpn-auth-oauth2
+        - codecov/codecov-action
 
     - add badges
         - `https://goreportcard.com/`

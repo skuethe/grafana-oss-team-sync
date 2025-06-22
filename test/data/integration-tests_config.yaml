@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+loglevel: 99
+
+
+source: "entraid"
+
+
+authfile: "../../test/data/integration-tests_authfile.env"
+
+
+features:
+  disableFolders: false
+  disableUserSync: false
+  addLocalAdminToTeams: true
+
+
+grafana:
+  authtype: "basicauth"
+  connection:
+    scheme: "http"
+    host: "localhost:3000"
+    basepath: "/api"
+    retry: 10
+
+
+teams:
+  - group-integration-1
+  - group-integration-2
+  - group-integration-3
+
+
+folders:
+  folderintegration1:
+    title: "folder-integration-1"
+    description: "A folder to test things"
+    permissions:
+      teams:
+        group-integration-1: 4
+        group-integration-2: 1
+  folderintegration2:
+    title: "Folder-Integration-2"
+    description: "A second folder"
+    permissions:
+      teams:
+        group-integration-1: 1
+        group-integration-2: 4
+        group-integration-3: 2

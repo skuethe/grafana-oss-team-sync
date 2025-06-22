@@ -26,6 +26,10 @@ SPDX-License-Identifier: GPL-3.0-or-later
     - add service container for devproxy which runs integration tests on PRs
 
 
+- CONTRIBUTING.md
+    - add info about unit, integration and e2e tests
+
+
 - tests
     - write _test files
         - res:
@@ -34,9 +38,24 @@ SPDX-License-Identifier: GPL-3.0-or-later
         - cli flags
         - env flags
             -> move "config -> k.unmarschal" into own func and write test for "minimal" and "full" supported config
-    - integration / end2end tests
+
+    - unit
+        - "go test -v -coverprofile=c.out ./...
+        - _test.go header: "//go:build !integration && !e2e"
+
+    - integration test
+        - don't test source (entraid)
+        - send "grafana models" structs to grafana target
+        - run complete "Grafana" package in one go (so: teams, users and folders)
         - run against multiple Grafana versions in CI
-        - how to mark tests as integration tests?
+        - "go test -tags=integration  ./..."
+        - _test.go header: "//go:build e2e"
+
+    - end2end tests
+        - run entraid against devproxy
+        - "go test -tags=e2e  ./..."
+        - _test.go header: "//go:build integration"
+
     - add mock data to test against grafana (teams, users, folders)
         -> allow mock to be used as source?
 

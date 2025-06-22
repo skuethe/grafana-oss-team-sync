@@ -37,6 +37,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 
 - add README info
+    - reorg "configuration"
+        -> improve entraid docs
+
     - how to setup Grafana
         - "Azure AD" auth
             - minimum permissions required?

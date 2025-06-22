@@ -122,32 +122,34 @@ The following hirarchy is used when merging the different config sources, overri
 
 [^authfilehirarchy]: We are using [godotenv][godotenv], which will NOT override existing environment variables.  
 
-| Configuration                     | Config via                      | Description |
-|-----------------------------------|---------------------------------|-------------|
+| Configuration                     | Config via | Description |
+|-----------------------------------|------------|-------------|
 | Log level                         | **config.yaml**: `loglevel`<br>**flag**: `--loglevel` or `-l`<br>**env var**: `GOTS_LOGLEVEL` | Configure the log level<br><br>**Type**: `int`<br>**Allowed**: `0` (INFO), `1` (WARN), `2` (ERROR), `99` (DEBUG)<br>**Default**: `0` (INFO) |
 | Source plugin                     | **config.yaml**: `source`<br>**flag**: `--source` or `-s`<br>**env var**: `GOTS_SOURCE`       | Configure the source plugin you want to use<br><br>**Type**: `string`<br>**Allowed**: `entraid` |
 | Auth file                         | **config.yaml**: `authfile`<br>**flag**: `--authfile`<br>**env var**: `GOTS_AUTHFILE` | Configure an optional file to load authentication data from. File content needs to be in `.env` syntax (so `key=value` per line)<br><br>**Type**: `string` |
 | Feature: disable folder sync      | **config.yaml**: `features.disableFolders`<br>**flag**: `--disablefolders`<br>**env var**: `GOTS_DISABLEFOLDERS` | Control the folder sync feature<br><br>**Type**: `bool`<br>**Default**: `false` |
 | Feature: disable user sync        | **config.yaml**: `features.disableUserSync`<br>**flag**: `--disableusersync`<br>**env var**: `GOTS_DISABLEUSERSYNC` | Control the user sync feature<br><br>**Type**: `bool`<br>**Default**: `false` |
 | Feature: add local admin to teams | **config.yaml**: `features.addLocalAdminToTeams`<br>**flag**: `--addlocaladmintoteams`<br>**env var**: `GOTS_ADDLOCALADMINTOTEAMS` | Control adding Grafana local admin to each team<br><br>**Type**: `bool`<br>**Default**: `true` |
-| Grafana authentication            |                                 | |
-| - basic auth                      | **flag**: `--username` and `--password` or `-u` and `-p`<br>**env var**: `GOTS_USERNAME` and `GOTS_PASSWORD` | Set username and password for basic authentication to Grafana<br>**Type**: `string` |
-| - service account token           | **flag**: `--token` or `-t`<br>**env var**: `GOTS_TOKEN` | Set token for service account token auth to Grafana<br>**Type**: `string` |
-| Grafana connection                |                                 | |
-| - scheme                          | **config.yaml**: `grafana.connection.scheme`<br>**flag**: `--scheme`<br>**env var**: `GOTS_SCHEME` | Configure the scheme to use<br><br>**Type**: `string`<br>**Allowed**: `http`, `https`<br>**Default**: `http` |
-| - host                            | **config.yaml**: `grafana.connection.host`<br>**flag**: `--host` or `-h`<br>**env var**: `GOTS_HOST` | Configure the host to use<br>**Type**: `string`<br>**Default**: `localhost:3000` |
-| - base path                       | **config.yaml**: `grafana.connection.basepath`<br>**flag**: `--basepath`<br>**env var**: `GOTS_BASEPATH` | Configure the base path to use<br><br>**Type**: `string`<br>**Default**: `/api` |
-| - retry                           | **config.yaml**: `grafana.connection.retry`<br>**flag**: `--retry` or `-r`<br>**env var**: `GOTS_RETRY` | Configure the connection retry, waiting 2 seconds in between each.<br>Only used when the return status code equals `429` or `5xx`<br><br>**Type**: `int`<br>**Default**: `0` |
 | Team sync                         | **config.yaml**: `teams`<br>**flag**: `--teams` or `-t`<br>**env var**: `GOTS_TEAMS` | Configure the list of teams to sync<br><br>**Type**: `[]string` |
 | Folder sync                       | **config.yaml**: `folders` | Configure the list of folders to sync<br><br>**Type**: `[]interface` |
 
 <!-- CONFIGURATION - GRAFANA -->
 ### Grafana
 
-| Configuration | Requirements  |
-|---------------|---------------|
+| Requirements  | |
+|---------------|-|
 | Version       | `>= 11.1.0` [^grafanaversion]  |
 | Auth          | Using either one of the [available authentication options][availableauthoptions] `basic auth` or `service account token` [^grafanatokenauth] |
+
+
+| Configuration               | Config via                      | Description |
+|-----------------------------|---------------------------------|-------------|
+| Auth: Basic Auth            | **flag**: `--username` and `--password` or `-u` and `-p`<br>**env var**: `GOTS_USERNAME` and `GOTS_PASSWORD` | Set username and password for basic authentication to Grafana<br>**Type**: `string` |
+| Auth: Service Account Token | **flag**: `--token` or `-t`<br>**env var**: `GOTS_TOKEN` | Set token for service account token auth to Grafana<br>**Type**: `string` |
+| Connection: Scheme          | **config.yaml**: `grafana.connection.scheme`<br>**flag**: `--scheme`<br>**env var**: `GOTS_SCHEME` | Configure the scheme to use<br><br>**Type**: `string`<br>**Allowed**: `http`, `https`<br>**Default**: `http` |
+| Connection: Host            | **config.yaml**: `grafana.connection.host`<br>**flag**: `--host` or `-h`<br>**env var**: `GOTS_HOST` | Configure the host to use<br>**Type**: `string`<br>**Default**: `localhost:3000` |
+| Connection: Base Path       | **config.yaml**: `grafana.connection.basepath`<br>**flag**: `--basepath`<br>**env var**: `GOTS_BASEPATH` | Configure the base path to use<br><br>**Type**: `string`<br>**Default**: `/api` |
+| Connection: Retry           | **config.yaml**: `grafana.connection.retry`<br>**flag**: `--retry` or `-r`<br>**env var**: `GOTS_RETRY` | Configure the connection retry, waiting 2 seconds in between each.<br>Only used when the return status code equals `429` or `5xx`<br><br>**Type**: `int`<br>**Default**: `0` |
 
 [^grafanaversion]: Minimum Grafana version is `11.1.0` as it introduced [a new bulk team membership endpoint][newbulkendpoint] we are currently using.  
 [^grafanatokenauth]: Please note that `service account token` auth only works if you disable the `UserSync` feature, as creating new users in Grafana uses the Admin API, [which requires the usage of basic auth][requirebasicauth].
@@ -157,8 +159,8 @@ The following hirarchy is used when merging the different config sources, overri
 <!-- CONFIGURATION - ENTRAID -->
 ### Source: `entraid`
 
-| Configuration   | Requirements  |
-|-----------------|---------------|
+| Requirements    | |
+|-----------------|-|
 | Auth            | Using Azure app via env variables: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` |
 | App permissions | Minimum: `User.ReadBasic.All`, `GroupMember.Read.All` |
 

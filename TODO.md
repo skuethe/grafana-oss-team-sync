@@ -61,20 +61,20 @@ SPDX-License-Identifier: GPL-3.0-or-later
     - make Grafana team search case insensitive
 
 
-- logging
-    - use "-v" / "--verbose" flag for debugging?
-    - Use OpenTelemetry standards / go libs?
-
-
 - look into:
     - Go "data streams" aka channels?
     - Go contexts and their benefits
 
 
+
 - future features
-    - allow folder permissions to add individual users
-    - allow folder permissions to add roles
-    - allow to assign admin permissions to team members
+    - general
+        - allow folder permissions to add individual users
+        - allow folder permissions to add roles
+        - allow to assign admin permissions to team members
+    - logging
+        - use "-v" / "--verbose" flag for debugging?
+        - Use OpenTelemetry standards / go libs?
     - add deploy/helm
     - e2e tests -> improve devproxy usage:
         - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/test-my-app-with-random-errors

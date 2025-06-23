@@ -4,10 +4,9 @@
 loglevel: 99
 
 
+
 source: "entraid"
 
-
-authfile: "../../test/data/integration-tests_authfile.env"
 
 
 features:
@@ -16,19 +15,12 @@ features:
   addLocalAdminToTeams: true
 
 
-grafana:
-  authtype: "basicauth"
-  connection:
-    scheme: "http"
-    host: "localhost:3000"
-    basepath: "/api"
-    retry: 10
-
 
 teams:
   - group-integration-1
   - group-integration-2
   - group-integration-3
+
 
 
 folders:

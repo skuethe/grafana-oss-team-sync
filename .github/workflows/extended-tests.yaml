@@ -16,22 +16,50 @@ permissions:
 
 jobs:
 
-  # integration-tests:
-  #   runs-on: ubuntu-latest
-  #   environment: integration-tests
-  #   # service container: grafana in matrix
-  #   steps:
-  #     - uses: actions/checkout@v4
+  # Integration Tests
+  integration-tests:
+    runs-on: ubuntu-latest
+    environment: integration-tests
 
-  #     - name: Setup Go
-  #       uses: actions/setup-go@v5
-  #       with:
-  #         go-version-file: 'go.mod'
+    strategy:
+      matrix:
+        version: [11.1.0, 12.0.0, latest]
 
-  #     - name: Test
-  #       run: go test -v -tags=integration  ./...
+    # Define service containers for integration tests
+    services:
+      grafana:
+        image: docker.io/grafana/grafana-oss:${{ matrix.version }}
+        ports:
+          - 3000:3000
+        options: >-
+          --health-cmd "nc -z localhost 3000"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Test
+        run: go test -v -tags=integration  ./...
+        env:
+          # Tell GOTS to load the e2e config and authfile
+          GOTS_CONFIG: ${{ github.workspace }}/test/data/integration-tests_config.yaml
+          GOTS_AUTHFILE: ${{ github.workspace }}/test/data/integration-tests_authfile.env
+
+          # Configure against Grafana service container
+          GOTS_SCHEME: http
+          GOTS_HOST: localhost:3000
+          GOTS_RETRY: 10
 
 
+
+  # End To End Tests
   e2e-tests:
     runs-on: ubuntu-latest
     environment: e2e-tests

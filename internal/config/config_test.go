@@ -163,10 +163,10 @@ func TestLoadOptionalAuthFile(t *testing.T) {
 	var tests = []addTest{
 		{"no authfile set", configtypes.AuthFileParameter, "", "GOTS_TEST", "", "test", ""},
 		{"authfile set but file does not exist", configtypes.AuthFileParameter, "doesnotexist.env", "GOTS_TEST", "", "test", ""},
-		{"authfile set with but non-existing entry", configtypes.AuthFileParameter, "../../test/data/config_test_authfile.env", "GOTS_DOESNOTEXIST", "", "doesnotexist", ""},
-		{"authfile set with content", configtypes.AuthFileParameter, "../../test/data/config_test_authfile.env", "GOTS_TEST", "valid", "test", "valid"},
-		{"authfile set with content authfile via string input", "authfile", "../../test/data/config_test_authfile.env", "GOTS_TEST", "valid", "test", "valid"},
-		{"wrong authfile reference set with content", "authFile", "../../test/data/config_test_authfile.env", "GOTS_TEST", "", "test", ""},
+		{"authfile set with but non-existing entry", configtypes.AuthFileParameter, "../../test/data/unit-tests_authfile.env", "GOTS_DOESNOTEXIST", "", "doesnotexist", ""},
+		{"authfile set with content", configtypes.AuthFileParameter, "../../test/data/unit-tests_authfile.env", "GOTS_TEST", "valid", "test", "valid"},
+		{"authfile set with content authfile via string input", "authfile", "../../test/data/unit-tests_authfile.env", "GOTS_TEST", "valid", "test", "valid"},
+		{"wrong authfile reference set with content", "authFile", "../../test/data/unit-tests_authfile.env", "GOTS_TEST", "", "test", ""},
 	}
 
 	for _, test := range tests {

@@ -95,3 +95,4 @@ SPDX-License-Identifier: GPL-3.0-or-later
     - allow folder permissions to add individual users
     - allow folder permissions to add roles
     - allow to assign admin permissions to team members
+    - add deploy/helm

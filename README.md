@@ -144,6 +144,7 @@ The following hirarchy is used when merging the different config sources, overri
 
 | Configuration               | Config via                      | Description |
 |-----------------------------|---------------------------------|-------------|
+| Auth Type                   | **config.yaml**: `grafana.authtype`<br>**flag**: `--authtype`<br>**env var**: `GOTS_AUTHTYPE` | Configure the auth type to use<br><br>**Type**: `string`<br>**Allowed**: `basicauth`, `token`<br>**Default**: `basicauth` |
 | Auth: Basic Auth            | **flag**: `--username` and `--password` or `-u` and `-p`<br>**env var**: `GOTS_USERNAME` and `GOTS_PASSWORD` | Set username and password for basic authentication to Grafana<br>**Type**: `string` |
 | Auth: Service Account Token | **flag**: `--token` or `-t`<br>**env var**: `GOTS_TOKEN` | Set token for service account token auth to Grafana<br>**Type**: `string` |
 | Connection: Scheme          | **config.yaml**: `grafana.connection.scheme`<br>**flag**: `--scheme`<br>**env var**: `GOTS_SCHEME` | Configure the scheme to use<br><br>**Type**: `string`<br>**Allowed**: `http`, `https`<br>**Default**: `http` |

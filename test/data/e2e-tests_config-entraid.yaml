@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+loglevel: 99
+
+
+source: "entraid"
+
+
+features:
+  disableFolders: false
+  disableUserSync: false
+  addLocalAdminToTeams: true
+
+
+
+teams:
+  - group-mock-1
+  - group-mock-2
+  - group-mock-3
+
+
+folders:
+  foldermock1:
+    title: "folder-mock-1"
+    description: "A folder to test things"
+    permissions:
+      teams:
+        group-mock-1: 4
+        group-mock-2: 1
+  foldermock2:
+    title: "Folder-Mock-2"
+    description: "A second folder"
+    permissions:
+      teams:
+        group-mock-1: 1
+        group-mock-2: 4
+        group-mock-3: 2

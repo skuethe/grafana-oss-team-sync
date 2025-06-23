@@ -7,13 +7,22 @@ precedence = "closest"
 SPDX-FileCopyrightText = "2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
-# msgraph mocks with sandbox data
+
+# REUSE GitHub action template
 [[annotations]]
-path = "test/devproxy/msgraph-v1_0-mockresponse.json"
-precedence = "closest"
-SPDX-FileCopyrightText = "2023 contributors to project Dev Proxy samples <https://github.com/pnp/proxy-samples>"
-SPDX-License-Identifier = "MIT"
-SPDX-FileComment = "https://github.com/pnp/proxy-samples/blob/main/samples/microsoft-graph-sandbox-mocks/graph-v1_0-proxy-mocks-sandbox.json"
+path = ".github/workflows/reuse.yaml"
+SPDX-FileCopyrightText = "2022 Free Software Foundation Europe e.V. <https://fsfe.org>"
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileComment = "based of: https://github.com/fsfe/reuse-action?tab=readme-ov-file#example-usage"
+
+
+# CONTRIBUTING.md template
+[[annotations]]
+path = "CONTRIBUTING.md"
+SPDX-FileCopyrightText = "2020 contributors to the cncf/project-template project <https://github.com/cncf/project-template>"
+SPDX-License-Identifier = "Apache-2.0"
+SPDX-FileComment = "based of: https://github.com/cncf/project-template/blob/54a33f5aba96bb668dc1cd578e836da7ec4b8b73/CONTRIBUTING.md"
+
 
 # Computer-generated files.
 [[annotations]]

@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    environment: integration-tests
+    # service container: grafana in matrix
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Test
+        run: go test -v -tags=integration  ./...
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    environment: e2e-tests
+    # service container: grafana + devproxy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Test
+        run: go test -v -tags=e2e  ./...

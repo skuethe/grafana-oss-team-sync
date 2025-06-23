@@ -35,26 +35,14 @@ We welcome many different types of contributions including:
 * Bug fixes
 * Documentation
 * Issue Triage
-* Answering questions on Slack/Mailing List
-* Web design
-* Communications / Social Media / Blog Posts
-* Release management
-
-Not everything happens through a GitHub pull request. Please come to our
-[meetings](TODO) or [contact us](TODO) and let's discuss how we can work
-together.
 
 ## Find an Issue
 
 We have good first issues for new contributors and help wanted issues suitable
-for any contributor. [good first issue](TODO) has extra information to
-help you make your first contribution. [help wanted](TODO) are issues
+for any contributor. [good first issue][goodfirstissue] has extra information to
+help you make your first contribution. [help wanted][helpwanted] are issues
 suitable for someone who isn't a core maintainer and is good to move onto after
 your first pull request.
-
-Sometimes there won’t be any issues with these labels. That’s ok! There is
-likely still something for you to work on. If you want to contribute but you
-don’t know where to start or can't find a suitable issue, you can ⚠️ **explain how people can ask for an issue to work on**.
 
 Once you see an issue that you'd like to work on, please post a comment saying
 that you want to work on it. Something like "I want to work on this" is fine.
@@ -73,16 +61,25 @@ The best way to reach us with a question when contributing is to ask on:
 
 ⚠️ **Explain how to set up a development environment**
 
-## Sign Your Commits
+Current tool-set:
+- (optional) `podman` - to run lint on `go`, `reuse` as well as run integration and e2e tests locally
+- (optional) `podman-compose` - to run integration and e2e tests locally
+- (optional) `pre-commit` - get better feedback before you commit your work
 
-⚠️ **Keep either the DCO or CLA section depending on which you use**
+1. fork the repo
+2. clone it locally
+3. initialize pre-commit (`pre-commit install`)
+4. (optionally): install `reuse`
+- use podman + podman-compose
+
+## Sign Your Commits
 
 ### DCO
 Licensing is important to open source projects. It provides some assurances that
 the software will continue to be available based under the terms that the
 author(s) desired. We require that contributors sign off on commits submitted to
 our project's repositories. The [Developer Certificate of Origin
-(DCO)](https://probot.github.io/apps/dco/) is a way to certify that you wrote and
+(DCO)][dco] is a way to certify that you wrote and
 have the right to contribute the code you are submitting to the project.
 
 You sign-off by adding the following to your commit messages. Your sign-off must
@@ -109,4 +106,18 @@ passes these checks, but we also have more criteria than just that before we can
 accept and merge it. We recommend that you check the following things locally
 before you submit your code:
 
-⚠️ **Create a checklist that authors should use before submitting a pull request**
+  - add the `SPDX` headers to newly created files (with the exception of files in the `test/**` folder)  
+    This can be achieved by the [`reuse` binary][reuseinstall]:
+    ```
+    reuse annotate --copyright="Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>" --license="GPL-3.0-or-later" [PATH TO NEW FILE HERE]
+    ```
+  - execute `REUSE lint` on the code  
+    There is a helper available: you can run `scripts/container.sh licenses` to use podman to run REUSE's `lint` command on the code
+  - execute `golangci-lint` on the code  
+    There is a helper available: you can run `scripts/container.sh lint` to use podman to run golangci-lint's `run` command on the code
+
+
+[goodfirstissue]:   <https://github.com/skuethe/grafana-oss-team-sync/labels/good%20first%20issue> "Issues with label 'good first issue'"
+[helpwanted]:       <https://github.com/skuethe/grafana-oss-team-sync/labels/help%20wanted> "Issues with label 'help wanted'"
+[dco]:              <https://probot.github.io/apps/dco/> "Developer Certificate of Origin"
+[reuseinstall]:     <https://github.com/fsfe/reuse-tool?tab=readme-ov-file#install> "How to install REUSE tool"

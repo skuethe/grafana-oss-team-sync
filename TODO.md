@@ -22,9 +22,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
         - https://docs.renovatebot.com/presets-group/#groupgoopenapi
         -
 
-- CI
-    - add service container for devproxy which runs integration tests on PRs
-
 
 - tests
     - write _test files
@@ -47,11 +44,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
     - how to setup Grafana
         - "Azure AD" auth
-            - minimum permissions required?
         - disable "allow sign up"
             -> If not enabled, only existing Grafana users can log in using OAuth.
         - ...
-    - how to setup EntraID app with permissions
 
 
 - entraid

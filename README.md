@@ -163,7 +163,7 @@ The following hirarchy is used when merging the different config sources, overri
 | Requirements    | |
 |-----------------|-|
 | Auth            | Using Azure app via env variables: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` |
-| App permissions | Minimum: `User.ReadBasic.All`, `GroupMember.Read.All` |
+| App permissions | Minimum: `User.ReadBasic.All`, `GroupMember.Read.All`<br>To list the members of a hidden membership group, the `Member.Read.Hidden` permission is required |
 
 
 &nbsp;  

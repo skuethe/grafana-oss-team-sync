@@ -9,6 +9,12 @@
       "pluginPath": "~appFolder/plugins/dev-proxy-plugins.dll"
     },
     {
+      "name": "GraphMinimalPermissionsPlugin",
+      "enabled": true,
+      "pluginPath": "~appFolder/plugins/dev-proxy-plugins.dll",
+      "configSection": "graphMinimalPermissionsPlugin"
+    },
+    {
       "name": "MockGeneratorPlugin",
       "enabled": true,
       "pluginPath": "~appFolder/plugins/dev-proxy-plugins.dll"
@@ -22,5 +28,9 @@
   "urlsToWatch": [
     "https://graph.microsoft.com/v1.0/*",
     "https://login.microsoftonline.com/*"
-  ]
+  ],
+  "graphMinimalPermissionsPlugin": {
+    "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v0.28.0/graphminimalpermissionsplugin.schema.json",
+    "type": "Delegated"
+  }
 }

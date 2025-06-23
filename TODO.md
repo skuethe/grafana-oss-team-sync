@@ -50,21 +50,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 
 - entraid
-    - use "dev proxy" to test app and get more insights:
-        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/test-my-app-with-random-errors
-        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/simulate-errors-microsoft-graph-apis
-        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/test-that-my-application-handles-throttling-properly
-        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/simulate-rate-limit-api-responses
-        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/detect-minimal-microsoft-graph-api-permissions
-
-        - use in:
-            - container: https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/use-dev-proxy-in-docker-container
-            - ci/cd:     https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/use-dev-proxy-in-ci-cd-overview
-
-        - mock data
-            - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/mock-responses#configure-dev-proxy-to-use-the-mock-responses
-            - generator: https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/technical-reference/mockgeneratorplugin
-
 
     - modify graph sdk via kiota and verify if that gives us a smaller package size
         -> https://learn.microsoft.com/en-gb/graph/sdks/customize-client?tabs=go
@@ -91,3 +76,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
     - allow folder permissions to add roles
     - allow to assign admin permissions to team members
     - add deploy/helm
+    - e2e tests -> improve devproxy usage:
+        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/test-my-app-with-random-errors
+        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/simulate-errors-microsoft-graph-apis
+        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/test-that-my-application-handles-throttling-properly
+        - https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/simulate-rate-limit-api-responses

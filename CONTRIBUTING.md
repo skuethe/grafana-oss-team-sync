@@ -11,6 +11,7 @@ SPDX-License-Identifier: Apache-2.0
   * [Ask for Help](#ask-for-help)
   * [Pull Request Lifecycle](#pull-request-lifecycle)
   * [Development Environment Setup](#development-environment-setup)
+  * [Testing](#testing)
   * [Sign Your Commits](#sign-your-commits)
   * [Pull Request Checklist](#pull-request-checklist)
 
@@ -55,22 +56,68 @@ The best way to reach us with a question when contributing is to ask on:
 
 ## Pull Request Lifecycle
 
-⚠️ **Explain your pull request process**
+The Pull Request process is as follows:
+
+1. Fork this repo
+2. Clone your fork locally
+3. Work on the code and add features, fix bugs, improve documentation, ...
+4. **Sign your commits** and push your changes to your feature branch
+5. Open a Pull Request against `repository: skuethe/grafana-oss-team-sync`, `branch: main`
+6. Add a good description of your contribution. Optionally reference open issues which are affected by the PR
+7. Wait for feedback / fix failing GitHub actions / react to reviews
+
 
 ## Development Environment Setup
 
-⚠️ **Explain how to set up a development environment**
-
 Current tool-set:
-- (optional) `podman` - to run lint on `go`, `reuse` as well as run integration and e2e tests locally
-- (optional) `podman-compose` - to run integration and e2e tests locally
-- (optional) `pre-commit` - get better feedback before you commit your work
 
-1. fork the repo
-2. clone it locally
-3. initialize pre-commit (`pre-commit install`)
-4. (optionally): install `reuse`
-- use podman + podman-compose
+- `podman` - to run lint commands on `go` and `reuse` as well as to run `integration` and `e2e` tests locally (optional)
+- `podman-compose` - to run `integration` and `e2e` tests locally (optional)
+- `pre-commit` - get better feedback before you commit your work (optional, but recommended)
+- `reuse` - to run compliance checks and add SPDX license headers to files
+
+## Testing
+
+We are using **go build tags** to distinguish between **unit**, **integration** and **end to end** tests in this project.  
+If you are contributing code and write or adapt existing tests, please respect the following guide-lines:
+
+### Unit Tests
+
+If you are writing **unit** tests, make sure that the files containing the unit tests, have the following file header:
+
+    //go:build !integration && !e2e
+
+This helps to distinguish between unit, integration and end to end tests.
+For executing the unit tests and getting coverage feedback, run the following commands:
+
+    go test -race -v -covermode=atomic -coverprofile=coverage.out ./...
+    go tool cover -html=coverage.out
+
+### Integration Tests
+
+The main purpose of the integration tests is to evaluate functionality with different Grafana versions.  
+For that purpose we are sending mock data to multiple Grafana instances.
+
+All files containing integration tests need to have the following file header present:
+
+    //go:build integration
+
+To execute integration tests, run the following command:
+
+    go test -tags=integration  ./...
+
+### End To End Tests
+
+The main purpose of the end to end tests, is to ensure the functionality for each source plugin.  
+As an example, the e2e test for `entraid` is using a **devproxy** instance, providing mock data for msgraph access testing the complete chain until the data is available in the Grafana instance.
+
+All files containing integration tests need to have the following file header present:
+
+    //go:build e2e
+
+To execute integration tests, run the following command:
+
+    go test -tags=e2e  ./...
 
 ## Sign Your Commits
 

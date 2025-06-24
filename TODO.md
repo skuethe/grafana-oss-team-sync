@@ -16,11 +16,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
         - `https://reuse.software/dev/#api`
         - `https://www.bestpractices.dev/en` ?
 
-    - add renovatebot
-        - https://docs.renovatebot.com/golang/
-        - https://docs.renovatebot.com/upgrade-best-practices/
-        - https://docs.renovatebot.com/presets-group/#groupgoopenapi
-        -
 
 
 - tests
@@ -40,14 +35,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 - add README info
     - improve entraid docs
-
-
-
-- entraid
-
-    - modify graph sdk via kiota and verify if that gives us a smaller package size
-        -> https://learn.microsoft.com/en-gb/graph/sdks/customize-client?tabs=go
-        -> https://stackoverflow.com/questions/78355878/how-to-disable-backingstore-and-dirty-tracking-in-graph-beta-sdk-for-java
 
 
 - groups / teams

@@ -26,15 +26,20 @@ function requireCommand() {
 function usage() {
   echo -e "Requirements:"
   echo -e "  - go"
-  echo -e "\nUsage: ${0} <PARAM>"
+  echo -e "\nUsage: ${0} <ARGS>"
+
   echo -e "\n  unit"
   echo -e "\twill run unit tests"
+
   echo -e "\n  coverage"
   echo -e "\twill parse coverage into HTML format and open in browser. Need to run 'unit' before to generate the coverage file"
+
   echo -e "\n  integration"
   echo -e "\twill run integration tests. Requires integration services to be avilable"
+
   echo -e "\n  e2e"
   echo -e "\twill run e2e tests. Requires e2e services to be available"
+
   echo -e "\n"
 }
 

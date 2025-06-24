@@ -3,8 +3,7 @@
 
 services:
   grafana:
-    # ref: https://github.com/grafana/grafana/releases/latest
-    image: docker.io/grafana/grafana-oss:12.0.2
+    image: docker.io/grafana/grafana-oss:latest
     container_name: grafana
     restart: unless-stopped
     ports:
@@ -18,12 +17,10 @@ services:
     - '8000:8000'
     - '8897:8897'
     command:
-    - '--config-file'
-    - '/config/entraid.json'
     # For recording mock data, use modified dev proxy config
-    # - '/config/entraid-record.json'
+    - '--config-file'
+    - '/config/entraid-record.json'
     volumes:
-      - '../test/devproxy/configs:/config:ro'
+      # For recording mock data, mount with write access
+      - '../test/devproxy/configs:/config:Z'
       - '../test/devproxy/cert:/home/devproxy/.config/dev-proxy/rootCert:Z'
-      # For recording mock data, don't mount readonly
-      # - '../test/devproxy/configs:/config:Z'

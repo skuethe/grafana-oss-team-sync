@@ -30,17 +30,28 @@ function usage() {
   echo -e "Requirements:"
   echo -e "  - podman"
   echo -e "  - podman-compose"
-  echo -e "\nUsage: ${0} <PARAM>"
-  echo -e "\n  start"
-  echo -e "\twill start the compose stack"
-  echo -e "\n  stop"
-  echo -e "\twill stop compose stack"
-  echo -e "\n  logs"
-  echo -e "\twill follow the logs of all containers of the compose stack"
+  echo -e "\nUsage: ${0} <ARGS>"
+
   echo -e "\n  lint"
   echo -e "\twill run lint checks against the code"
+
   echo -e "\n  licenses"
   echo -e "\twill run reuse lint checks against the code"
+
+  echo -e "\n  e2e-start"
+  echo -e "\twill start the end to end testing compose stack: Grafana + devproxy. Devproxy is serving mock data for EntraID"
+  echo -e "\n  e2e-stop"
+  echo -e "\twill stop the end to end testing compose stack"
+  echo -e "\n  e2e-logs"
+  echo -e "\twill follow the logs of all containers of the end to end testing compose stack"
+
+  echo -e "\n  integration-start [version-tag]"
+  echo -e "\twill start the integration testing compose stack: Grafana. You have to pass the Grafana version you want to test (supported: '11.1.0', '12.0.0' or 'latest')"
+  echo -e "\n  integration-stop"
+  echo -e "\twill stop the integration testing compose stack"
+  echo -e "\n  integration-logs"
+  echo -e "\twill follow the logs of all containers of the integration testing compose stack"
+
   echo -e "\n"
 }
 
@@ -52,27 +63,30 @@ requireCommand "podman-compose"
 
 
 case "${1}" in
-  "start")
-    cd ${DEPLOY_DIR} && podman compose up -d
-    ;;
-  "stop")
-    cd ${DEPLOY_DIR} && podman compose down
-    ;;
-  "logs")
-    cd ${DEPLOY_DIR} && podman compose logs -f
-    ;;
-  "lint")
+  "go-lint")
     cd ${ROOT_DIR} && podman run --rm -v $(pwd):/app:ro -w /app docker.io/golangci/golangci-lint:${GOLANGCI_LINT_VERSION} golangci-lint run
     ;;
   "licenses")
     cd ${ROOT_DIR} && podman run --rm -v $(pwd):/data:ro docker.io/fsfe/reuse:${REUSE_VERSION} lint
     ;;
-  "integration-test-start")
-    echo "Using version: ${2}"
+  "e2e-start")
+    podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml up -d
+    ;;
+  "e2e-stop")
+    podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml down
+    ;;
+  "e2e-logs")
+    podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml logs -f
+    ;;
+  "integration-start")
+    echo "Using Grafana version: ${2}"
     podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml -f ${DEPLOY_DIR}/integration-tests_docker-compose-grafana-${2}.yaml up -d
     ;;
-  "integration-test-stop")
+  "integration-stop")
     podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml down
+    ;;
+  "integration-logs")
+    podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml logs -f
     ;;
   *)
     usage

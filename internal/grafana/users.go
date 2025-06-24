@@ -16,6 +16,7 @@ import (
 )
 
 type User models.AdminCreateUserForm
+
 type Users []User
 
 func generateSecurePassword() string {

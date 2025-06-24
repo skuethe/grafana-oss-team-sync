@@ -10,8 +10,10 @@ set -eo pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 ROOT_DIR="${SCRIPT_DIR}/../"
 
-GRAFANA_VERSIONS="11.1.0 12.0.0 latest"
+# GRAFANA_VERSIONS="11.1.0 12.0.0 latest"
 # GRAFANA_VERSIONS="11.1.0"
+# GRAFANA_VERSIONS="12.0.0"
+GRAFANA_VERSIONS="latest"
 
 # HELPERS
 

@@ -14,10 +14,12 @@ import (
 )
 
 type TeamParameter models.CreateTeamCommand
+
 type Team struct {
 	Parameter *TeamParameter
 	Users     *Users
 }
+
 type Teams []Team
 
 func (t *Team) searchTeam() (*teams.SearchTeamsOK, error) {

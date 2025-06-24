@@ -23,9 +23,7 @@ grafana:
 
 
 teams:
-  - group-integration-1
-  - group-integration-2
-  - group-integration-3
+  - not-used
 
 
 

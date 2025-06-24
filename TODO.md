@@ -24,11 +24,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
         - env flags
             -> move "config -> k.unmarschal" into own func and write test for "minimal" and "full" supported config
 
-    - integration test
-        - send "grafana models" structs to grafana target
-        - run complete "Grafana" package in one go (so: teams, users and folders)
-        - run against multiple Grafana versions in CI
-
     - add mock data to test against grafana (teams, users, folders)
         -> allow mock to be used as source?
 

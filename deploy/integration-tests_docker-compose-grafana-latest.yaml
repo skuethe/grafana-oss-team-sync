@@ -5,7 +5,3 @@ services:
 
   grafana:
     image: docker.io/grafana/grafana-oss:latest
-    container_name: grafana
-    restart: unless-stopped
-    ports:
-     - '3000:3000'

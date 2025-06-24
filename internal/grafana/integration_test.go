@@ -19,72 +19,28 @@ var (
 	ErrCouldNotSetHostVariable   = errors.New("could not set required environment variable for GOTS_HOST")
 )
 
-// func prepareIntegrationGrafana() error {
-
-// 	// 1. set config via env var
-// 	os.Clearenv()
-// 	if err := os.Setenv("GOTS_CONFIG", "../../test/data/integration-tests_config.yaml"); err != nil {
-// 		return fmt.Errorf("%w: %q", ErrCouldNotSetConfigVariable, err)
-// 	}
-
-// 	// Load flags to not fail
-// 	flags.Load()
-
-// 	// 2. parse config
-// 	config.Load()
-
-// 	// 3. init Grafana
-// 	New()
-
-// 	return nil
-// }
-
 func TestIntegrationGrafanaFolders(t *testing.T) {
 
-	type addTest struct {
-		name string
-		host string
+	// 1. set config via env var
+	os.Clearenv()
+	if err := os.Setenv("GOTS_CONFIG", "../../test/data/integration-tests_config.yaml"); err != nil {
+		t.Fatal(ErrCouldNotSetConfigVariable, err)
+	}
+	if err := os.Setenv("GOTS_AUTHFILE", "../../test/data/integration-tests_authfile.env"); err != nil {
+		t.Fatal(ErrCouldNotSetConfigVariable, err)
 	}
 
-	var tests = []addTest{
-		{"minimum Grafana", "localhost:3001"},
-		{"Grafana 12", "localhost:3002"},
-		{"Grafana latest", "localhost:3003"},
-	}
+	// Load flags to not fail
+	flags.Load()
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
+	// 2. parse config
+	config.Load()
 
-			// 1. set config via env var
-			os.Clearenv()
-			if err := os.Setenv("GOTS_CONFIG", "../../test/data/integration-tests_config.yaml"); err != nil {
-				t.Fatal(ErrCouldNotSetConfigVariable, err)
-			}
-			if err := os.Setenv("GOTS_HOST", test.host); err != nil {
-				t.Fatal(ErrCouldNotSetHostVariable, err)
-			}
+	// 3. init Grafana
+	New()
 
-			// Load flags to not fail
-			flags.Load()
-
-			// 2. parse config
-			config.Load()
-
-			// 3. init Grafana
-			New()
-
-			// if err := prepareIntegrationGrafana(); err != nil {
-			// 	t.Fatal(err)
-			// }
-
-			// Run ProcessFolders
-			Instance.ProcessFolders()
-
-			// if !errors.Is(outputerr, test.expectederr) {
-			// 	t.Errorf("got error: %v, wanted error: %v", outputerr, test.expectederr)
-			// }
-		})
-	}
+	// Run ProcessFolders
+	Instance.ProcessFolders()
 
 }
 

@@ -16,6 +16,12 @@ features:
 
 
 
+grafana:
+  connection:
+    retry: 10
+
+
+
 teams:
   - group-integration-1
   - group-integration-2

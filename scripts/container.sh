@@ -67,10 +67,11 @@ case "${1}" in
   "licenses")
     cd ${ROOT_DIR} && podman run --rm -v $(pwd):/data:ro docker.io/fsfe/reuse:${REUSE_VERSION} lint
     ;;
-  "integration-tests-start")
-    podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml up -d
+  "integration-test-start")
+    echo "Using version: ${2}"
+    podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml -f ${DEPLOY_DIR}/integration-tests_docker-compose-grafana-${2}.yaml up -d
     ;;
-  "integration-tests-stop")
+  "integration-test-stop")
     podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml down
     ;;
   *)

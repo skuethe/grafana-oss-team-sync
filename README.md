@@ -136,6 +136,8 @@ The following hirarchy is used when merging the different config sources, overri
 <!-- CONFIGURATION - GRAFANA -->
 ### Grafana
 
+Ideally you have [setup SSO authentication][setupssoauth] with the same source as your group and user sync
+
 | Requirements  | |
 |---------------|-|
 | Version       | `>= 11.1.0` [^grafanaversion]  |
@@ -160,14 +162,13 @@ The following hirarchy is used when merging the different config sources, overri
 <!-- CONFIGURATION - ENTRAID -->
 ### Source: `entraid`
 
+If you have [enabled EntraID OAuth][entraidoauth] for SSO authentication in Grafana with the same entraid tenant, it is possible to set `allow_sign_up = false` in your [EntraID OAuth configuration options][entraidoauthconfig], so that only users which are synced by Grafana OSS Team Sync are able to log into your Grafana instance.
+
 | Requirements    | |
 |-----------------|-|
 | Auth            | Using Azure app via env variables: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` |
 | App permissions | Minimum: `User.ReadBasic.All`, `GroupMember.Read.All`<br>To list the members of a hidden membership group, the `Member.Read.Hidden` permission is required |
 
-
-&nbsp;  
-This tool is opinionated in a few ways, which result in special configuration requirements for it to work properly. See details [below](#opinionated-behaviour).
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 
@@ -255,6 +256,8 @@ See [`LICENSE`](LICENSE.md) for more information.
 [newbulkendpoint]:      <https://github.com/grafana/grafana/pull/87441> "Team: Add an endpoint for bulk team membership updates"
 [requirebasicauth]:     <https://grafana.com/docs/grafana/latest/developers/http_api/admin/> "Admin API"
 [setupssoauth]:         <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/> "Configure authentication"
+[entraidoauth]:         <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/azuread/> "Entra ID OAuth authentication"
+[entraidoauthconfig]:   <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/azuread/#configuration-options> "Entra ID OAuth - Configuration options"
 [semver]:               <https://semver.org/> "Semantic Versioning"
 [githubreleases]:       <https://github.com/skuethe/grafana-oss-team-sync/releases> "Releases"
 [spdxopenstandard]:     <https://spdx.dev> "The System Package Data Exchange™"

@@ -39,14 +39,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 
 - add README info
-    - reorg "configuration"
-        -> improve entraid docs
+    - improve entraid docs
 
-    - how to setup Grafana
-        - "Azure AD" auth
-        - disable "allow sign up"
-            -> If not enabled, only existing Grafana users can log in using OAuth.
-        - ...
 
 
 - entraid
@@ -62,7 +56,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 
 - look into:
-    - Go "data streams" aka channels?
     - Go contexts and their benefits
 
 

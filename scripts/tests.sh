@@ -10,8 +10,8 @@ set -eo pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 ROOT_DIR="${SCRIPT_DIR}/../"
 
-# GRAFANA_VERSIONS="11.1.0 12.0.0"
-GRAFANA_VERSIONS="11.1.0"
+GRAFANA_VERSIONS="11.1.0 12.0.0 latest"
+# GRAFANA_VERSIONS="11.1.0"
 
 # HELPERS
 
@@ -59,10 +59,10 @@ case "${1}" in
   "integration")
     cd ${ROOT_DIR}
     for i in ${GRAFANA_VERSIONS}; do
-      scripts/container.sh integration-test-start ${i}
+      scripts/container.sh integration-start ${i}
       go clean -testcache -tags=integration
       go test -v -tags=integration  ./...
-      scripts/container.sh integration-test-stop ${i}
+      scripts/container.sh integration-stop
     done
     ;;
   "e2e")

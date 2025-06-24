@@ -161,7 +161,7 @@ before you submit your code:
   - execute `REUSE lint` on the code  
     There is a helper available: you can run `scripts/container.sh licenses` to use podman to run REUSE's `lint` command on the code
   - execute `golangci-lint` on the code  
-    There is a helper available: you can run `scripts/container.sh lint` to use podman to run golangci-lint's `run` command on the code
+    There is a helper available: you can run `scripts/container.sh go-lint` to use podman to run golangci-lint's `run` command on the code
 
 
 [goodfirstissue]:   <https://github.com/skuethe/grafana-oss-team-sync/labels/good%20first%20issue> "Issues with label 'good first issue'"

@@ -32,8 +32,8 @@ function usage() {
   echo -e "  - podman-compose"
   echo -e "\nUsage: ${0} <ARGS>"
 
-  echo -e "\n  lint"
-  echo -e "\twill run lint checks against the code"
+  echo -e "\n  go-lint"
+  echo -e "\twill run go lint checks against the code"
 
   echo -e "\n  licenses"
   echo -e "\twill run reuse lint checks against the code"
@@ -80,7 +80,7 @@ case "${1}" in
     ;;
   "integration-start")
     echo "Using Grafana version: ${2}"
-    podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml -f ${DEPLOY_DIR}/integration-tests_docker-compose-grafana-${2}.yaml up -d
+    podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml -f ${DEPLOY_DIR}/integration-tests_docker-compose_grafana-${2}.yaml up -d
     ;;
   "integration-stop")
     podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml down

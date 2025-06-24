@@ -24,6 +24,14 @@ SPDX-License-Identifier = "Apache-2.0"
 SPDX-FileComment = "based of: https://github.com/cncf/project-template/blob/54a33f5aba96bb668dc1cd578e836da7ec4b8b73/CONTRIBUTING.md"
 
 
+# PULL_REQUEST_TEMPLATE.md template
+[[annotations]]
+path = ".github/PULL_REQUEST_TEMPLATE.md"
+SPDX-FileCopyrightText = "2016 contributors to the TalAter/open-source-templates project <https://github.com/TalAter/open-source-templates>"
+SPDX-License-Identifier = "MIT"
+SPDX-FileComment = "based of: https://github.com/TalAter/open-source-templates/blob/master/PULL_REQUEST_TEMPLATE.md"
+
+
 # Computer-generated files.
 [[annotations]]
 path = [

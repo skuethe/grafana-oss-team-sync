@@ -26,9 +26,12 @@ var (
 	Instance *configtypes.Config
 
 	ErrNoConfigFileDefined              = errors.New("no config file defined")
+	ErrCouldNotLoadCLIArgs              = errors.New("could not load CLI arguments")
+	ErrCouldNotLoadYAMLFile             = errors.New("could not load YAML file")
 	ErrCouldNotLoadAuthfile             = errors.New("could not process configured authfile")
 	ErrCouldNotLoadEnvironmentVariables = errors.New("could not load environment variables")
 	ErrCouldNotUnmarshalConfig          = errors.New("could not unmarshal config")
+	ErrCouldNotSetRequiredVariable      = errors.New("could not set required environment variable")
 )
 
 func getConfigFilePath() (*string, error) {
@@ -53,18 +56,18 @@ func loadYAMLFile(k *koanf.Koanf) error {
 	// Handle config file definitions from flag and environment variables
 	configFile, err := getConfigFilePath()
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ErrCouldNotLoadYAMLFile, err)
 	}
 
 	// Load main YAML config
 	if err := k.Load(file.Provider(*configFile), yaml.Parser()); err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ErrCouldNotLoadYAMLFile, err)
 	}
 	return nil
 }
 
 func loadEnvironmentVariables(k *koanf.Koanf) error {
-	return k.Load(env.ProviderWithValue("GOTS_", ".", func(k string, v string) (string, any) {
+	err := k.Load(env.ProviderWithValue("GOTS_", ".", func(k string, v string) (string, any) {
 		key := strings.ReplaceAll(strings.ToLower(strings.TrimPrefix(k, "GOTS_")), "_", ".")
 
 		switch key {
@@ -101,10 +104,14 @@ func loadEnvironmentVariables(k *koanf.Koanf) error {
 
 		return key, v
 	}), nil)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrCouldNotLoadEnvironmentVariables, err)
+	}
+	return nil
 }
 
 func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) error {
-	return k.Load(posflag.ProviderWithFlag(fs, ".", k, func(f *pflag.Flag) (string, any) {
+	err := k.Load(posflag.ProviderWithFlag(fs, ".", k, func(f *pflag.Flag) (string, any) {
 		key := f.Name
 		val := posflag.FlagVal(fs, f)
 
@@ -142,6 +149,10 @@ func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) error {
 
 		return key, val
 	}), nil)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrCouldNotLoadCLIArgs, err)
+	}
+	return nil
 }
 
 func loadOptionalAuthFile(k *koanf.Koanf) error {
@@ -166,7 +177,7 @@ func unmarshalIntoStruct(k *koanf.Koanf) error {
 	return nil
 }
 
-func Load() {
+func Load() error {
 	configLog := slog.With(slog.String("package", "config"))
 	configLog.Info("loading config")
 
@@ -178,19 +189,18 @@ func Load() {
 
 	// Load main YAML config
 	if err := loadYAMLFile(k); err != nil {
-		configLog.Error("could not load config file")
-		panic(err)
+		return err
 	}
 
 	// Load env vars and merge (override) config
 	if err := loadEnvironmentVariables(k); err != nil {
-		configLog.Warn("could not load environment variables")
+		configLog.Warn(err.Error())
 	}
 
 	// Load flags and merge (override) config
 	// This will also load default values specified in the flags package
 	if err := loadCLIParameter(k, flags.Instance); err != nil {
-		configLog.Warn("could not load CLI input")
+		configLog.Warn(err.Error())
 	}
 
 	// Load optional authfile as config and environment variables
@@ -200,8 +210,7 @@ func Load() {
 
 	// Create new Config instance from the different inputs
 	if err := unmarshalIntoStruct(k); err != nil {
-		configLog.Error("could not parse config")
-		panic(err)
+		return err
 	}
 
 	// Output feature configuration if non-defaults set
@@ -213,20 +222,17 @@ func Load() {
 
 	// Validate Grafana authtype input
 	if err := Instance.ValdidateGrafanaAuthType(); err != nil {
-		configLog.Error("error validating Grafana authtype input")
-		panic(err)
+		return err
 	}
 
 	// Validate Grafana connection scheme input
 	if err := Instance.ValdidateGrafanaScheme(); err != nil {
-		configLog.Error("error validating Grafana connection scheme input")
-		panic(err)
+		return err
 	}
 
 	// Validate source input
 	if err := Instance.ValdidateSourcePlugin(); err != nil {
-		configLog.Error("error validating source input")
-		panic(err)
+		return err
 	}
 
 	// Give warning about empty team input
@@ -234,4 +240,5 @@ func Load() {
 		configLog.Warn("your teams input is empty")
 	}
 
+	return nil
 }

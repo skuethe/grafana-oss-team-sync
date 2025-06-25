@@ -50,7 +50,9 @@ func main() {
 	)
 
 	// Initialize config
-	config.Load()
+	if err := config.Load(); err != nil {
+		panic(err)
+	}
 
 	// Further configure logger
 	logLevelFromConfig := config.Instance.GetLogLevel()

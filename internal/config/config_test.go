@@ -19,12 +19,6 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var (
-	ErrCouldNotSetRequiredVariable = errors.New("could not set required environment variable")
-	ErrCouldNotLoadYamlIntoConfig  = errors.New("could not load YAML file into config")
-	ErrCouldNotLoadCLIIntoConfig   = errors.New("could not load CLI input into config")
-)
-
 func TestGetConfigFilePath(t *testing.T) {
 
 	type addTest struct {
@@ -144,7 +138,7 @@ func TestLoadCLIParameter(t *testing.T) {
 			fs.String(test.flag, test.input, "")
 
 			if err := loadCLIParameter(k, fs); err != nil {
-				t.Fatal(fmt.Errorf("%w: %w", ErrCouldNotLoadCLIIntoConfig, err))
+				t.Fatal(fmt.Errorf("%w: %w", ErrCouldNotLoadCLIArgs, err))
 			}
 
 			if output := k.String(test.path); output != test.expected {
@@ -362,13 +356,13 @@ func TestUnmarshalIntoStruct(t *testing.T) {
 
 			// Load YAML config
 			if err := loadYAMLFile(k); err != nil {
-				t.Fatal(fmt.Errorf("%w: %w", ErrCouldNotLoadYamlIntoConfig, err))
+				t.Fatal(fmt.Errorf("%w: %w", ErrCouldNotLoadYAMLFile, err))
 			}
 
 			// Need to also load flags, as this will set default values
 			flags.Load()
 			if err := loadCLIParameter(k, flags.Instance); err != nil {
-				t.Fatal(fmt.Errorf("%w: %w", ErrCouldNotLoadCLIIntoConfig, err))
+				t.Fatal(fmt.Errorf("%w: %w", ErrCouldNotLoadCLIArgs, err))
 			}
 
 			if err := unmarshalIntoStruct(k); err != nil {
@@ -483,7 +477,9 @@ func TestLoad(t *testing.T) {
 			// Need to also load flags, as this will set default values
 			flags.Load()
 
-			Load()
+			if err := Load(); err != nil {
+				t.Fatal(err)
+			}
 
 			if output := *Instance; !cmp.Equal(output, test.expected) {
 				t.Errorf("difference: %+v", cmp.Diff(output, test.expected))

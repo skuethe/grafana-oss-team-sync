@@ -77,7 +77,7 @@ jobs:
         - 8000:8000
         - 8897:8897
         options: >-
-          --health-cmd "nc -z localhost 8897"
+          --health-cmd "echo >/dev/tcp/localhost/8897"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5

@@ -6,9 +6,8 @@ name: Release
 
 on:
   push:
-    # run only against release tags
     tags:
-      - "v*"
+      - '*'
 
 permissions:
   contents: write

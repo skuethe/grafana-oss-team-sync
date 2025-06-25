@@ -1,0 +1,149 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+#
+# Define log level
+#
+# Possible values:
+#   0: INFO
+#   1: WARN
+#   2: ERROR
+#  99: DEBUG
+#
+
+loglevel: 0
+
+
+#
+# Source configuration
+# From where you want to sync teams
+#
+#
+# Options:
+# "entraid" - Entra ID (formerly Azure Active Directory)
+#
+# At the moment only entraid is supported as a source
+#
+
+source: "entraid"
+
+
+
+#
+# AuthFile (optional)
+# If you want to load sensitive data from another file, specify it's path here
+# The file content should be .env formated (so "key=value" entries)
+#
+# authfile: ""
+
+
+
+#
+# Configure feature behaviour
+#
+
+features:
+  #
+  # Grafana: add the local Grafana admin user ("admin@localhost") to each created team as a member
+  #
+  addLocalAdminToTeams: true
+
+  #
+  # Grafana: disable creating folders and managing their permissions
+  #
+  disableFolders: false
+
+  #
+  # Grafana: disable creating users
+  #
+  disableUserSync: false
+
+
+
+#
+# Grafana configuration
+#
+
+grafana:
+  #
+  # Grafana auth type to use
+  # Either "basicauth" or "token"
+  # Default: "basicauth"
+  #
+  # WARNING: "token" does not allow to use the "admin API" which is necessary to create new users. If you want to use "token" auth, you should set "features.disableUserSync" to "true"
+  #
+  # authtype: "basicauth"
+
+  #
+  # Grafana connection specific configuration
+  #
+  connection:
+    #
+    # Scheme to use
+    # Either "http" or "https"
+    # Default "http"
+    #
+    # scheme: "http"
+
+    #
+    # Host and port of your Grafana instance
+    # Default "localhost:3000"
+    #
+    # host: "localhost:3000"
+
+    #
+    # Set base path for accessing Grafana API
+    # Default "/api"
+    #
+    # basepath: "/api"
+
+    #
+    # Amount of retries to connect to your Grafana instance
+    # Default 0
+    #
+    # retry: 0
+
+
+
+#
+# Teams you want to sync to Grafana
+#
+
+teams: []
+  # - myGroupName
+
+
+
+#
+# Folders you want to create in Grafana
+#
+
+#
+# WARNINGS:
+# - Folder entries are converted to lowercase and used as the folders UID
+# - Every folder in this list will have it's default viewer and editor roles removed!
+#
+# For each folder you can pass the following input:
+#   - title (required)
+#   - description (optional)
+#   - permissions
+#
+# The permission block can reference teams and can be set to one of the following permission level:
+#   - view  (1)
+#   - edit  (2)
+#   - admin (4)
+#
+#
+# Example:
+#
+# folders:
+#   folderid:
+#     title: "My Folder Title"
+#     description: "A folder to test things"
+#     permissions:
+#       teams:
+#         team1: 1
+#         team2: 2
+#
+
+folders: {}

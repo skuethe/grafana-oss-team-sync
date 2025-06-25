@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+loglevel: 1
+
+
+source: "someothersource"
+
+
+authfile: "someauthfile.env"
+
+
+features:
+  addLocalAdminToTeams: false
+  disableFolders: true
+  disableUserSync: true
+
+
+grafana:
+  authtype: "someotherauthtype"
+
+  connection:
+    scheme: "someotherscheme"
+
+    host: "someotherhost:3001"
+
+    basepath: "/someotherpath"
+
+    retry: 42
+
+
+teams:
+  - somegroup-1
+  - somegroup-2
+
+
+folders:
+  somefolder1:
+    title: "somefolder-1"
+    description: "some description 1"
+    permissions:
+      teams:
+        somegroup-1: 1
+        somegroup-2: 2
+  somefolder2:
+    title: "SomeFolder-2"
+    description: "Some Description 2"
+    permissions:
+      teams:
+        somegroup-1: 2
+        somegroup-2: 4

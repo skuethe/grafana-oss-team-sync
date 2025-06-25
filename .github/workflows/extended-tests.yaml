@@ -1,0 +1,124 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+name: Extended Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+
+  # Integration Tests
+  integration-tests:
+    runs-on: ubuntu-latest
+    environment: integration-tests
+
+    strategy:
+      matrix:
+        version: [11.1.0, 12.0.0, latest]
+
+    # Define service containers for integration tests
+    services:
+      grafana:
+        image: docker.io/grafana/grafana-oss:${{ matrix.version }}
+        ports:
+          - 3000:3000
+        options: >-
+          --health-cmd "nc -z localhost 3000"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Test
+        run: go test -v -tags=integration  ./...
+        env:
+          # Tell GOTS to load the e2e config and authfile
+          GOTS_CONFIG: ${{ github.workspace }}/test/data/integration-tests_config.yaml
+          GOTS_AUTHFILE: ${{ github.workspace }}/test/data/integration-tests_authfile.env
+
+          # Configure against Grafana service container
+          GOTS_SCHEME: http
+          GOTS_HOST: localhost:3000
+          GOTS_RETRY: 10
+
+
+
+  # End To End Tests
+  e2e-tests:
+    runs-on: ubuntu-latest
+    environment: e2e-tests
+
+    # Define service containers for end to end tests
+    services:
+
+      # Start devproxy instance, to mock plugin source data
+      devproxy:
+        image: ghcr.io/dotnet/dev-proxy:0.28.0
+        env:
+          # ref: https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/use-dev-proxy-in-ci-cd-overview
+          CI: 1
+        ports:
+        - 8000:8000
+        - 8897:8897
+        # options: >-
+        #   --health-cmd "echo >/dev/tcp/localhost/8897"
+        #   --health-interval 10s
+        #   --health-timeout 5s
+        #   --health-retries 5
+
+      # Start latest Grafana stable, to run e2e tests against
+      grafana:
+        image: docker.io/grafana/grafana-oss:latest
+        ports:
+          - 3000:3000
+        options: >-
+          --health-cmd "nc -z localhost 3000"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Fetch devproxy cert
+        run: curl --connect-timeout 10 http://127.0.0.1:8897/proxy/rootCertificate?format=crt --output ./devproxy.pem
+
+      - name: Test
+        run: go test -v -tags=e2e  ./...
+        env:
+          # Set env vars for go to use the devproxy instance
+          HTTP_PROXY: localhost:8000
+          HTTPS_PROXY: localhost:8000
+
+          # Set env var for go to respect the selfsigned cert of devproxy instance
+          SSL_CERT_FILE: devproxy.pem
+
+          # Tell GOTS to load the e2e config and authfile
+          GOTS_CONFIG: ${{ github.workspace }}/test/data/e2e-tests_config-entraid.yaml
+          GOTS_AUTHFILE: ${{ github.workspace }}/test/data/e2e-tests_authfile.env
+
+          # Configure against Grafana service container
+          GOTS_SCHEME: http
+          GOTS_HOST: localhost:3000
+          GOTS_RETRY: 10

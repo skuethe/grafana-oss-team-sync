@@ -1,0 +1,49 @@
+version = 1
+
+# License information on test files
+[[annotations]]
+path = "test/**"
+precedence = "closest"
+SPDX-FileCopyrightText = "2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+
+# REUSE GitHub action template
+[[annotations]]
+path = ".github/workflows/reuse.yaml"
+SPDX-FileCopyrightText = "2022 Free Software Foundation Europe e.V. <https://fsfe.org>"
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileComment = "based of: https://github.com/fsfe/reuse-action?tab=readme-ov-file#example-usage"
+
+
+# CONTRIBUTING.md template
+[[annotations]]
+path = "CONTRIBUTING.md"
+SPDX-FileCopyrightText = "2020 contributors to the cncf/project-template project <https://github.com/cncf/project-template>"
+SPDX-License-Identifier = "Apache-2.0"
+SPDX-FileComment = "based of: https://github.com/cncf/project-template/blob/54a33f5aba96bb668dc1cd578e836da7ec4b8b73/CONTRIBUTING.md"
+
+
+# PULL_REQUEST_TEMPLATE.md template
+[[annotations]]
+path = ".github/PULL_REQUEST_TEMPLATE.md"
+SPDX-FileCopyrightText = "2016 contributors to the TalAter/open-source-templates project <https://github.com/TalAter/open-source-templates>"
+SPDX-License-Identifier = "MIT"
+SPDX-FileComment = "based of: https://github.com/TalAter/open-source-templates/blob/master/PULL_REQUEST_TEMPLATE.md"
+
+
+# ISSUE_TEMPLATE/* templates
+[[annotations]]
+path = ".github/ISSUE_TEMPLATE/*"
+SPDX-FileCopyrightText = "2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+
+# Computer-generated files.
+[[annotations]]
+path = [
+    "go.mod",
+    "go.sum"
+]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "GPL-3.0-or-later"

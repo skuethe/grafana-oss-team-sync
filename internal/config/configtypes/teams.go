@@ -7,6 +7,6 @@ type Teams []string
 
 const (
 	TeamsDefault   string = ""
-	TeamsFlagHelp  string = "the comma-seperated list of teams you want to sync"
+	TeamsFlagHelp  string = "the comma-separated list of teams you want to sync"
 	TeamsParameter string = "teams"
 )

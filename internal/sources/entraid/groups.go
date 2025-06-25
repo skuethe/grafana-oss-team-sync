@@ -59,10 +59,10 @@ func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) 
 }
 
 func (g *groups) handleGroupPagination(nextLink *string) (*models.GroupCollectionResponseable, error) {
-	configuraton := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
+	configuration := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
 		Headers: g.headers,
 	}
-	result, err := g.client.Groups().WithUrl(*nextLink).Get(context.Background(), configuraton)
+	result, err := g.client.Groups().WithUrl(*nextLink).Get(context.Background(), configuration)
 	if err != nil {
 		return nil, err
 	}
@@ -79,11 +79,11 @@ func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, 
 		Select: []string{"id", "displayName", "mail"},
 		Count:  &requestCount,
 	}
-	configuraton := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
+	configuration := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
 		Headers:         g.headers,
 		QueryParameters: requestParams,
 	}
-	result, err := g.client.Groups().Get(context.Background(), configuraton)
+	result, err := g.client.Groups().Get(context.Background(), configuration)
 	if err != nil {
 		return nil, err
 	}

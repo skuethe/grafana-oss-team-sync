@@ -57,10 +57,10 @@ func (u *users) processUserResult(result *models.UserCollectionResponseable) {
 }
 
 func (u *users) handleUserPagination(nextLink *string) (*models.UserCollectionResponseable, error) {
-	configuraton := &graphgroups.ItemTransitiveMembersGraphUserRequestBuilderGetRequestConfiguration{
+	configuration := &graphgroups.ItemTransitiveMembersGraphUserRequestBuilderGetRequestConfiguration{
 		Headers: u.headers,
 	}
-	result, err := u.client.Groups().ByGroupId(*u.groupid).TransitiveMembers().GraphUser().WithUrl(*nextLink).Get(context.Background(), configuraton)
+	result, err := u.client.Groups().ByGroupId(*u.groupid).TransitiveMembers().GraphUser().WithUrl(*nextLink).Get(context.Background(), configuration)
 	if err != nil {
 		return nil, err
 	}
@@ -75,11 +75,11 @@ func (u *users) getInitialUsersFromGroup() (*models.UserCollectionResponseable, 
 		Select: []string{"userPrincipalName", "displayName", "mail"},
 		Count:  &requestCount,
 	}
-	configuraton := &graphgroups.ItemTransitiveMembersGraphUserRequestBuilderGetRequestConfiguration{
+	configuration := &graphgroups.ItemTransitiveMembersGraphUserRequestBuilderGetRequestConfiguration{
 		Headers:         u.headers,
 		QueryParameters: requestParams,
 	}
-	result, err := u.client.Groups().ByGroupId(*u.groupid).TransitiveMembers().GraphUser().Get(context.Background(), configuraton)
+	result, err := u.client.Groups().ByGroupId(*u.groupid).TransitiveMembers().GraphUser().Get(context.Background(), configuration)
 	if err != nil {
 		return nil, err
 	}

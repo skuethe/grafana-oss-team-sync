@@ -97,7 +97,7 @@ func loadEnvironmentVariables(k *koanf.Koanf) error {
 		case configtypes.FeaturesDisableUsersOptimized:
 			return configtypes.FeaturesDisableUsersParameter, v
 
-		// "teams" - respect comma seperated list
+		// "teams" - respect comma separated list
 		case configtypes.TeamsParameter:
 			return key, strings.Split(v, ",")
 		}
@@ -142,7 +142,7 @@ func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) error {
 		case configtypes.FeaturesDisableUsersOptimized:
 			return configtypes.FeaturesDisableUsersParameter, val
 
-		// "teams" - respect comma seperated list
+		// "teams" - respect comma separated list
 		case configtypes.TeamsParameter:
 			return key, strings.Split(val.(string), ",")
 		}

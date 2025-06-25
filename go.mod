@@ -5,6 +5,7 @@ go 1.24.2
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.9.0
 	github.com/go-openapi/strfmt v0.23.0
+	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20250428202209-be3a35ff1dac
 	github.com/joho/godotenv v1.5.1
 	github.com/knadh/koanf/parsers/yaml v1.0.0

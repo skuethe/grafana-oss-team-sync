@@ -5,6 +5,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 
@@ -24,7 +25,10 @@ import (
 var (
 	Instance *configtypes.Config
 
-	ErrNoConfigFileDefined = errors.New("no config file defined")
+	ErrNoConfigFileDefined              = errors.New("no config file defined")
+	ErrCouldNotLoadAuthfile             = errors.New("could not process configured authfile")
+	ErrCouldNotLoadEnvironmentVariables = errors.New("could not load environment variables")
+	ErrCouldNotUnmarshalConfig          = errors.New("could not unmarshal config")
 )
 
 func getConfigFilePath() (*string, error) {
@@ -140,16 +144,26 @@ func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) error {
 	}), nil)
 }
 
-func loadOptionalAuthFile(k *koanf.Koanf) {
+func loadOptionalAuthFile(k *koanf.Koanf) error {
 	authfile := k.String(configtypes.AuthFileParameter)
 	if authfile != "" {
 		if err := godotenv.Load(authfile); err != nil {
-			slog.Warn("could not process configured authfile", "path", authfile)
+			return fmt.Errorf("%w (%v): %w", ErrCouldNotLoadAuthfile, authfile, err)
 		}
 		if err := loadEnvironmentVariables(k); err != nil {
-			slog.Warn("could not load environment variables")
+			return fmt.Errorf("%w: %w", ErrCouldNotLoadEnvironmentVariables, err)
 		}
 	}
+	return nil
+}
+
+func unmarshalIntoStruct(k *koanf.Koanf) error {
+	if err := k.UnmarshalWithConf("", &Instance, koanf.UnmarshalConf{
+		Tag: "yaml",
+	}); err != nil {
+		return fmt.Errorf("%w: %w", ErrCouldNotUnmarshalConfig, err)
+	}
+	return nil
 }
 
 func Load() {
@@ -180,12 +194,12 @@ func Load() {
 	}
 
 	// Load optional authfile as config and environment variables
-	loadOptionalAuthFile(k)
+	if err := loadOptionalAuthFile(k); err != nil {
+		configLog.Warn(err.Error())
+	}
 
 	// Create new Config instance from the different inputs
-	if err := k.UnmarshalWithConf("", &Instance, koanf.UnmarshalConf{
-		Tag: "yaml",
-	}); err != nil {
+	if err := unmarshalIntoStruct(k); err != nil {
 		configLog.Error("could not parse config")
 		panic(err)
 	}

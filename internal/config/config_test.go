@@ -393,7 +393,9 @@ func TestUnmarshalIntoStruct(t *testing.T) {
 			}
 
 			// Need to also load flags, as this will set default values
-			flags.Load()
+			if err := flags.Load(); err != nil {
+				t.Fatal(err)
+			}
 			if err := loadCLIParameter(k, flags.Instance); err != nil {
 				t.Fatal(err)
 			}
@@ -508,7 +510,9 @@ func TestLoad(t *testing.T) {
 			}
 
 			// Need to also load flags, as this will set default values
-			flags.Load()
+			if err := flags.Load(); err != nil {
+				t.Fatal(err)
+			}
 
 			if err := Load(); err != nil {
 				t.Fatal(err)

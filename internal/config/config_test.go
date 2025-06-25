@@ -41,7 +41,7 @@ func TestGetConfigFilePath(t *testing.T) {
 
 			os.Clearenv()
 			if err := os.Setenv(configtypes.ConfigVariable, test.inputenv); err != nil {
-				t.Fatal("could not set required environment variables", "variable", configtypes.ConfigVariable, "input", test.inputenv, "error", err)
+				t.Fatal(fmt.Errorf("%w (%v = %v): %w", ErrCouldNotSetRequiredVariable, configtypes.ConfigVariable, test.inputenv, err))
 			}
 
 			flags.Config = test.inputflag
@@ -52,6 +52,39 @@ func TestGetConfigFilePath(t *testing.T) {
 			}
 			if outputpath != nil && *outputpath != test.expectedpath {
 				t.Errorf("got path: %q, wanted path: %q", *outputpath, test.expectedpath)
+			}
+		})
+	}
+
+}
+
+func TestLoadYAMLFile(t *testing.T) {
+
+	type addTest struct {
+		name     string
+		input    string
+		expected error
+	}
+
+	var tests = []addTest{
+		{"existing file", "../../test/data/unit-tests_config_minimal.yaml", nil},
+		{"non-existing file", "doesnotexist.yaml", ErrCouldNotLoadYAMLFile},
+		{"not a YAML file", "../../test/data/unit-tests_authfile.env", ErrCouldNotLoadYAMLFile},
+		{"no config file defined", "", ErrNoConfigFileDefined},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			os.Clearenv()
+			if err := os.Setenv(configtypes.ConfigVariable, test.input); err != nil {
+				t.Fatal(fmt.Errorf("%w (%v = %v): %w", ErrCouldNotSetRequiredVariable, configtypes.ConfigVariable, test.input, err))
+			}
+
+			k := koanf.New(".")
+
+			if output := loadYAMLFile(k); !errors.Is(output, test.expected) {
+				t.Errorf("got error: %v, wanted error: %v", output, test.expected)
 			}
 		})
 	}
@@ -356,13 +389,13 @@ func TestUnmarshalIntoStruct(t *testing.T) {
 
 			// Load YAML config
 			if err := loadYAMLFile(k); err != nil {
-				t.Fatal(fmt.Errorf("%w: %w", ErrCouldNotLoadYAMLFile, err))
+				t.Fatal(err)
 			}
 
 			// Need to also load flags, as this will set default values
 			flags.Load()
 			if err := loadCLIParameter(k, flags.Instance); err != nil {
-				t.Fatal(fmt.Errorf("%w: %w", ErrCouldNotLoadCLIArgs, err))
+				t.Fatal(err)
 			}
 
 			if err := unmarshalIntoStruct(k); err != nil {

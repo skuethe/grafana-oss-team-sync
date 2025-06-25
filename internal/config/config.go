@@ -162,7 +162,7 @@ func loadOptionalAuthFile(k *koanf.Koanf) error {
 			return fmt.Errorf("%w (%v): %w", ErrCouldNotLoadAuthfile, authfile, err)
 		}
 		if err := loadEnvironmentVariables(k); err != nil {
-			return fmt.Errorf("%w: %w", ErrCouldNotLoadEnvironmentVariables, err)
+			return err
 		}
 	}
 	return nil

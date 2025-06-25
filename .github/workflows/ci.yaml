@@ -7,9 +7,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'internal/**'
+      - '*.go'
+      - 'go.mod'
   pull_request:
     paths:
       - 'internal/**'
+      - '*.go'
       - 'go.mod'
 
 permissions:

@@ -25,10 +25,13 @@ type GrafanaInstance struct {
 var (
 	Instance *GrafanaInstance
 
-	ErrAuthTokenMissing         = errors.New("token auth specified, but token is missing")
-	ErrAuthBasicUsernameMissing = errors.New("basic auth specified, but username is missing")
-	ErrAuthBasicPasswordMissing = errors.New("basic auth specified, but password is missing")
-	ErrAuthUnsupported          = errors.New("unsupported authentication type defined")
+	ErrCouldNotEnableAuthentication = errors.New("could not enable authentication")
+	ErrInstanceNotHealthy           = errors.New("instance is not healthy")
+	ErrCouldNotFetchOrgDetails      = errors.New("could not fetch org details from specified auth")
+	ErrAuthTokenMissing             = errors.New("token auth specified, but token is missing")
+	ErrAuthBasicUsernameMissing     = errors.New("basic auth specified, but username is missing")
+	ErrAuthBasicPasswordMissing     = errors.New("basic auth specified, but password is missing")
+	ErrAuthUnsupported              = errors.New("unsupported authentication type defined")
 )
 
 // We are explicitly handling auth data here, because we do not want to add it to our global config.Instance
@@ -93,7 +96,7 @@ func setAuthData(c *client.TransportConfig) error {
 	return nil
 }
 
-func New() {
+func New() error {
 	grafanaLog := slog.With(slog.String("package", "grafana"))
 	grafanaLog.Info("initializing Grafana")
 
@@ -112,8 +115,7 @@ func New() {
 
 	// Add authentication data based on config input
 	if err := setAuthData(cfg); err != nil {
-		grafanaLog.Error("could not enable authentication")
-		panic(err)
+		return fmt.Errorf("%w: %w", ErrCouldNotEnableAuthentication, err)
 	}
 
 	client := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
@@ -124,8 +126,7 @@ func New() {
 
 	// Validate Grafana health
 	if health, err := client.Health.GetHealth(); err != nil {
-		grafanaLog.Error("Grafana instance is not healthy")
-		panic(err)
+		return fmt.Errorf("%w: %w", ErrInstanceNotHealthy, err)
 	} else {
 		grafanaLog.Info("validated instance health",
 			slog.String("version", health.Payload.Version),
@@ -134,8 +135,7 @@ func New() {
 
 	// Fetching current org here for additional information AND to fail fast on auth errors
 	if currentOrg, err := client.Org.GetCurrentOrg(); err != nil {
-		grafanaLog.Error("could not fetch Grafana Org from specified auth")
-		panic(err)
+		return fmt.Errorf("%w: %w", ErrCouldNotFetchOrgDetails, err)
 	} else {
 		grafanaLog.Info("successfully authenticated against Grafana",
 			slog.Group("org",
@@ -148,4 +148,5 @@ func New() {
 	Instance = &GrafanaInstance{
 		api: client,
 	}
+	return nil
 }

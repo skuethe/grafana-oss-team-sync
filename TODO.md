@@ -22,9 +22,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
     - write _test files
         - cli flags
 
-    - make "flags.Load()" return error
-    - make "grafana.New()" return error
-
 
 - add README info
     - improve entraid docs

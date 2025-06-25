@@ -4,8 +4,8 @@
 package flags
 
 import (
+	"errors"
 	"fmt"
-	"log/slog"
 	"os"
 
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
@@ -22,9 +22,11 @@ var (
 	Token             string
 	BasicAuthUsername string
 	BasicAuthPassword string
+
+	ErrCouldNotParseCLIArgs = errors.New("no config file defined")
 )
 
-func Load() {
+func Load() error {
 	Instance = flag.NewFlagSet("grafana-oss-team-sync", flag.ExitOnError)
 	Instance.SortFlags = false
 
@@ -72,7 +74,7 @@ func Load() {
 
 	// Parse cli input
 	if err := Instance.Parse(os.Args[1:]); err != nil {
-		slog.Warn("could not parse CLI arguments")
+		return fmt.Errorf("%w: %w", ErrCouldNotParseCLIArgs, err)
 	}
 
 	// Handle help printing
@@ -81,4 +83,6 @@ func Load() {
 		fmt.Println(Instance.FlagUsages())
 		os.Exit(0)
 	}
+
+	return nil
 }

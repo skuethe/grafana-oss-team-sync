@@ -22,7 +22,9 @@ var (
 
 func main() {
 	// Handle Flags
-	flags.Load()
+	if err := flags.Load(); err != nil {
+		panic(err)
+	}
 
 	// Handle version printing
 	if flags.Version {
@@ -60,7 +62,9 @@ func main() {
 	slog.SetDefault(logger)
 
 	// Initialize Grafana
-	grafana.New()
+	if err := grafana.New(); err != nil {
+		panic(err)
+	}
 
 	// Call the configured source plugin
 	grafanaTeamList := sources.CallPlugin()

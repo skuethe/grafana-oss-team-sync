@@ -24,7 +24,6 @@ type GrafanaConnection struct {
 type GrafanaPermission int
 
 const (
-	// GrafanaAuthTypeFlagShort string = ""
 	GrafanaAuthTypeDefault   string = "basicauth"
 	GrafanaAuthTypeFlagHelp  string = "the auth type you want to use to authenticate against Grafana\nAllowed: basicauth or token"
 	GrafanaAuthTypeOptimized string = "authtype"
@@ -48,7 +47,6 @@ const (
 	GrafanaTokenAuthParameter string = "token"
 	GrafanaTokenAuthVariable  string = "GOTS_TOKEN"
 
-	// GrafanaConnectionSchemeFlagShort string = ""
 	GrafanaConnectionSchemeDefault   string = "http"
 	GrafanaConnectionSchemeFlagHelp  string = "the scheme of your Grafana instance\nAllowed: http or https"
 	GrafanaConnectionSchemeOptimized string = "scheme"
@@ -63,7 +61,6 @@ const (
 	GrafanaConnectionHostOptimized string = "host"
 	GrafanaConnectionHostParameter string = "grafana.connection.host"
 
-	// GrafanaConnectionBasePathFlagShort string = ""
 	GrafanaConnectionBasePathDefault   string = "/api"
 	GrafanaConnectionBasePathFlagHelp  string = "the base path of your Grafana instance"
 	GrafanaConnectionBasePathOptimized string = "basepath"

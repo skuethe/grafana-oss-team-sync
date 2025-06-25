@@ -148,8 +148,6 @@ func TestLoadCLIParameter(t *testing.T) {
 
 func TestLoadOptionalAuthFile(t *testing.T) {
 
-	// TODO: need to somehow load file content.. mock file from repo? or fake file generated during test?
-
 	type addTest struct {
 		name                    string
 		inputauthfileconfigpath string
@@ -204,10 +202,6 @@ func TestLoadOptionalAuthFile(t *testing.T) {
 					t.Errorf("wrong config - got: %v; wanted: %v", outputconfig, test.expectedconfigcontent)
 				}
 			}
-
-			// if output := k.String(test.path); output != test.expected {
-			// 	t.Errorf("got %q, wanted %q", output, test.expected)
-			// }
 		})
 	}
 }

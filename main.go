@@ -20,13 +20,6 @@ var (
 	date    = "unknown"
 )
 
-// app access needed?
-// https://learn.microsoft.com/en-gb/graph/permissions-reference?view=graph-rest-1.0#groupmemberreadall
-// https://learn.microsoft.com/en-gb/graph/permissions-reference?view=graph-rest-1.0#userreadbasicall
-// current app has:
-//  - User.Read
-//  - Directory.Read.All
-
 func main() {
 	// Handle Flags
 	flags.Load()
@@ -78,27 +71,6 @@ func main() {
 
 	// Grafana: continue to process folders
 	grafana.Instance.ProcessFolders()
-
-	//
-	//
-	// Temporary data inputs
-	//
-	//
-
-	// userList := []models.AdminCreateUserForm{
-	// 	{
-	// 		Email:    strings.ToLower("test@test.com"),
-	// 		Login:    strings.ToLower("testUser"),
-	// 		Name:     "testUser",
-	// 		Password: "testPassword",
-	// 	},
-	// 	{
-	// 		Email:    strings.ToLower("second@test.com"),
-	// 		Login:    strings.ToLower("secondUser"),
-	// 		Name:     "secondUserName",
-	// 		Password: "secondPassword",
-	// 	},
-	// }
 
 	slog.Info("finished Grafana OSS Team Sync")
 }

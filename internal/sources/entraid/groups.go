@@ -72,17 +72,12 @@ func (g *groups) handleGroupPagination(nextLink *string) (*models.GroupCollectio
 
 func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, error) {
 
-	// requestSearch := "\"displayName:" + a.name + "\""
-	// requestTop := int32(1)
 	requestCount := true
 	requestFilter := "displayName in ('" + strings.Join(config.Instance.Teams, "', '") + "')"
 	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
 		Filter: &requestFilter,
 		Select: []string{"id", "displayName", "mail"},
 		Count:  &requestCount,
-		// Top:    &requestTop,
-		// Expand: []string{"members($select=id,displayName)"},
-		// Search: &requestSearch,
 	}
 	configuraton := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
 		Headers:         g.headers,

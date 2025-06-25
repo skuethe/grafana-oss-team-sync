@@ -32,6 +32,13 @@ SPDX-License-Identifier = "MIT"
 SPDX-FileComment = "based of: https://github.com/TalAter/open-source-templates/blob/master/PULL_REQUEST_TEMPLATE.md"
 
 
+# ISSUE_TEMPLATE/* templates
+[[annotations]]
+path = ".github/ISSUE_TEMPLATE/*"
+SPDX-FileCopyrightText = "2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+
 # Computer-generated files.
 [[annotations]]
 path = [

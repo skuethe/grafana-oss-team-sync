@@ -89,7 +89,7 @@ docker_manifests:
 
 - name_template: "ghcr.io/skuethe/grafana-oss-team-sync:latest"
   image_templates:
-    - "ghcr.io/skuethe/grafana-oss-team-sync:latest}-amd64"
+    - "ghcr.io/skuethe/grafana-oss-team-sync:latest-amd64"
     - "ghcr.io/skuethe/grafana-oss-team-sync:latest-arm64v8"
 
 

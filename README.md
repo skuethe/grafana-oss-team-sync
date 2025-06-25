@@ -22,14 +22,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <br/>
 
 <!-- PROJECT SHIELDS -->
-<!--
-*** declarations on the bottom of this document
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
--->
+[![Go Report Card][goreportcardbadge]][goreportcardlink]
+[![REUSE status][reusebadge]][reuselink]
+![GitHub License][githublicensebadge]
+
+
 
   </p>
 </div>
@@ -249,6 +246,12 @@ See [`LICENSE`](LICENSE.md) for more information.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[goreportcardbadge]:    <https://goreportcard.com/badge/github.com/skuethe/grafana-oss-team-sync> "Go Report Card: badge"
+[goreportcardlink]:     <https://goreportcard.com/report/github.com/skuethe/grafana-oss-team-sync> "Go Report Card: link"
+[reusebadge]:           <https://api.reuse.software/badge/github.com/skuethe/grafana-oss-team-sync> "REUSE: badge"
+[reuselink]:            <https://api.reuse.software/info/github.com/skuethe/grafana-oss-team-sync> "REUSE: link"
+[githublicensebadge]:   <https://img.shields.io/github/license/skuethe/grafana-oss-team-sync> "License"
 
 [godotenv]:             <https://github.com/joho/godotenv> "GoDotEnv"
 [enterprisefeature]:    <https://grafana.com/docs/grafana/v12.0/introduction/grafana-enterprise/#team-sync> "Grafana Enterprise - Team Sync"

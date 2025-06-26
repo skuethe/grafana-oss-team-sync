@@ -38,6 +38,12 @@ path = ".github/ISSUE_TEMPLATE/*"
 SPDX-FileCopyrightText = "2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
+# renovate.json
+[[annotations]]
+path = "renovate.json"
+SPDX-FileCopyrightText = "2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
 
 # Computer-generated files.
 [[annotations]]

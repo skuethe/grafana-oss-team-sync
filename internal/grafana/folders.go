@@ -5,8 +5,10 @@ package grafana
 
 import (
 	"log/slog"
+	"slices"
 	"strings"
 
+	"github.com/grafana/grafana-openapi-client-go/client/folders"
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
@@ -15,9 +17,30 @@ import (
 
 type Folder models.CreateFolderCommand
 
-func (f *Folder) doesFolderExist() bool {
-	_, err := Instance.api.Folders.GetFolderByUID(f.UID)
-	return err == nil
+func (f *Folder) searchFolder() (*models.FolderSearchHit, error) {
+	// TODO: respect possible pagination
+	result, err := Instance.api.Folders.GetFolders(folders.NewGetFoldersParams())
+	if err != nil {
+		return nil, err
+	}
+	index := slices.IndexFunc(result.Payload, func(s *models.FolderSearchHit) bool { return s.Title == f.Title })
+	if index < 0 {
+		return nil, nil
+	}
+	return result.GetPayload()[index], nil
+}
+
+func (f *Folder) doesFolderExist() (bool, error) {
+	result, err := f.searchFolder()
+	if err != nil {
+		return false, err
+	}
+	if result == nil {
+		return false, nil
+	}
+	// If the folder exists, update the UID of our input folder to match the result of the search
+	f.UID = result.UID
+	return true, nil
 }
 
 func (f *Folder) createFolder() error {
@@ -96,30 +119,39 @@ func (g *GrafanaInstance) ProcessFolders() {
 
 		for folderUID, folder := range config.Instance.Folders {
 
-			folderLog := slog.With(
-				slog.Group("folder",
-					slog.String("uid", folderUID),
-					slog.String("title", folder.Title),
-				),
-			)
-
 			f := Folder{
 				UID:         strings.ToLower(folderUID),
 				Title:       folder.Title,
 				Description: folder.Description,
 			}
 
-			if f.doesFolderExist() {
-				countSkipped++
-				folderLog.Debug("skipping already existing Grafana folder")
+			folderLog := slog.With(
+				slog.Group("folder",
+					slog.String("uid", f.UID),
+					slog.String("title", f.Title),
+				),
+			)
+
+			exists, err := f.doesFolderExist()
+			if err != nil {
+				folderLog.Error("could not search for folder",
+					slog.Any("error", err),
+				)
 			} else {
-				if err := f.createFolder(); err != nil {
-					folderLog.Error("could not create Grafana folder",
-						slog.Any("error", err),
+				if exists {
+					countSkipped++
+					folderLog.Debug("skipping already existing Grafana folder",
+						slog.String("existing.uid", f.UID),
 					)
 				} else {
-					folderLog.Info("created Grafana folder")
-					countCreated++
+					if err := f.createFolder(); err != nil {
+						folderLog.Error("could not create Grafana folder",
+							slog.Any("error", err),
+						)
+					} else {
+						folderLog.Info("created Grafana folder")
+						countCreated++
+					}
 				}
 			}
 

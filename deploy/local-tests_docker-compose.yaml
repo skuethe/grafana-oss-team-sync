@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+services:
+  grafana:
+    image: docker.io/grafana/grafana-oss:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+     - '3000:3000'
+
+
+  grafana-oss-team-sync:
+    image: localhost/grafana-oss-team-sync:dev
+    container_name: grafana-oss-team-sync
+    build:
+      context: ../
+      dockerfile: build/package/Dockerfile
+    environment:
+      GOTS_HOST: "grafana:3000"
+      GOTS_RETRY: 10
+      GOTS_AUTHFILE: "/app/.env"
+      GOTS_CONFIG: "/app/configs/config.yaml"
+    volumes:
+      - '../:/app:Z'

@@ -38,6 +38,9 @@ function usage() {
   echo -e "\n  licenses"
   echo -e "\twill run reuse lint checks against the code"
 
+  echo -e "\n  renovate"
+  echo -e "\twill run renovate config check"
+
   echo -e "\n  e2e-start"
   echo -e "\twill start the end to end testing compose stack: Grafana + devproxy. Devproxy is serving mock data for EntraID"
   echo -e "\n  e2e-stop"
@@ -68,6 +71,9 @@ case "${1}" in
     ;;
   "licenses")
     cd ${ROOT_DIR} && podman run --rm -v $(pwd):/data:ro docker.io/fsfe/reuse:${REUSE_VERSION} lint
+    ;;
+  "renovate")
+    cd ${ROOT_DIR} && podman run -e RENOVATE_CONFIG_FILE=/data/renovate.json --rm -v $(pwd):/data:ro ghcr.io/renovatebot/renovate renovate-config-validator --strict
     ;;
   "e2e-start")
     podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml up -d

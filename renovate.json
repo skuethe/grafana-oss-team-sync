@@ -4,7 +4,9 @@
     "config:recommended",
     "docker:pinDigests",
     "helpers:pinGitHubActionDigestsToSemver",
-    ":configMigration"
+    ":configMigration",
+    "monorepo:azure-sdk-for-go",
+    "monorepo:kiota"
   ],
   "labels": [
     "dependencies"
@@ -23,6 +25,20 @@
       "matchManagers": ["gomod"],
       "matchDepTypes": ["indirect"],
       "enabled": true
+    },
+    {
+      "groupName": "GitHub Actions",
+      "matchManagers": ["github-actions"],
+      "semanticCommitScope": "ci",
+      "separateMajorMinor": false
+    },
+    {
+      "groupName": "golang.org/x",
+      "matchPackageNames": ["golang.org/x/*"]
+    },
+    {
+      "groupName": "github.com/knadh/koanf",
+      "matchPackageNames": ["github.com/knadh/koanf/*"]
     }
   ]
 }

@@ -2,5 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 FROM scratch
+COPY --from=docker.io/golang:alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY grafana-oss-team-sync /usr/bin/grafana-oss-team-sync
 ENTRYPOINT ["/usr/bin/grafana-oss-team-sync"]

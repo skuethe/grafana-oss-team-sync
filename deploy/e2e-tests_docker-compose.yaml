@@ -3,7 +3,7 @@
 
 services:
   grafana:
-    image: docker.io/grafana/grafana-oss:latest
+    image: docker.io/grafana/grafana-oss:latest@sha256:b5b59bfc7561634c2d7b136c4543d702ebcc94a3da477f21ff26f89ffd4214fa
     container_name: grafana
     restart: unless-stopped
     ports:
@@ -11,7 +11,7 @@ services:
 
 
   devproxy:
-    image: ghcr.io/dotnet/dev-proxy:0.28.0
+    image: ghcr.io/dotnet/dev-proxy:0.28.0@sha256:720767c1ae2599db80de2d0af165eb11ff09ec64d56d124ae6dafd024e27dd7c
     container_name: devproxy
     ports:
     - '8000:8000'

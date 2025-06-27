@@ -3,7 +3,7 @@ module github.com/skuethe/grafana-oss-team-sync
 go 1.24.4
 
 require (
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.9.0
+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.10.1
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20250617151817-c0f8cbb88d5c

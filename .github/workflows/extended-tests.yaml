@@ -77,7 +77,7 @@ jobs:
 
       # Start devproxy instance, to mock plugin source data
       devproxy:
-        image: ghcr.io/dotnet/dev-proxy:0.28.0@sha256:720767c1ae2599db80de2d0af165eb11ff09ec64d56d124ae6dafd024e27dd7c
+        image: ghcr.io/dotnet/dev-proxy:0.29.2@sha256:628e7ba4f0a6d28d9cb22850eea2ef835af19823b98e30c51f084ca7c2f9bca6
         env:
           # ref: https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/use-dev-proxy-in-ci-cd-overview
           CI: 1

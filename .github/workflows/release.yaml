@@ -39,8 +39,8 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@9c156ee8a17a598857849441385a2041ef570552 # v6.3.0
         with:
-          # renovate: github=goreleaser/goreleaser
-          version: "~> v2"
+          # renovate: github-releases=goreleaser/goreleaser
+          version: v2.10.2
           args: release --clean --config ./build/ci/.goreleaser.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

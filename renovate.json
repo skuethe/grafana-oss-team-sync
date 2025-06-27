@@ -14,6 +14,9 @@
   "postUpdateOptions": [
     "gomodTidy"
   ],
+  "docker-compose": {
+    "managerFilePatterns": ["/[^_]*_docker-compose[^/]*\\.ya?ml$/"]
+  },
   "packageRules": [
     {
       "matchManagers": ["gomod"],
@@ -42,10 +45,41 @@
       "matchPackageNames": ["github.com/knadh/koanf/**"]
     },
     {
+      "groupName": "github.com/dotnet/dev-proxy",
+      "matchPackageNames": [
+        "ghcr.io/dotnet/dev-proxy/*",
+        "github.com/dotnet/dev-proxy"
+      ]
+    },
+    {
       "groupName": "Non-breaking updates",
       "matchManagers": ["gomod"],
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "matchJsonata": ["isBreaking != true"]
+    }
+  ],
+
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/).+\\.json$/"
+      ],
+      "matchStrings": [
+        "[\\t ]*\"\\$schema\": +\"https:\\/\\/raw\\.githubusercontent\\.com\\/dotnet\\/dev-proxy\\/main\\/schemas\\/(?<currentValue>[\\w\\.-]+)\\/[\\w\\.-]+\",?"
+      ],
+      "packageNameTemplate": "github.com/dotnet/dev-proxy",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/./"
+      ],
+      "matchStrings": [
+        "[\\t ]*(?:#|\\/\\/) ?renovate: (?<datasource>[^=]+)=(?<depName>\\S+)(?: registry=(?<registryUrl>\\S+))?(?: versioning=(?<versioning>\\S+))?[\\t ]*\\r?\\n.+?[:=][\\t ]*[\"']?(?<currentValue>[^@\\s\"'=]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?[\"']?"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else if (equals datasource 'docker')}}docker{{else}}semver{{/if}}"
     }
   ]
 }

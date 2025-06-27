@@ -29,6 +29,7 @@
     {
       "groupName": "GitHub Actions",
       "matchManagers": ["github-actions"],
+      "matchDatasources": ["!docker"],
       "semanticCommitScope": "ci",
       "separateMajorMinor": false
     },
@@ -38,7 +39,13 @@
     },
     {
       "groupName": "github.com/knadh/koanf",
-      "matchPackageNames": ["github.com/knadh/koanf/*"]
+      "matchPackageNames": ["github.com/knadh/koanf/**"]
+    },
+    {
+      "groupName": "Non-breaking updates",
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "matchJsonata": ["isBreaking != true"]
     }
   ]
 }

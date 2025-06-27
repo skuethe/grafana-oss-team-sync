@@ -11,9 +11,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 ROOT_DIR="${SCRIPT_DIR}/../"
 DEPLOY_DIR="${ROOT_DIR}/deploy/"
 
-# renovate: github=golangci/golangci-lint
-GOLANGCI_LINT_VERSION="v2.1.6"
-# renovate: github=fsfe/reuse-tool
+# renovate: github-releases=golangci/golangci-lint
+GOLANGCI_LINT_VERSION="2.1.6"
+# renovate: github-releases=fsfe/reuse-tool
 REUSE_VERSION="5.0.2"
 
 # HELPERS
@@ -67,7 +67,7 @@ requireCommand "podman-compose"
 
 case "${1}" in
   "go-lint")
-    cd ${ROOT_DIR} && podman run --rm -v $(pwd):/app:ro -w /app docker.io/golangci/golangci-lint:${GOLANGCI_LINT_VERSION} golangci-lint run
+    cd ${ROOT_DIR} && podman run --rm -v $(pwd):/app:ro -w /app docker.io/golangci/golangci-lint:v${GOLANGCI_LINT_VERSION} golangci-lint run
     ;;
   "licenses")
     cd ${ROOT_DIR} && podman run --rm -v $(pwd):/data:ro docker.io/fsfe/reuse:${REUSE_VERSION} lint

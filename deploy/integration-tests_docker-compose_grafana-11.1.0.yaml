@@ -4,4 +4,4 @@
 services:
 
   grafana:
-    image: docker.io/grafana/grafana-oss:11.1.0@sha256:079600c9517b678c10cda6006b4487d3174512fd4c6cface37df7822756ed7a5
+    image: docker.io/grafana/grafana-oss:12.0.2@sha256:b5b59bfc7561634c2d7b136c4543d702ebcc94a3da477f21ff26f89ffd4214fa

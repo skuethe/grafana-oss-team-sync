@@ -38,6 +38,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
   <ul>
     <li><a href="#about-the-project">About The Project</a></li>
     <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#installation">Installation</a></li>
     <li><a href="#configuration">Configuration</a></li>
       <ul>
         <li><a href="#grafana">Grafana</a></li>
@@ -99,6 +100,24 @@ The idea is to add new sources in the future as a "plugin" feature.
 Feel free to contribute your desired source.
 
 This tool works with Grafana versions `>=11.1.0`.  
+
+<p align="right">( <a href="#top">Back to top</a> )</p>
+
+
+
+<!-- INSTALLATION -->
+## Installation
+
+There are multiple ways of using this tool. The easiest option would be to use the ready-to-go container image which is automatically uploaded as a [package to this repo][githubpackagelink] on GitHub. It is currently available for architectures `linux/amd64` as well as `linux/arm64`.  
+You can start by using `latest` tag for evaluation and then switch to a versioned release. Just have a look at available tags in the package linked above.  
+Example:
+```script
+podman pull ghcr.io/skuethe/grafana-oss-team-sync:latest
+```
+
+As an alternative, you can download your favorite (linux) binary which is attached to each release. Have a look at the [latest release][githublatestrelease] to find your preferred one (currently building `apk`, `deb` and `rpm` for both `linux/amd64` as well as `linux/arm64`).  
+
+If you are still missing your needed installation method or OS architecture, you can either [Build It Yourself](#build-it-yourself), or open a PR with an enhancement to the build-process (goreleaser).
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 
@@ -253,6 +272,8 @@ See [`LICENSE`](LICENSE.md) for more information.
 [reuselink]:            <https://api.reuse.software/info/github.com/skuethe/grafana-oss-team-sync> "REUSE: link"
 [githublicensebadge]:   <https://img.shields.io/github/license/skuethe/grafana-oss-team-sync> "License"
 
+[githubpackagelink]:    <https://github.com/skuethe/grafana-oss-team-sync/pkgs/container/grafana-oss-team-sync> "grafana-oss-team-sync package"
+[githublatestrelease]:  <https://github.com/skuethe/grafana-oss-team-sync/releases/latest> "Latest grafana-oss-team-sync release"
 [godotenv]:             <https://github.com/joho/godotenv> "GoDotEnv"
 [enterprisefeature]:    <https://grafana.com/docs/grafana/v12.0/introduction/grafana-enterprise/#team-sync> "Grafana Enterprise - Team Sync"
 [availableauthoptions]: <https://grafana.com/docs/grafana/latest/developers/http_api/authentication/> "Authentication options for the HTTP API"

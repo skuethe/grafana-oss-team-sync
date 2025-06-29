@@ -86,7 +86,7 @@ case "${1}" in
     ;;
   "integration-start")
     echo "Using Grafana version: ${2}"
-    podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml -f ${DEPLOY_DIR}/integration-tests_docker-compose_grafana-${2}.yaml up -d
+    podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml -f ${DEPLOY_DIR}/integration-tests_override_grafana-${2}.yaml up -d
     ;;
   "integration-stop")
     podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml down

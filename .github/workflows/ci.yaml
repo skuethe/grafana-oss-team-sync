@@ -4,14 +4,6 @@
 ---
 name: CI
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/ci.yaml'
-      - 'internal/**'
-      - '*.go'
-      - 'go.mod'
   pull_request:
     paths:
       - '.github/workflows/ci.yaml'

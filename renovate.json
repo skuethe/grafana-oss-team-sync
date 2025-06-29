@@ -47,8 +47,8 @@
     {
       "groupName": "github.com/dotnet/dev-proxy",
       "matchPackageNames": [
-        "ghcr.io/dotnet/dev-proxy/*",
-        "github.com/dotnet/dev-proxy"
+        "ghcr.io/dotnet/dev-proxy",
+        "dotnet/dev-proxy"
       ]
     },
     {
@@ -68,7 +68,7 @@
       "matchStrings": [
         "[\\t ]*\"\\$schema\": +\"https:\\/\\/raw\\.githubusercontent\\.com\\/dotnet\\/dev-proxy\\/main\\/schemas\\/(?<currentValue>[\\w\\.-]+)\\/[\\w\\.-]+\",?"
       ],
-      "packageNameTemplate": "github.com/dotnet/dev-proxy",
+      "packageNameTemplate": "dotnet/dev-proxy",
       "datasourceTemplate": "github-releases"
     },
     {

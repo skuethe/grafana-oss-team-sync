@@ -8,6 +8,9 @@
     "monorepo:azure-sdk-for-go",
     "monorepo:kiota"
   ],
+  "ignorePresets": [
+    ":ignoreModulesAndTests"
+  ],
   "labels": [
     "dependencies"
   ],
@@ -45,7 +48,7 @@
       "matchPackageNames": ["github.com/knadh/koanf/**"]
     },
     {
-      "groupName": "github.com/dotnet/dev-proxy",
+      "groupName": "dotnet/dev-proxy",
       "matchPackageNames": [
         "ghcr.io/dotnet/dev-proxy",
         "dotnet/dev-proxy"

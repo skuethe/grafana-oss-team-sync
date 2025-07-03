@@ -4,16 +4,9 @@
 package tests
 
 import (
-	"errors"
-
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
-)
-
-var (
-	ErrCouldNotSetConfigVariable = errors.New("could not set required environment variable for GOTS_CONFIG")
-	ErrCouldNotSetHostVariable   = errors.New("could not set required environment variable for GOTS_HOST")
 )
 
 func IntegrationGrafana(teamList *grafana.Teams) error {

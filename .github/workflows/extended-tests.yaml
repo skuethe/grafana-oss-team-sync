@@ -47,6 +47,9 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
+      - name: Force clean testing
+        run: go clean -testcache -tags=integration
+
       - name: Test
         run: go test -v -tags=integration  ./...
         env:
@@ -66,6 +69,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: e2e-tests
 
+    strategy:
+      matrix:
+        sourceplugin: ["entraid"]
+
     # Define service containers for end to end tests
     services:
 
@@ -78,6 +85,7 @@ jobs:
         ports:
         - 8000:8000
         - 8897:8897
+        options: --config-file /config/${{ matrix.sourceplugin }}.json
         # options: >-
         #   --health-cmd "echo >/dev/tcp/localhost/8897"
         #   --health-interval 10s
@@ -103,8 +111,19 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
+      # As we cannot reliably mount files into service containers, we copy them over and restart the specific service
+      - name: Copy files to service
+        run: |
+          docker cp ${{ github.workspace }}/test/devproxy/configs/*.json devproxy:/config/
+      - name: Restart service
+        run: |
+          docker restart devproxy
+
       - name: Fetch devproxy cert
         run: curl --connect-timeout 10 http://127.0.0.1:8897/proxy/rootCertificate?format=crt --output ./devproxy.pem
+
+      - name: Force clean testing
+        run: go clean -testcache -tags=e2e
 
       - name: Test
         run: go test -v -tags=e2e  ./...
@@ -117,8 +136,8 @@ jobs:
           SSL_CERT_FILE: devproxy.pem
 
           # Tell GOTS to load the e2e config and authfile
-          GOTS_CONFIG: ${{ github.workspace }}/test/data/e2e-tests_config-entraid.yaml
-          GOTS_AUTHFILE: ${{ github.workspace }}/test/data/e2e-tests_authfile.env
+          GOTS_CONFIG: ${{ github.workspace }}/test/data/e2e-tests_${{ matrix.sourceplugin }}_config.yaml
+          GOTS_AUTHFILE: ${{ github.workspace }}/test/data/e2e-tests_${{ matrix.sourceplugin }}_authfile.env
 
           # Configure against Grafana service container
           GOTS_SCHEME: http

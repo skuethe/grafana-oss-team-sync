@@ -59,7 +59,9 @@ case "${1}" in
     go test -v -tags=integration  ./...
     ;;
   "e2e")
-    cd ${ROOT_DIR} && go test -tags=e2e  ./...
+    cd ${ROOT_DIR}
+    go clean -testcache -tags=e2e
+    go test -v -tags=e2e  ./...
     ;;
   *)
     usage

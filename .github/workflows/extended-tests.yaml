@@ -47,6 +47,9 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
+      - name: Force clean testing
+        run: go clean -testcache -tags=integration
+
       - name: Test
         run: go test -v -tags=integration  ./...
         env:
@@ -66,6 +69,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: e2e-tests
 
+    strategy:
+      matrix:
+        sourceplugin: ["entraid"]
+
     # Define service containers for end to end tests
     services:
 
@@ -78,11 +85,11 @@ jobs:
         ports:
         - 8000:8000
         - 8897:8897
-        # options: >-
-        #   --health-cmd "echo >/dev/tcp/localhost/8897"
-        #   --health-interval 10s
-        #   --health-timeout 5s
-        #   --health-retries 5
+        options: >-
+          --health-cmd "/bin/bash -c 'echo >/dev/tcp/localhost/8897'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
       # Start latest Grafana stable, to run e2e tests against
       grafana:
@@ -103,24 +110,31 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
+      # As we cannot reliably mount files into service containers, we copy them over and restart the specific service
+      - name: Copy files to service
+        run: |
+          docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}.json ${{ job.services.devproxy.id }}:/config/devproxyrc.json
+          docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}-mocks.json ${{ job.services.devproxy.id }}:/config/
+      # Unfortunately we can not use "docker wait --condition healthy ${{ job.services.devproxy.id }}", as this is currently only supported in podman, not docker
+      - name: Restart service
+        timeout-minutes: 2
+        run: |
+          docker restart ${{ job.services.devproxy.id }}
+          bash -c "sleep 10; until </dev/tcp/127.0.0.1/8897; do sleep 1; done"
+
       - name: Fetch devproxy cert
-        run: curl --connect-timeout 10 http://127.0.0.1:8897/proxy/rootCertificate?format=crt --output ./devproxy.pem
+        run: curl --connect-timeout 10 http://127.0.0.1:8897/proxy/rootCertificate?format=crt --output ${{ github.workspace }}/devproxy.pem
+
+      - name: Force clean testing
+        run: go clean -testcache -tags=e2e
 
       - name: Test
-        run: go test -v -tags=e2e  ./...
+        run: go test -v -tags=e2e ./...
         env:
-          # Set env vars for go to use the devproxy instance
-          HTTP_PROXY: localhost:8000
-          HTTPS_PROXY: localhost:8000
-
           # Set env var for go to respect the selfsigned cert of devproxy instance
-          SSL_CERT_FILE: devproxy.pem
+          SSL_CERT_FILE: ${{ github.workspace }}/devproxy.pem
 
-          # Tell GOTS to load the e2e config and authfile
-          GOTS_CONFIG: ${{ github.workspace }}/test/data/e2e-tests_config-entraid.yaml
-          GOTS_AUTHFILE: ${{ github.workspace }}/test/data/e2e-tests_authfile.env
-
-          # Configure against Grafana service container
-          GOTS_SCHEME: http
-          GOTS_HOST: localhost:3000
-          GOTS_RETRY: 10
+          # Set GOTS specific input
+          GOTS_AUTHFILE: ${{ github.workspace }}/test/data/e2e-tests_${{ matrix.sourceplugin }}_authfile.env
+          GOTS_CONFIG: ${{ github.workspace }}/test/data/e2e-tests_config.yaml
+          GOTS_SOURCE: "${{ matrix.sourceplugin }}"

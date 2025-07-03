@@ -5,15 +5,16 @@ loglevel: 99
 
 
 
-source: "entraid"
-
-
-
 features:
   disableFolders: false
   disableUserSync: false
   addLocalAdminToTeams: true
 
+
+
+grafana:
+  connection:
+    retry: 10
 
 
 teams:

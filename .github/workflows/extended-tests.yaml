@@ -86,7 +86,6 @@ jobs:
         - 8000:8000
         - 8897:8897
         options: >-
-          --config-file /config/${{ matrix.sourceplugin }}.json
           --health-cmd "/bin/bash -c 'echo >/dev/tcp/localhost/8897'"
           --health-interval 10s
           --health-timeout 5s
@@ -114,7 +113,8 @@ jobs:
       # As we cannot reliably mount files into service containers, we copy them over and restart the specific service
       - name: Copy files to service
         run: |
-          docker cp ${{ github.workspace }}/test/devproxy/configs/*.json devproxy:/config/
+          docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}.json devproxy:/config/devproxyrc.json
+          docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}-mocks.json devproxy:/config/
       - name: Restart service
         run: |
           docker restart devproxy

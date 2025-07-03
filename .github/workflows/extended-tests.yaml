@@ -125,21 +125,16 @@ jobs:
       - name: Force clean testing
         run: go clean -testcache -tags=e2e
 
+      - name: Load required env vars
+        run: |
+          cat ${{ github.workspace }}/test/data/e2e-tests_devproxy.env >> $GITHUB_ENV
+
       - name: Test
         run: go test -v -tags=e2e  ./...
         env:
-          # Set env vars for go to use the devproxy instance
-          HTTP_PROXY: localhost:8000
-          HTTPS_PROXY: localhost:8000
-
           # Set env var for go to respect the selfsigned cert of devproxy instance
           SSL_CERT_FILE: devproxy.pem
 
           # Tell GOTS to load the e2e config and authfile
-          GOTS_CONFIG: ${{ github.workspace }}/test/data/e2e-tests_${{ matrix.sourceplugin }}_config.yaml
+          GOTS_CONFIG: ${{ github.workspace }}/test/data/e2e-tests_config.yaml
           GOTS_AUTHFILE: ${{ github.workspace }}/test/data/e2e-tests_${{ matrix.sourceplugin }}_authfile.env
-
-          # Configure against Grafana service container
-          GOTS_SCHEME: http
-          GOTS_HOST: localhost:3000
-          GOTS_RETRY: 10

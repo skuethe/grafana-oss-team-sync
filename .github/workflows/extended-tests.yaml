@@ -115,10 +115,12 @@ jobs:
         run: |
           docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}.json ${{ job.services.devproxy.id }}:/config/devproxyrc.json
           docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}-mocks.json ${{ job.services.devproxy.id }}:/config/
+      # Unfortunately we can not use "docker wait --condition healthy ${{ job.services.devproxy.id }}", as this is currently only supported in podman, not docker
       - name: Restart service
+        timeout-minutes: 2
         run: |
           docker restart ${{ job.services.devproxy.id }}
-          docker wait --condition healthy ${{ job.services.devproxy.id }}
+          bash -c "until </dev/tcp/127.0.0.1/8897; do sleep 1; done"
 
       - name: Fetch devproxy cert
         run: curl --connect-timeout 10 http://127.0.0.1:8897/proxy/rootCertificate?format=crt --output ./devproxy.pem

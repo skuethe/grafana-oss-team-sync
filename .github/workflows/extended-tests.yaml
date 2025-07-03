@@ -120,7 +120,7 @@ jobs:
         timeout-minutes: 2
         run: |
           docker restart ${{ job.services.devproxy.id }}
-          bash -c "until </dev/tcp/127.0.0.1/8897; do sleep 1; done"
+          bash -c "sleep 10; until </dev/tcp/127.0.0.1/8897; do sleep 1; done"
 
       - name: Fetch devproxy cert
         run: curl --connect-timeout 10 http://127.0.0.1:8897/proxy/rootCertificate?format=crt --output ./devproxy.pem

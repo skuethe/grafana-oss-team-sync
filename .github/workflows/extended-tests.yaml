@@ -123,7 +123,7 @@ jobs:
           bash -c "sleep 10; until </dev/tcp/127.0.0.1/8897; do sleep 1; done"
 
       - name: Fetch devproxy cert
-        run: curl --connect-timeout 10 http://127.0.0.1:8897/proxy/rootCertificate?format=crt --output ./devproxy.pem
+        run: curl --connect-timeout 10 http://127.0.0.1:8897/proxy/rootCertificate?format=crt --output ${{ github.workspace }}/devproxy.pem
 
       - name: Force clean testing
         run: go clean -testcache -tags=e2e
@@ -132,7 +132,7 @@ jobs:
         run: go test -v -tags=e2e ./...
         env:
           # Set env var for go to respect the selfsigned cert of devproxy instance
-          SSL_CERT_FILE: devproxy.pem
+          SSL_CERT_FILE: ${{ github.workspace }}/devproxy.pem
 
           # Set GOTS specific input
           GOTS_AUTHFILE: ${{ github.workspace }}/test/data/e2e-tests_${{ matrix.sourceplugin }}_authfile.env

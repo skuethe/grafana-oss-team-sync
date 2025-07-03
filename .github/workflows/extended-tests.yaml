@@ -85,8 +85,8 @@ jobs:
         ports:
         - 8000:8000
         - 8897:8897
-        options: --config-file /config/${{ matrix.sourceplugin }}.json
         options: >-
+          --config-file /config/${{ matrix.sourceplugin }}.json
           --health-cmd "/bin/bash -c 'echo >/dev/tcp/localhost/8897'"
           --health-interval 10s
           --health-timeout 5s

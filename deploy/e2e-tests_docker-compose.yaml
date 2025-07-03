@@ -8,7 +8,9 @@ services:
     restart: unless-stopped
     ports:
      - '3000:3000'
-
+    depends_on:
+      devproxy:
+        condition: service_healthy
 
   devproxy:
     image: ghcr.io/dotnet/dev-proxy:0.29.2@sha256:628e7ba4f0a6d28d9cb22850eea2ef835af19823b98e30c51f084ca7c2f9bca6
@@ -16,9 +18,7 @@ services:
     ports:
     - '8000:8000'
     - '8897:8897'
-    command:
-    - '--config-file'
-    - '/config/entraid.json'
+    healthcheck:
+      test: /bin/bash -c "echo >/dev/tcp/localhost/8897"
     volumes:
       - '../test/devproxy/configs:/config:ro'
-      - '../test/devproxy/cert:/home/devproxy/.config/dev-proxy/rootCert:Z'

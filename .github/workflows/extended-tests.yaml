@@ -86,11 +86,11 @@ jobs:
         - 8000:8000
         - 8897:8897
         options: --config-file /config/${{ matrix.sourceplugin }}.json
-        # options: >-
-        #   --health-cmd "echo >/dev/tcp/localhost/8897"
-        #   --health-interval 10s
-        #   --health-timeout 5s
-        #   --health-retries 5
+        options: >-
+          --health-cmd "/bin/bash -c 'echo >/dev/tcp/localhost/8897'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
       # Start latest Grafana stable, to run e2e tests against
       grafana:
@@ -125,16 +125,13 @@ jobs:
       - name: Force clean testing
         run: go clean -testcache -tags=e2e
 
-      - name: Load required env vars
-        run: |
-          cat ${{ github.workspace }}/test/data/e2e-tests_devproxy.env >> $GITHUB_ENV
-
       - name: Test
-        run: go test -v -tags=e2e  ./...
+        run: go test -v -tags=e2e ./...
         env:
           # Set env var for go to respect the selfsigned cert of devproxy instance
           SSL_CERT_FILE: devproxy.pem
 
-          # Tell GOTS to load the e2e config and authfile
-          GOTS_CONFIG: ${{ github.workspace }}/test/data/e2e-tests_config.yaml
+          # Set GOTS specific input
           GOTS_AUTHFILE: ${{ github.workspace }}/test/data/e2e-tests_${{ matrix.sourceplugin }}_authfile.env
+          GOTS_CONFIG: ${{ github.workspace }}/test/data/e2e-tests_config.yaml
+          GOTS_SOURCE: "${{ matrix.sourceplugin }}"

@@ -34,8 +34,8 @@ function usage() {
   echo -e "\n  integration"
   echo -e "\twill run integration tests. Requires integration services to be avilable"
 
-  echo -e "\n  e2e"
-  echo -e "\twill run e2e tests. Requires e2e services to be available"
+  echo -e "\n  e2e [source plugin]"
+  echo -e "\twill run e2e tests. Requires e2e container services to be available. Pass the source plugin you want to validate"
 
   echo -e "\n"
 }
@@ -60,8 +60,10 @@ case "${1}" in
     ;;
   "e2e")
     cd ${ROOT_DIR}
+    plugin="${2:-entraid}"
+    curl --connect-timeout 10 http://localhost:8897/proxy/rootCertificate?format=crt --output ./test/devproxy/cert/devproxy.pem
     go clean -testcache -tags=e2e
-    go test -v -tags=e2e  ./...
+    SSL_CERT_FILE="${ROOT_DIR}/test/devproxy/cert/devproxy.pem" GOTS_AUTHFILE="../../test/data/e2e-tests_${plugin}_authfile.env" GOTS_CONFIG="../../test/data/e2e-tests_config.yaml" GOTS_SOURCE="${plugin}" go test -v -tags=e2e ./...
     ;;
   *)
     usage

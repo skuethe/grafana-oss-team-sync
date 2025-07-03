@@ -76,7 +76,12 @@ case "${1}" in
     cd ${ROOT_DIR} && podman run -e RENOVATE_CONFIG_FILE=/data/renovate.json --rm -v $(pwd):/data:ro ghcr.io/renovatebot/renovate renovate-config-validator --strict
     ;;
   "e2e-start")
-    podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml up -d
+    if [[ -z "${2}" ]]; then
+      podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml -f ${DEPLOY_DIR}/e2e-tests_override_entraid.yaml up -d
+    else
+      echo "Using source plugin: ${2}"
+      podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml -f ${DEPLOY_DIR}/e2e-tests_override_${2}.yaml up -d
+    fi
     ;;
   "e2e-stop")
     podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml down
@@ -88,7 +93,7 @@ case "${1}" in
     if [[ -z "${2}" ]]; then
       podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml up -d
     else
-      echo "Using Grafana version: ${version}"
+      echo "Using Grafana version: ${2}"
       podman compose -f ${DEPLOY_DIR}/integration-tests_docker-compose.yaml -f ${DEPLOY_DIR}/integration-tests_override_grafana-${2}.yaml up -d
     fi
     ;;

@@ -113,11 +113,11 @@ jobs:
       # As we cannot reliably mount files into service containers, we copy them over and restart the specific service
       - name: Copy files to service
         run: |
-          docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}.json devproxy:/config/devproxyrc.json
-          docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}-mocks.json devproxy:/config/
+          docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}.json ${{ job.services.devproxy.id }}:/config/devproxyrc.json
+          docker cp ${{ github.workspace }}/test/devproxy/configs/${{ matrix.sourceplugin }}-mocks.json ${{ job.services.devproxy.id }}:/config/
       - name: Restart service
         run: |
-          docker restart devproxy
+          docker restart ${{ job.services.devproxy.id }}
 
       - name: Fetch devproxy cert
         run: curl --connect-timeout 10 http://127.0.0.1:8897/proxy/rootCertificate?format=crt --output ./devproxy.pem

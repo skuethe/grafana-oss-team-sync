@@ -3,51 +3,28 @@
 // SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package main
+package tests
 
 import (
-	"errors"
 	"os"
 	"testing"
 
-	"github.com/skuethe/grafana-oss-team-sync/internal/config"
-	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
-)
-
-var (
-	ErrCouldNotSetConfigVariable = errors.New("could not set required environment variable for GOTS_CONFIG")
-	ErrCouldNotSetHostVariable   = errors.New("could not set required environment variable for GOTS_HOST")
 )
 
 func TestIntegrationGrafana(t *testing.T) {
 
 	// 1. set config via env var
 	os.Clearenv()
-	if err := os.Setenv("GOTS_CONFIG", "test/data/integration-tests_config.yaml"); err != nil {
+	if err := os.Setenv("GOTS_CONFIG", "../../test/data/integration-tests_config.yaml"); err != nil {
 		t.Fatal(ErrCouldNotSetConfigVariable, err)
 	}
-	if err := os.Setenv("GOTS_AUTHFILE", "test/data/integration-tests_authfile.env"); err != nil {
+	if err := os.Setenv("GOTS_AUTHFILE", "../../test/data/integration-tests_authfile.env"); err != nil {
 		t.Fatal(ErrCouldNotSetConfigVariable, err)
-	}
-
-	// Load flags to not fail
-	if err := flags.Load(); err != nil {
-		t.Fatal(err)
-	}
-
-	// 2. parse config
-	if err := config.Load(); err != nil {
-		t.Fatal(err)
-	}
-
-	// 3. init Grafana
-	if err := grafana.New(); err != nil {
-		t.Fatal(err)
 	}
 
 	// Create grafana.Teams for integration tests
-	grafanaTeamList := &grafana.Teams{
+	teamList := &grafana.Teams{
 		grafana.Team{
 			Parameter: &grafana.TeamParameter{
 				Name: "group-integration-1",
@@ -95,13 +72,8 @@ func TestIntegrationGrafana(t *testing.T) {
 		},
 	}
 
-	// Run ProcessUsers
-	grafanaTeamList.ProcessUsers()
-
-	// Run ProcessTeams
-	grafanaTeamList.ProcessTeams()
-
-	// Run ProcessFolders
-	grafana.Instance.ProcessFolders()
-
+	// Run integration routine
+	if err := IntegrationGrafana(teamList); err != nil {
+		t.Fatal(err)
+	}
 }

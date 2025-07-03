@@ -32,13 +32,19 @@ func TestIntegrationGrafana(t *testing.T) {
 	}
 
 	// Load flags to not fail
-	flags.Load()
+	if err := flags.Load(); err != nil {
+		t.Fatal(err)
+	}
 
 	// 2. parse config
-	config.Load()
+	if err := config.Load(); err != nil {
+		t.Fatal(err)
+	}
 
 	// 3. init Grafana
-	grafana.New()
+	if err := grafana.New(); err != nil {
+		t.Fatal(err)
+	}
 
 	// Create grafana.Teams for integration tests
 	grafanaTeamList := &grafana.Teams{

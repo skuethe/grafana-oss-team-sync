@@ -13,7 +13,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/knadh/koanf/parsers/yaml"
-	"github.com/knadh/koanf/providers/env"
+	"github.com/knadh/koanf/providers/env/v2"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
@@ -67,42 +67,45 @@ func loadYAMLFile(k *koanf.Koanf) error {
 }
 
 func loadEnvironmentVariables(k *koanf.Koanf) error {
-	err := k.Load(env.ProviderWithValue("GOTS_", ".", func(k string, v string) (string, any) {
-		key := strings.ReplaceAll(strings.ToLower(strings.TrimPrefix(k, "GOTS_")), "_", ".")
+	err := k.Load(env.Provider(".", env.Opt{
+		Prefix: "GOTS_",
+		TransformFunc: func(k, v string) (string, any) {
+			k = strings.ReplaceAll(strings.ToLower(strings.TrimPrefix(k, "GOTS_")), "_", ".")
 
-		switch key {
-		// Grafana flags - return full parameter, to map it to the config object
-		case configtypes.GrafanaAuthTypeOptimized:
-			return configtypes.GrafanaAuthTypeParameter, v
+			switch k {
+			// Grafana flags - return full parameter, to map it to the config object
+			case configtypes.GrafanaAuthTypeOptimized:
+				return configtypes.GrafanaAuthTypeParameter, v
 
-		case configtypes.GrafanaConnectionSchemeOptimized:
-			return configtypes.GrafanaConnectionSchemeParameter, v
+			case configtypes.GrafanaConnectionSchemeOptimized:
+				return configtypes.GrafanaConnectionSchemeParameter, v
 
-		case configtypes.GrafanaConnectionHostOptimized:
-			return configtypes.GrafanaConnectionHostParameter, v
+			case configtypes.GrafanaConnectionHostOptimized:
+				return configtypes.GrafanaConnectionHostParameter, v
 
-		case configtypes.GrafanaConnectionBasePathOptimized:
-			return configtypes.GrafanaConnectionBasePathParameter, v
+			case configtypes.GrafanaConnectionBasePathOptimized:
+				return configtypes.GrafanaConnectionBasePathParameter, v
 
-		case configtypes.GrafanaConnectionRetryOptimized:
-			return configtypes.GrafanaConnectionRetryParameter, v
+			case configtypes.GrafanaConnectionRetryOptimized:
+				return configtypes.GrafanaConnectionRetryParameter, v
 
-		// Features - return full parameter, to map it to the config object
-		case configtypes.FeaturesAddLocalAdminToTeamsOptimized:
-			return configtypes.FeaturesAddLocalAdminToTeamsParameter, v
+			// Features - return full parameter, to map it to the config object
+			case configtypes.FeaturesAddLocalAdminToTeamsOptimized:
+				return configtypes.FeaturesAddLocalAdminToTeamsParameter, v
 
-		case configtypes.FeaturesDisableFoldersOptimized:
-			return configtypes.FeaturesDisableFoldersParameter, v
+			case configtypes.FeaturesDisableFoldersOptimized:
+				return configtypes.FeaturesDisableFoldersParameter, v
 
-		case configtypes.FeaturesDisableUsersOptimized:
-			return configtypes.FeaturesDisableUsersParameter, v
+			case configtypes.FeaturesDisableUsersOptimized:
+				return configtypes.FeaturesDisableUsersParameter, v
 
-		// "teams" - respect comma separated list
-		case configtypes.TeamsParameter:
-			return key, strings.Split(v, ",")
-		}
+			// "teams" - respect comma separated list
+			case configtypes.TeamsParameter:
+				return k, strings.Split(v, ",")
+			}
 
-		return key, v
+			return k, v
+		},
 	}), nil)
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrCouldNotLoadEnvironmentVariables, err)

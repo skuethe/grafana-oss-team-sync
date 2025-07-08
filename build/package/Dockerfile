@@ -2,6 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 FROM scratch
-COPY --from=docker.io/golang:alpine@sha256:68932fa6d4d4059845c8f40ad7e654e626f3ebd3706eef7846f319293ab5cb7a /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=docker.io/golang:alpine@sha256:ddf52008bce1be455fe2b22d780b6693259aaf97b16383b6372f4b22dd33ad66 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY grafana-oss-team-sync /usr/bin/grafana-oss-team-sync
 ENTRYPOINT ["/usr/bin/grafana-oss-team-sync"]

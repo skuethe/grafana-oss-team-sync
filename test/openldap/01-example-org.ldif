@@ -1,69 +1,52 @@
 # Base domain entries - converting AD-style DN to OpenLDAP format
-dn: dc=mock,dc=example,dc=org
+dn: dc=example,dc=org
 objectClass: top
 objectClass: dcObject
 objectClass: organization
-dc: mock
-o: Mock Organization
+dc: example
+o: Example Organization
 
 # Organizational Units
-dn: ou=Users,dc=mock,dc=example,dc=org
+dn: ou=Users,dc=example,dc=org
 objectClass: top
 objectClass: organizationalUnit
 ou: Users
 
-dn: ou=Groups,dc=mock,dc=example,dc=org
+dn: ou=Groups,dc=example,dc=org
 objectClass: top
 objectClass: organizationalUnit
 ou: Groups
 
-# Admin group
-dn: cn=admins,ou=Groups,dc=mock,dc=example,dc=org
-objectClass: top
-objectClass: groupOfNames
-cn: admins
-description: An administrators group
-
 # group-mock-1 group
-dn: cn=group-mock-1,ou=Groups,dc=mock,dc=example,dc=org
+dn: cn=group-mock-1,ou=Groups,dc=example,dc=org
 objectClass: top
 objectClass: groupOfNames
 cn: group-mock-1
 description: Example group of group-mock-1
-member: cn=user-1,ou=Users,dc=mock,dc=example,dc=org
-member: cn=user-2,ou=Users,dc=mock,dc=example,dc=org
-member: cn=user-3,ou=Users,dc=mock,dc=example,dc=org
+member: cn=user-1,ou=Users,dc=example,dc=org
+member: cn=user-2,ou=Users,dc=example,dc=org
+member: cn=user-3,ou=Users,dc=example,dc=org
 
 # group-mock-2 group
-dn: cn=group-mock-2,ou=Groups,dc=mock,dc=example,dc=org
+dn: cn=group-mock-2,ou=Groups,dc=example,dc=org
 objectClass: top
 objectClass: groupOfNames
 cn: group-mock-2
 description: Example group of group-mock-2
-member: cn=user-1,ou=Users,dc=mock,dc=example,dc=org
-member: cn=user-4,ou=Users,dc=mock,dc=example,dc=org
+member: cn=user-1,ou=Users,dc=example,dc=org
+member: cn=user-4,ou=Users,dc=example,dc=org
 
 # group-mock-3 group
-dn: cn=group-mock-3,ou=Groups,dc=mock,dc=example,dc=org
-objectClass: top
-objectClass: groupOfNames
-cn: group-mock-3
-description: Example group of group-mock-3
-
-# Bind user
-dn: cn=bind,ou=Users,dc=mock,dc=example,dc=org
-changetype: add
-objectClass: top
-objectClass: person
-cn: bind
-sn: bind
-displayName: Bind User
-description: Bind User
-# userPassword::
+#dn: cn=group-mock-3,ou=Groups,dc=example,dc=org
+#objectClass: top
+#objectClass: groupOfNames
+#cn: group-mock-3
+#description: Example group of group-mock-3
 
 # Mock users
-dn: cn=user-1,ou=Users,dc=mock,dc=example,dc=org
+dn: cn=user-1,ou=Users,dc=example,dc=org
 changetype: add
+objectClass: iNetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
 objectClass: top
@@ -73,8 +56,9 @@ displayName: User One
 description: Example user user-1
 mail: user1@example.com
 
-dn: cn=user-2,ou=Users,dc=mock,dc=example,dc=org
+dn: cn=user-2,ou=Users,dc=example,dc=org
 changetype: add
+objectClass: iNetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
 objectClass: top
@@ -84,8 +68,9 @@ displayName: User Two
 description: Example user user-2
 mail: user2@example.com
 
-dn: cn=user-3,ou=Users,dc=mock,dc=example,dc=org
+dn: cn=user-3,ou=Users,dc=example,dc=org
 changetype: add
+objectClass: iNetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
 objectClass: top
@@ -94,8 +79,9 @@ sn: user-3
 displayName: User Three
 description: Example user user-3
 
-dn: cn=user-4,ou=Users,dc=mock,dc=example,dc=org
+dn: cn=user-4,ou=Users,dc=example,dc=org
 changetype: add
+objectClass: iNetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
 objectClass: top

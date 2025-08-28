@@ -77,10 +77,10 @@ case "${1}" in
     ;;
   "e2e-start")
     if [[ -z "${2}" ]]; then
-      podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml -f ${DEPLOY_DIR}/e2e-tests_override_entraid.yaml up -d
+      podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml up -d
     else
       echo "Using source plugin: ${2}"
-      podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml -f ${DEPLOY_DIR}/e2e-tests_override_${2}.yaml up -d
+      podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml up -d ${2}
     fi
     ;;
   "e2e-stop")

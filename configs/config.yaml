@@ -21,11 +21,10 @@ loglevel: 0
 #
 # Options:
 # "entraid" - Entra ID (formerly Azure Active Directory)
-#
-# At the moment only entraid is supported as a source
+# "ldap"    - LDAP (Lightweight Directory Access Protocol)
 #
 
-source: "entraid"
+source: ""
 
 
 

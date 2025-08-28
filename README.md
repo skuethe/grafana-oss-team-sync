@@ -43,6 +43,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
       <ul>
         <li><a href="#grafana">Grafana</a></li>
         <li><a href="#source-entraid">Source: EntraID</a></li>
+        <li><a href="#source-ldap">Source: LDAP</a></li>
       </ul>
     <li><a href="#opinionated-behaviour">Opinionated Behaviour</a></li>
     <li><a href="#build-it-yourself">Build It Yourself</a></li>
@@ -66,6 +67,10 @@ This functionality _does_ exist in Grafana itself ("Team Sync"), but is a is an 
 Sources are internally setup as plugins, which can be easily extended to others in the future.  
 Currently the following sources are supported:  
 - **Entra ID** (formerly "Azure Active Directory")
+- **LDAP** (Lightweight Directory Access Protocol)
+
+Feel free to contribute your desired source if it is missing.
+
 
 
 <!-- ABOUT THE PROJECT - CURRENT FEATURE LIST -->
@@ -78,26 +83,9 @@ The list of features include:
 - (optional) create `folders` from config input and add groups to the `permission` list as either a `viewer`, `editor` or `admin` role
 
 
-<!-- ABOUT THE PROJECT - POSSIBLE FUTURE IMPROVEMENTS -->
-### Possible future improvements
-
-Things which potentially will be added in the future:
-
-- allow to reference `users` on folder permissions
-- allow to reference `roles` on folder permissions
-- allow to assign `admin` permissions to team members
-- **delete** users and groups when removed from the source / sync list
-
-<p align="right">( <a href="#top">Back to top</a> )</p>
-
-
 
 <!-- REQUIREMENTS -->
 ## Requirements
-
-In it's current state, only `Microsoft Entra ID` is available as a source for groups and users.  
-The idea is to add new sources in the future as a "plugin" feature.  
-Feel free to contribute your desired source.
 
 This tool works with Grafana versions `>=11.1.0`.  
 
@@ -184,6 +172,15 @@ If you have [enabled EntraID OAuth][entraidoauth] for SSO authentication in Graf
 |-----------------|-|
 | Auth            | Using Azure app via env variables: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` |
 | App permissions | Minimum: `User.ReadBasic.All`, `GroupMember.Read.All`<br>To list the members of a hidden membership group, the `Member.Read.Hidden` permission is required |
+
+
+
+<!-- CONFIGURATION - LDAP -->
+### Source: `ldap`
+
+| Requirements    | |
+|-----------------|-|
+| Auth            | Using env variables: `...`, `...`, `...` |
 
 
 <p align="right">( <a href="#top">Back to top</a> )</p>

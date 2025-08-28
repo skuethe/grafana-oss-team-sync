@@ -19,7 +19,8 @@ func TestString(t *testing.T) {
 	}
 
 	var tests = []addTest{
-		{"existing source", SourcePluginEntraID, "entraid"},
+		{"existing source entraid", SourcePluginEntraID, "entraid"},
+		{"existing source ldap", SourcePluginLDAP, "ldap"},
 		{"non-existing source", Source("valid"), "valid"},
 	}
 
@@ -41,8 +42,10 @@ func TestGetSource(t *testing.T) {
 	}
 
 	var tests = []addTest{
-		{"existing source via const", Config{Source: SourcePluginEntraID}, SourcePluginEntraID},
-		{"existing source via string", Config{Source: SourcePluginEntraID}, Source("entraid")},
+		{"existing source via const entraid", Config{Source: SourcePluginEntraID}, SourcePluginEntraID},
+		{"existing source via const ldap", Config{Source: SourcePluginLDAP}, SourcePluginLDAP},
+		{"existing source via string entraid", Config{Source: SourcePluginEntraID}, Source("entraid")},
+		{"existing source via string ldap", Config{Source: SourcePluginLDAP}, Source("ldap")},
 		{"non-existing source", Config{Source: Source("invalid")}, Source("invalid")},
 	}
 
@@ -64,7 +67,8 @@ func TestValidateSourcePlugin(t *testing.T) {
 	}
 
 	var tests = []addTest{
-		{"existing source", Config{Source: SourcePluginEntraID}, nil},
+		{"existing source entraid", Config{Source: SourcePluginEntraID}, nil},
+		{"existing source ldap", Config{Source: SourcePluginLDAP}, nil},
 		{"non-existing source", Config{Source: Source("invalid")}, ErrInvalidSourcePlugin},
 	}
 

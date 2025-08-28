@@ -22,3 +22,17 @@ services:
       test: /bin/bash -c "echo >/dev/tcp/localhost/8897"
     volumes:
       - '../test/devproxy/configs:/config:ro'
+    command:
+    - '--config-file'
+    - '/config/entraid.json'
+
+  ldap:
+    image: docker.io/bitnamilegacy/openldap:latest@sha256:8c0ba3a0429f691800f99b8462901c8b923a03733eda14bd3f168d560b81d3b7
+    container_name: openldap
+    environment:
+      - BITNAMI_DEBUG=true
+    ports:
+      - 1389:1389
+      - 1636:1636
+    volumes:
+      - '../test/openldap:/ldifs:ro'

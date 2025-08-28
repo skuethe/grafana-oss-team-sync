@@ -10,6 +10,7 @@ import (
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources/entraid"
+	"github.com/skuethe/grafana-oss-team-sync/internal/sources/ldap"
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources/sourcetypes"
 )
 
@@ -31,6 +32,9 @@ func CallPlugin() *grafana.Teams {
 			instance = entraid.New()
 			// EntraID: search for all specified groups and users
 			grafanaTeamList = entraid.ProcessGroups(instance)
+		case configtypes.SourcePluginLDAP:
+			instance = ldap.New()
+			grafanaTeamList = ldap.ProcessGroups(instance)
 		}
 
 		pluginLog.Info("finished processing source plugin")

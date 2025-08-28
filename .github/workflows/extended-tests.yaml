@@ -71,7 +71,7 @@ jobs:
 
     strategy:
       matrix:
-        sourceplugin: ["entraid"]
+        sourceplugin: ["entraid", "ldap"]
 
     # Define service containers for end to end tests
     services:

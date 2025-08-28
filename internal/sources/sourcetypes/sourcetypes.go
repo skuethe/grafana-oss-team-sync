@@ -4,9 +4,11 @@
 package sourcetypes
 
 import (
+	ldap "github.com/go-ldap/ldap/v3"
 	msgraph "github.com/microsoftgraph/msgraph-sdk-go"
 )
 
 type SourcePlugin struct {
 	EntraID *msgraph.GraphServiceClient
+	LDAP    *ldap.Client
 }

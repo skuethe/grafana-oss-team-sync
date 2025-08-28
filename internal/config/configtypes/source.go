@@ -12,12 +12,13 @@ type Source string
 
 const (
 	SourceDefault   string = "entraid"
-	SourceFlagHelp  string = "the source `plugin` you want to use\nAllowed: entraid"
+	SourceFlagHelp  string = "the source `plugin` you want to use\nAllowed: entraid, ldap"
 	SourceFlagShort string = "s"
 	SourceParameter string = "source"
 	SourceVariable  string = "GOTS_SOURCE"
 
 	SourcePluginEntraID Source = "entraid"
+	SourcePluginLDAP    Source = "ldap"
 )
 
 var (
@@ -31,6 +32,8 @@ func (s Source) String() string {
 func (c *Config) ValdidateSourcePlugin() error {
 	switch c.Source {
 	case SourcePluginEntraID:
+		return nil
+	case SourcePluginLDAP:
 		return nil
 	}
 

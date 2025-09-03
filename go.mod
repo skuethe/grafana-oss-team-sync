@@ -6,7 +6,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.11.0
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/google/go-cmp v0.7.0
-	github.com/grafana/grafana-openapi-client-go v0.0.0-20250826134529-57b18317f84b
+	github.com/grafana/grafana-openapi-client-go v0.0.0-20250828163705-969607f81baa
 	github.com/joho/godotenv v1.5.1
 	github.com/knadh/koanf/parsers/yaml v1.1.0
 	github.com/knadh/koanf/providers/confmap v1.0.0
@@ -16,7 +16,7 @@ require (
 	github.com/knadh/koanf/v2 v2.2.2
 	github.com/microsoft/kiota-abstractions-go v1.9.3
 	github.com/microsoftgraph/msgraph-sdk-go v1.84.0
-	github.com/spf13/pflag v1.0.7
+	github.com/spf13/pflag v1.0.10
 )
 
 require (
@@ -73,9 +73,9 @@ require (
 	github.com/stretchr/testify v1.11.1 // indirect
 	go.mongodb.org/mongo-driver v1.17.4 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
-	go.opentelemetry.io/otel v1.37.0 // indirect
-	go.opentelemetry.io/otel/metric v1.37.0 // indirect
-	go.opentelemetry.io/otel/trace v1.37.0 // indirect
+	go.opentelemetry.io/otel v1.38.0 // indirect
+	go.opentelemetry.io/otel/metric v1.38.0 // indirect
+	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.41.0 // indirect
 	golang.org/x/net v0.43.0 // indirect

@@ -1,0 +1,83 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "grafana-oss-team-sync.fullname" . }}
+  labels:
+    {{- include "grafana-oss-team-sync.labels" . | nindent 4 }}
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+              {{- with .Values.image }}
+            - image: {{ .registry }}/{{ .repository }}:{{ default $.Chart.AppVersion .tag }}
+              name: grafana-oss-team-sync
+              imagePullPolicy: {{ .pullPolicy }}
+              {{- end }}
+              volumeMounts:
+                - name: gots-config
+                  mountPath: "/config"
+                  readOnly: true
+              env:
+                - name: GOTS_CONFIG
+                  value: "/config/config.yaml"
+                - name: GOTS_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-auth
+                      key: admin-user
+                - name: GOTS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-auth
+                      key: admin-password
+                - name: CLIENT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: azure-oauth
+                      key: AZURE_CLIENT_ID
+                - name: CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: azure-oauth
+                      key: AZURE_CLIENT_SECRET
+                - name: TENANT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: azure-oauth
+                      key: AZURE_TENANT_ID
+          restartPolicy: Never
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumes:
+          - name: gots-config
+            configMap:
+              name: {{ include "grafana-oss-team-sync.fullname" . }}-config
+  {{- with .Values.cronSettings }}
+  suspend: {{ .suspend }}
+  schedule: {{ default "0 23 * * 6" .schedule | quote }}
+  {{- if .timezone }}
+  timeZone: {{ .timezone }}
+  {{- end }}
+  concurrencyPolicy: {{ .concurrencyPolicy | quote }}
+  successfulJobsHistoryLimit: {{ .successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .failedJobsHistoryLimit }}
+  {{- if .startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ .startingDeadlineSeconds }}
+  {{- end }}
+  {{- end }}

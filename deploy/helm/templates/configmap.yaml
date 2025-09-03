@@ -1,0 +1,9 @@
+{{- with .Values.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "grafana-oss-team-sync.fullname" . }}-config
+data:
+  config.yaml: |-
+    {{- toYaml .config | nindent 4 }}
+{{- end }}

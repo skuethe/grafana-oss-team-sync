@@ -14,11 +14,11 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           containers:
-              {{- with .Values.image }}
+            {{- with .Values.image }}
             - image: {{ .registry }}/{{ .repository }}:{{ default $.Chart.AppVersion .tag }}
               name: grafana-oss-team-sync
               imagePullPolicy: {{ .pullPolicy }}
-              {{- end }}
+            {{- end }}
               volumeMounts:
                 - name: gots-config
                   mountPath: "/config"
@@ -26,31 +26,21 @@ spec:
               env:
                 - name: GOTS_CONFIG
                   value: "/config/config.yaml"
-                - name: GOTS_USERNAME
-                  valueFrom:
-                    secretKeyRef:
-                      name: grafana-auth
-                      key: admin-user
-                - name: GOTS_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: grafana-auth
-                      key: admin-password
-                - name: CLIENT_ID
-                  valueFrom:
-                    secretKeyRef:
-                      name: azure-oauth
-                      key: AZURE_CLIENT_ID
-                - name: CLIENT_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      name: azure-oauth
-                      key: AZURE_CLIENT_SECRET
-                - name: TENANT_ID
-                  valueFrom:
-                    secretKeyRef:
-                      name: azure-oauth
-                      key: AZURE_TENANT_ID
+                {{- range $key, $val := .Values.extraEnvVars }}
+                - name: {{ $key }}
+                  value: {{ $val }}
+                {{- end }}
+              {{- if or .Values.extraEnvVarsConfigMap .Values.extraEnvVarsSecret }}
+              envFrom:
+                {{- range .Values.extraEnvVarsConfigMap }}
+                - configMapRef:
+                    name: {{ . }}
+                {{- end }}
+                {{- range .Values.extraEnvVarsSecret }}
+                - secretRef:
+                    name: {{ . }}
+                {{- end }}
+              {{- end }}
           restartPolicy: Never
           {{- with .Values.affinity }}
           affinity:

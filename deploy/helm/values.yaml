@@ -41,7 +41,28 @@ cronSettings:
 #   folders: {}
 config: {}
 
+#
+# ENV VARs can be directly passed to the GOTS container.
+# Format:
+# extraEnvVars:
+#   KEY_1: VAL_1
+#   KEY_2: VAL_2
+#
+extraEnvVars: {}
 
+# List of configMaps. KEY/VALUE pairs from configMaps are loaded on container using envFrom.
+# Format:
+# extraEnvVarsConfigMap:
+#   - "configMap-1"
+#   - "configMap-2"
+extraEnvVarsConfigMap: []
+
+# List of secrets. KEY/VALUE pairs from secrets are loaded on container using envFrom.
+# Format:
+# extraEnvVarsConfigMap:
+#   - "secret-1"
+#   - "secret-2"
+extraEnvVarsSecret: []
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/

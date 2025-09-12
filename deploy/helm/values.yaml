@@ -27,6 +27,7 @@ cronSettings:
   failedJobsHistoryLimit: 1
   startingDeadlineSeconds: null
   suspend: false
+  backoffLimit: 0 # Sets the backoffLimit in the job template. Default behaviour is to NOT retry the job by creating new pods.
 
 # Configuration file(config.yaml) for grafana-oss-team-sync (YAML format)
 # Example configuration:

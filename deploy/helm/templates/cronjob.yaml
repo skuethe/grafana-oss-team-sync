@@ -23,35 +23,44 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           containers:
-            {{- with .Values.image }}
+              {{- with .Values.image }}
             - image: {{ .registry }}/{{ .repository }}:{{ default $.Chart.AppVersion .tag }}
               name: grafana-oss-team-sync
               imagePullPolicy: {{ .pullPolicy }}
-            {{- end }}
+              {{- end }}
               volumeMounts:
                 - name: gots-config
                   mountPath: "/config"
                   readOnly: true
-                {{- with .Values.volumeMounts }}
+              {{- with .Values.volumeMounts }}
                 {{- toYaml . | nindent 16 }}
-                {{- end }}
+              {{- end }}
               env:
                 - name: GOTS_CONFIG
                   value: "/config/config.yaml"
-                {{- range $key, $val := .Values.extraEnvVars }}
+                  {{- range $key, $val := .Values.extraEnvVars }}
                 - name: {{ $key }}
                   value: {{ $val }}
-                {{- end }}
+                  {{- end }}
+                  {{- range $key, $val := .Values.secrets }}
+                  {{- if $val }}
+                - name: {{ $key }}
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "grafana-oss-team-sync.fullname" $ }}-secret
+                      key: {{ $key }}
+                  {{- end }}
+                  {{- end }}
               {{- if or .Values.extraEnvVarsConfigMap .Values.extraEnvVarsSecret }}
               envFrom:
-                {{- range .Values.extraEnvVarsConfigMap }}
+              {{- range .Values.extraEnvVarsConfigMap }}
                 - configMapRef:
                     name: {{ . }}
-                {{- end }}
-                {{- range .Values.extraEnvVarsSecret }}
+              {{- end }}
+              {{- range .Values.existingSecrets }}
                 - secretRef:
                     name: {{ . }}
-                {{- end }}
+              {{- end }}
               {{- end }}
               {{- with .Values.securityContext }}
               securityContext:

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Default values for grafana-oss-team-sync
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -58,7 +62,7 @@ extraEnvVars: {}
 #   - configMap-2
 extraEnvVarsConfigMap: []
 
-# Secrets in plan-text can be specified here. To use existing secrets, see the existingSecrets section below. 
+# Secrets in plan-text can be specified here. To use existing secrets, see the existingSecrets section below.
 # Plain-text secrets keys always take precedence over keys specified in an existing secret.
 # Empty secrets are not added to the secret object, and are also not mounted on the container.
 secrets: {}

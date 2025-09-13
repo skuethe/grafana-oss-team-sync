@@ -54,26 +54,26 @@ extraEnvVars: {}
 # Load ENV VARs from list of extra configMaps. KEY/VALUE pairs from configMaps are loaded on container using envFrom.
 # Format:
 # extraEnvVarsConfigMap:
-#   - "configMap-1"
-#   - "configMap-2"
+#   - configMap-1
+#   - configMap-2
 extraEnvVarsConfigMap: []
 
 # Secrets in plan-text can be specified here. To use existing secrets, see the existingSecrets section below. 
 # Plain-text secrets keys always take precedence over keys specified in an existing secret.
 # Empty secrets are not added to the secret object, and are also not mounted on the container.
-secrets:
-  GOTS_USERNAME: ""
-  GOTS_PASSWORD: ""
-  GOTS_TOKEN: ""
-  CLIENT_ID: ""
-  TENANT_ID: ""
-  CLIENT_SECRET: ""
+secrets: {}
+  # GOTS_USERNAME: ""
+  # GOTS_PASSWORD: ""
+  # GOTS_TOKEN: ""
+  # CLIENT_ID: ""
+  # TENANT_ID: ""
+  # CLIENT_SECRET: ""
 
 # List of existing secrets. KEY/VALUE pairs from secrets are loaded on container using envFrom.
 # Format:
 # existingSecrets:
-#   - "secret-1"
-#   - "secret-2"
+#   - secret-1
+#   - secret-2
 existingSecrets: []
 
 # This is for setting Kubernetes Annotations to a Pod.
@@ -87,13 +87,13 @@ podSecurityContext: {}
   # fsGroup: 2000
 
 # Container security context
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

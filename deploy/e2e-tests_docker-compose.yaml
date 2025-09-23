@@ -3,7 +3,7 @@
 
 services:
   grafana:
-    image: docker.io/grafana/grafana-oss:latest@sha256:5749a0e982878aedaa2d320ed14d3bdce7a040a938f482258670009d419a597f
+    image: docker.io/grafana/grafana-oss:latest@sha256:60794dc17e6a58d28539cfd3dd496a7f2da62e13ff54a4055431385eec5d6639
     container_name: grafana
     restart: unless-stopped
     ports:

@@ -1,9 +1,9 @@
 module github.com/skuethe/grafana-oss-team-sync
 
-go 1.25.1
+go 1.25.2
 
 require (
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.12.0
+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.13.0
 	github.com/go-openapi/strfmt v0.24.0
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20250925215610-d92957c70d5c
@@ -15,7 +15,7 @@ require (
 	github.com/knadh/koanf/providers/posflag v1.0.1
 	github.com/knadh/koanf/v2 v2.3.0
 	github.com/microsoft/kiota-abstractions-go v1.9.3
-	github.com/microsoftgraph/msgraph-sdk-go v1.86.0
+	github.com/microsoftgraph/msgraph-sdk-go v1.87.0
 	github.com/spf13/pflag v1.0.10
 )
 
@@ -63,7 +63,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
-	github.com/std-uritemplate/std-uritemplate/go/v2 v2.0.5 // indirect
+	github.com/std-uritemplate/std-uritemplate/go/v2 v2.0.6 // indirect
 	go.mongodb.org/mongo-driver v1.17.4 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.38.0 // indirect

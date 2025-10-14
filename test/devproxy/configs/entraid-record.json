@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v1.1.0/rc.schema.json",
+  "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v1.2.1/rc.schema.json",
   "logLevel": "debug",
   "record": true,
   "plugins": [
@@ -30,7 +30,7 @@
     "https://login.microsoftonline.com/*"
   ],
   "graphMinimalPermissionsPlugin": {
-    "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v1.1.0/graphminimalpermissionsplugin.schema.json",
+    "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v1.2.1/graphminimalpermissionsplugin.schema.json",
     "type": "Delegated"
   }
 }

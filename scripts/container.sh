@@ -14,7 +14,7 @@ DEPLOY_DIR="${ROOT_DIR}/deploy/"
 # renovate: github-releases=golangci/golangci-lint
 GOLANGCI_LINT_VERSION="2.5.0"
 # renovate: github-releases=fsfe/reuse-tool
-REUSE_VERSION="6.1.2"
+REUSE_VERSION="6.2.0"
 
 # HELPERS
 

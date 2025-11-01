@@ -4,6 +4,8 @@
 package tests
 
 import (
+	"context"
+
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
@@ -11,7 +13,6 @@ import (
 )
 
 func EndToEnd() error {
-
 	// Load flags to not fail
 	if err := flags.Load(); err != nil {
 		return err
@@ -28,7 +29,7 @@ func EndToEnd() error {
 	}
 
 	// Call the configured source plugin
-	grafanaTeamList := sources.CallPlugin()
+	grafanaTeamList := sources.CallPlugin(context.TODO())
 
 	// Grafana: continue to process users
 	grafanaTeamList.ProcessUsers()

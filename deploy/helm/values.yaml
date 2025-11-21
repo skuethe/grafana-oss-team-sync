@@ -1,0 +1,131 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Default values for grafana-oss-team-sync
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Use the below fields to ovoerride the name of resources.
+nameOverride: ""
+fullnameOverride: ""
+
+# This sets the container image. more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+image:
+  registry: ghcr.io
+  repository: skuethe/grafana-oss-team-sync
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+
+# Configuration for CronJob
+cronSettings:
+  schedule: ""  # Defaults to "0 23 * * 6" if empty.
+  timezone: ""  # Optional
+  concurrencyPolicy: "Forbid"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  startingDeadlineSeconds: null
+  suspend: false
+  backoffLimit: 0 # Sets the backoffLimit in the job template. Default behaviour is to NOT retry the job by creating new pods.
+
+# Configuration file(config.yaml) for grafana-oss-team-sync (YAML format)
+# Example configuration:
+#
+# config:
+#   source: "entraid"
+#   grafana:
+#     connection:
+#       host: "prom-stack-grafana:80"
+#       retry: 3
+#   teams:[]
+#   folders: {}
+config: {}
+
+#
+# ENV VARs can be directly passed to the GOTS container.
+# Format:
+# extraEnvVars:
+#   KEY_1: VAL_1
+#   KEY_2: VAL_2
+#
+extraEnvVars: {}
+
+# Load ENV VARs from list of extra configMaps. KEY/VALUE pairs from configMaps are loaded on container using envFrom.
+# Format:
+# extraEnvVarsConfigMap:
+#   - configMap-1
+#   - configMap-2
+extraEnvVarsConfigMap: []
+
+# Secrets in plan-text can be specified here. To use existing secrets, see the existingSecrets section below.
+# Plain-text secrets keys always take precedence over keys specified in an existing secret.
+# Empty secrets are not added to the secret object, and are also not mounted on the container.
+secrets: {}
+  # GOTS_USERNAME: ""
+  # GOTS_PASSWORD: ""
+  # GOTS_TOKEN: ""
+  # CLIENT_ID: ""
+  # TENANT_ID: ""
+  # CLIENT_SECRET: ""
+
+# List of existing secrets. KEY/VALUE pairs from secrets are loaded on container using envFrom.
+# Format:
+# existingSecrets:
+#   - secret-1
+#   - secret-2
+existingSecrets: []
+
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# Container security context
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# Additional volumes for the Pod.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the container.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

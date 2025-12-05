@@ -1,12 +1,12 @@
 module github.com/skuethe/grafana-oss-team-sync
 
-go 1.25.4
+go 1.25.5
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.13.1
 	github.com/go-openapi/strfmt v0.25.0
 	github.com/google/go-cmp v0.7.0
-	github.com/grafana/grafana-openapi-client-go v0.0.0-20251118002049-9bc70ad4530f
+	github.com/grafana/grafana-openapi-client-go v0.0.0-20251202103709-7ef691d4df1d
 	github.com/joho/godotenv v1.5.1
 	github.com/knadh/koanf/parsers/yaml v1.1.0
 	github.com/knadh/koanf/providers/confmap v1.0.0
@@ -15,7 +15,7 @@ require (
 	github.com/knadh/koanf/providers/posflag v1.0.1
 	github.com/knadh/koanf/v2 v2.3.0
 	github.com/microsoft/kiota-abstractions-go v1.9.3
-	github.com/microsoftgraph/msgraph-sdk-go v1.90.0
+	github.com/microsoftgraph/msgraph-sdk-go v1.91.0
 	github.com/spf13/pflag v1.0.10
 )
 

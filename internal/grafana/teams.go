@@ -24,7 +24,7 @@ type Teams []Team
 
 func (t *Team) searchTeam() (*teams.SearchTeamsOK, error) {
 	result, err := Instance.api.Teams.SearchTeams(&teams.SearchTeamsParams{
-		Name: &t.Parameter.Name,
+		Name: t.Parameter.Name,
 	})
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (t *Team) getTeamID() (*int64, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &result.Payload.Teams[0].ID, nil
+	return result.Payload.Teams[0].ID, nil
 }
 
 func (t *Team) createTeam() error {
@@ -110,7 +110,7 @@ func (t *Teams) ProcessTeams() {
 
 			teamLog := slog.With(
 				slog.Group("team",
-					slog.String("name", team.Parameter.Name),
+					slog.String("name", *team.Parameter.Name),
 				),
 			)
 

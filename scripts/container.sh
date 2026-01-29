@@ -80,11 +80,11 @@ case "${1}" in
       podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml up -d
     else
       echo "Using source plugin: ${2}"
-      podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml up -d ${2}
+      podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml -f ${DEPLOY_DIR}/e2e-tests_docker-compose_extend-${2}.yaml up -d
     fi
     ;;
   "e2e-stop")
-    podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml down
+    podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml down --remove-orphans
     ;;
   "e2e-logs")
     podman compose -f ${DEPLOY_DIR}/e2e-tests_docker-compose.yaml logs -f

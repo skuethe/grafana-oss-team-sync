@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+services:
+  # Ref: https://github.com/bitnami/containers/blob/main/bitnami/openldap/README.md
+  # search:
+  # ldapsearch -x -b "dc=example,dc=org" -s sub -w "adminpassword" -D "cn=admin,dc=example,dc=org" -H ldap://localhost:1389 "objectClass=iNetOrgPerson"
+  ldap:
+    image: docker.io/bitnamilegacy/openldap:latest@sha256:8c0ba3a0429f691800f99b8462901c8b923a03733eda14bd3f168d560b81d3b7
+    container_name: openldap
+    environment:
+      - BITNAMI_DEBUG=true
+      - LDAP_ALLOW_ANON_BINDING=no
+      - LDAP_ENABLE_TLS=no
+      - LDAP_REQUIRE_TLS=no
+      - LDAP_LDAPS_PORT_NUMBER=1636
+      # - LDAP_TLS_CERT_FILE=/opt/bitnami/openldap/certs/openldap.crt
+      # - LDAP_TLS_KEY_FILE=/opt/bitnami/openldap/certs/openldap.key
+      # - LDAP_TLS_CA_FILE=/opt/bitnami/openldap/certs/openldapCA.crt
+    ports:
+      - 1389:1389
+      - 1636:1636
+    volumes:
+      # - /path/to/certs:/opt/bitnami/openldap/certs
+      - '../test/openldap:/ldifs:ro'

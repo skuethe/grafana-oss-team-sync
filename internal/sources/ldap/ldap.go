@@ -4,32 +4,89 @@
 package ldap
 
 import (
+	"crypto/tls"
 	"log/slog"
+	"os"
+	"strconv"
+
+	goldap "github.com/go-ldap/ldap/v3"
 
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources/sourcetypes"
 )
+
+type search struct {
+	connection *goldap.Conn
+	baseDN     string
+	filter     string
+	attributes []string
+}
+
+func (s *search) perform() (*goldap.SearchResult, error) {
+	searchRequest := goldap.NewSearchRequest(
+		s.baseDN,
+		goldap.ScopeWholeSubtree, goldap.NeverDerefAliases, 0, 0, false,
+		s.filter,
+		s.attributes,
+		nil,
+	)
+
+	sr, err := s.connection.Search(searchRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(sr.Entries) < 1 {
+		slog.Warn("search result is empty")
+	}
+
+	return sr, nil
+}
 
 func New() *sourcetypes.SourcePlugin {
 	ldapLog := slog.With(slog.String("package", "ldap"))
 	ldapLog.Info("initializing LDAP")
 
-	// clientId := os.Getenv("CLIENT_ID")
-	// tenantId := os.Getenv("TENANT_ID")
-	// clientSecret := os.Getenv("CLIENT_SECRET")
+	baseDN := os.Getenv("LDAP_BASE_DN")
+	bindDN := os.Getenv("LDAP_BIND_DN")
+	bindPassword := os.Getenv("LDAP_BIND_PASSWORD")
+	uri := os.Getenv("LDAP_URI")
+	groupFilter := os.Getenv("LDAP_GROUP_FILTER")
+	userFilter := os.Getenv("LDAP_USER_FILTER")
 
-	// credential, err := azidentity.NewClientSecretCredential(tenantId, clientId, clientSecret, nil)
-	// if err != nil {
-	// 	ldapLog.Error("unable to create secret credential for msgraph client")
-	// 	panic(err)
-	// }
+	insecureSkipVerify, err := strconv.ParseBool(os.Getenv("LDAP_INSECURE_SKIP_VERIFY"))
+	if err != nil {
+		ldapLog.Error("could not convert variable LDAP_INSECURE_SKIP_VERIFY to bool")
+	}
 
-	// client, err := graph.NewGraphServiceClientWithCredentials(credential, []string{"https://graph.microsoft.com/.default"})
-	// if err != nil {
-	// 	ldapLog.Error("unable to create msgraph client")
-	// 	panic(err)
-	// }
+	conn, err := goldap.DialURL(uri)
+	if err != nil {
+		ldapLog.Error("unable to connect to LDAP URI")
+		panic(err)
+	}
+	// defer conn.Close()
+
+	// Reconnect with TLS
+	if insecureSkipVerify {
+		err = conn.StartTLS(&tls.Config{InsecureSkipVerify: true})
+		if err != nil {
+			ldapLog.Error("unable to connect via TLS")
+			panic(err)
+		}
+	}
+
+	// First bind with a read only user
+	err = conn.Bind(bindDN, bindPassword)
+	if err != nil {
+		ldapLog.Error("unable to authenticate with bind user and password")
+		panic(err)
+	}
 
 	return &sourcetypes.SourcePlugin{
-		LDAP: client,
+		LDAP: &sourcetypes.LDAPClient{
+			Connection:  conn,
+			BaseDN:      baseDN,
+			GroupFilter: groupFilter,
+			UserFilter:  userFilter,
+		},
 	}
 }

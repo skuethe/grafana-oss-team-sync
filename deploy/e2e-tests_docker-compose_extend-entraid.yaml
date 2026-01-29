@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+services:
+  grafana:
+    depends_on:
+      devproxy:
+        condition: service_healthy
+
+  devproxy:
+    image: ghcr.io/dotnet/dev-proxy:2.0.0@sha256:c1b061b862fe96b31d69aa11e43abebf44099bad3d590a0251b15c805b84e218
+    container_name: devproxy
+    ports:
+    - '8000:8000'
+    - '8897:8897'
+    healthcheck:
+      test: /bin/bash -c "echo >/dev/tcp/localhost/8897"
+    volumes:
+      - '../test/devproxy/configs:/config:ro'
+    command:
+    - '--config-file'
+    - '/config/entraid.json'

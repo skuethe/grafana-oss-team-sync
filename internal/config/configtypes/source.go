@@ -17,12 +17,11 @@ const (
 	SourceParameter string = "source"
 	SourceVariable  string = "GOTS_SOURCE"
 
-	SourcePluginEntraID Source = "entraid"
+	SourcePluginEntraID  Source = "entraid"
+	SourcePluginKeycloak Source = "keycloak"
 )
 
-var (
-	ErrInvalidSourcePlugin = errors.New("invalid source plugin defined")
-)
+var ErrInvalidSourcePlugin = errors.New("invalid source plugin defined")
 
 func (s Source) String() string {
 	return string(s)
@@ -31,6 +30,8 @@ func (s Source) String() string {
 func (c *Config) ValdidateSourcePlugin() error {
 	switch c.Source {
 	case SourcePluginEntraID:
+		return nil
+	case SourcePluginKeycloak:
 		return nil
 	}
 

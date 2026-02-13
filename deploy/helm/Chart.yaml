@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+apiVersion: v2
+name: grafana-oss-team-sync
+description: A Helm chart for deploying grafana-oss-team-sync as a CronJob
+type: application
+version: 0.1.0
+appVersion: "0.1.10"
+home: "https://github.com/skuethe/grafana-oss-team-sync"
+sources:
+  - "https://github.com/skuethe/grafana-oss-team-sync"
+maintainers:
+  - name: Suyash S
+    url: "https://github.com/suyash-811"
+  - name: skuethe # Assuming this works for you
+    url: "https://github.com/skuethe"

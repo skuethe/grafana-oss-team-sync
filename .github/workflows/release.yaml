@@ -40,7 +40,7 @@ jobs:
         uses: goreleaser/goreleaser-action@ec59f474b9834571250b370d4735c50f8e2d1e29 # v7.0.0
         with:
           # renovate: github-releases=goreleaser/goreleaser
-          version: v2.14.0
+          version: v2.14.1
           args: release --clean --config ./build/ci/.goreleaser.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

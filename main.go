@@ -4,6 +4,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"os"
@@ -21,6 +22,7 @@ var (
 )
 
 func main() {
+	backgroundCtx := context.Background()
 	// Handle Flags
 	if err := flags.Load(); err != nil {
 		panic(err)
@@ -67,7 +69,7 @@ func main() {
 	}
 
 	// Call the configured source plugin
-	grafanaTeamList := sources.CallPlugin()
+	grafanaTeamList := sources.CallPlugin(backgroundCtx)
 
 	// Grafana: continue to process users
 	grafanaTeamList.ProcessUsers()

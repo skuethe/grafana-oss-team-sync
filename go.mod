@@ -15,7 +15,7 @@ require (
 	github.com/knadh/koanf/providers/posflag v1.0.1
 	github.com/knadh/koanf/v2 v2.3.2
 	github.com/microsoft/kiota-abstractions-go v1.9.3
-	github.com/microsoftgraph/msgraph-sdk-go v1.95.0
+	github.com/microsoftgraph/msgraph-sdk-go v1.96.0
 	github.com/spf13/pflag v1.0.10
 )
 

@@ -25,4 +25,4 @@ configs/*.yaml
 !configs/config.yaml
 
 # Python virtualenvs. Mostly used for installing pre-commit and resuse binaries.
-venv/
+.venv/

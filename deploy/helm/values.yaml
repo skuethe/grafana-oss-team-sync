@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+---
 
 # Default values for grafana-oss-team-sync
 # This is a YAML-formatted file.
@@ -19,7 +20,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
-# This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+# List of image pull secrets. See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ for additional help.
 imagePullSecrets: []
 
 # Configuration for CronJob
@@ -31,7 +32,7 @@ cronSettings:
   failedJobsHistoryLimit: 1
   startingDeadlineSeconds: null
   suspend: false
-  backoffLimit: 0 # Sets the backoffLimit in the job template. Default behaviour is to NOT retry the job by creating new pods.
+  backoffLimit: 0  # Sets the backoffLimit in the job template. Default behaviour is to NOT retry the job by creating new pods.
 
 # Configuration file(config.yaml) for grafana-oss-team-sync (YAML format)
 # Example configuration:
@@ -94,7 +95,7 @@ podSecurityContext: {}
 securityContext:
   capabilities:
     drop:
-    - ALL
+      - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 1000

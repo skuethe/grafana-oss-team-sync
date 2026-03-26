@@ -40,10 +40,10 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Go
-        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
           go-version-file: 'go.mod'
 
@@ -78,7 +78,7 @@ jobs:
 
       # Start devproxy instance, to mock plugin source data
       devproxy:
-        image: ghcr.io/dotnet/dev-proxy:1.1.0@sha256:4bb9e074ddfaa18a085a50b0ef8d9e09b9624c6549880d2d5122a14809110ca7
+        image: ghcr.io/dotnet/dev-proxy:2.2.0@sha256:70e566960311a3a2d2056a73b1e15794c5d9a6672c8460309687bbe8462b8252
         env:
           # ref: https://learn.microsoft.com/en-us/microsoft-cloud/dev/dev-proxy/how-to/use-dev-proxy-in-ci-cd-overview
           CI: 1
@@ -93,7 +93,7 @@ jobs:
 
       # Start latest Grafana stable, to run e2e tests against
       grafana:
-        image: docker.io/grafana/grafana-oss:latest@sha256:5749a0e982878aedaa2d320ed14d3bdce7a040a938f482258670009d419a597f
+        image: docker.io/grafana/grafana-oss:latest@sha256:e932bd6ed0e026595b08483cd0141e5103e1ab7ff8604839ff899b8dc54cabcb
         ports:
           - 3000:3000
         options: >-
@@ -103,10 +103,10 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Go
-        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
           go-version-file: 'go.mod'
 

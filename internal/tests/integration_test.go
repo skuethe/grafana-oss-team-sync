@@ -24,10 +24,13 @@ func TestIntegrationGrafana(t *testing.T) {
 	}
 
 	// Create grafana.Teams for integration tests
+	groupName1 := "group-integration-1"
+	groupName2 := "group-integration-2"
+	groupName3 := "group-integration-3"
 	teamList := &grafana.Teams{
 		grafana.Team{
 			Parameter: &grafana.TeamParameter{
-				Name: "group-integration-1",
+				Name: &groupName1,
 			},
 			Users: &grafana.Users{
 				grafana.User{
@@ -49,7 +52,7 @@ func TestIntegrationGrafana(t *testing.T) {
 		},
 		grafana.Team{
 			Parameter: &grafana.TeamParameter{
-				Name: "group-integration-2",
+				Name: &groupName2,
 			},
 			Users: &grafana.Users{
 				grafana.User{
@@ -66,7 +69,7 @@ func TestIntegrationGrafana(t *testing.T) {
 		},
 		grafana.Team{
 			Parameter: &grafana.TeamParameter{
-				Name: "group-integration-3",
+				Name: &groupName3,
 			},
 			Users: &grafana.Users{},
 		},

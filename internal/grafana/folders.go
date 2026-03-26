@@ -91,11 +91,11 @@ func (f *Folder) manageFolderPermissions(permissions configtypes.FolderPermissio
 
 		permissionList = append(permissionList, &models.DashboardACLUpdateItem{
 			Permission: permissionType,
-			TeamID:     team.Payload.Teams[0].ID,
+			TeamID:     *team.Payload.Teams[0].ID,
 		})
 	}
 
-	_, err := Instance.api.FolderPermissions.UpdateFolderPermissions(f.UID, &models.UpdateDashboardACLCommand{
+	_, err := Instance.api.Folders.UpdateFolderPermissions(f.UID, &models.UpdateDashboardACLCommand{
 		Items: permissionList,
 	})
 	if err != nil {

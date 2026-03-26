@@ -27,7 +27,7 @@ type groups struct {
 
 func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) {
 	for _, group := range (*result).GetValue() {
-		groupDisplayName := *group.GetDisplayName()
+		groupDisplayName := group.GetDisplayName()
 		groupId := *group.GetId()
 		groupMail := group.GetMail()
 
@@ -38,7 +38,7 @@ func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) 
 
 		groupLog := slog.With(
 			slog.Group("group",
-				slog.String("displayname", groupDisplayName),
+				slog.String("displayname", *groupDisplayName),
 				slog.String("id", groupId),
 			),
 		)
@@ -54,7 +54,7 @@ func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) 
 			},
 			Users: grafanaUserList,
 		})
-		config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, groupDisplayName, false)
+		config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, *groupDisplayName, false)
 	}
 }
 

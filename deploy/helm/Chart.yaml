@@ -17,3 +17,6 @@ maintainers:
     url: "https://github.com/suyash-811"
   - name: skuethe
     url: "https://github.com/skuethe"
+annotations:
+  artifacthub.io/license: "GPL-3.0-only"
+  artifacthub.io/category: ""  # Need help filling this

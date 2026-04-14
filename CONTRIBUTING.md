@@ -21,7 +21,7 @@ As you get started, you are in the best position to give us feedback on areas of
 our project that we need help with including:
 
 * Problems found during setting up a new developer environment
-* Gaps in our Quickstart Guide or documentation
+* Gaps in our quick-start guide or documentation
 * Bugs in our automation scripts
 
 If anything doesn't make sense, or doesn't work when you run it, please open a
@@ -52,13 +52,13 @@ that you want to work on it. Something like "I want to work on this" is fine.
 
 The best way to reach us with a question when contributing is to ask on:
 
-* The original github issue
+* The original GitHub issue
 
-## Pull Request Lifecycle
+## Pull Request Life-Cycle
 
 The Pull Request process is as follows:
 
-1. Fork this repo
+1. Fork this repository
 2. Clone your fork locally
 3. Work on the code and add features, fix bugs, improve documentation, ...
 4. **Sign your commits** and push your changes to your feature branch
@@ -67,7 +67,7 @@ The Pull Request process is as follows:
 7. Wait for feedback / fix failing GitHub actions / react to reviews
 
 
-## Development Environment Setup
+## Development Environment Set-Up
 
 Current tool-set:
 
@@ -108,7 +108,7 @@ To execute integration tests, run the following command:
 
 ### End To End Tests
 
-The main purpose of the end to end tests, is to ensure the functionality for each source plugin.  
+The main purpose of the end to end tests, is to ensure the functionality for each source plug-in.  
 As an example, the e2e test for `entraid` is using a **devproxy** instance, providing mock data for msgraph access testing the complete chain until the data is available in the Grafana instance.
 
 All files containing integration tests need to have the following file header present:
@@ -145,7 +145,7 @@ repository, you can amend your commit with the sign-off by running
 
     git commit --amend -s
 
-## Pull Request Checklist
+## Pull Request Check-List
 
 When you submit your pull request, or you push new commits to it, our automated
 systems will run some checks on your new code. We require that your pull request

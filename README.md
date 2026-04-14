@@ -100,7 +100,7 @@ The idea is to add new sources in the future as a "plug-in" feature.
 Feel free to contribute your desired source.
 
 This tool works with Grafana versions `>=11.1.0`.  
-We are running tests against versions `v11.1.0`, `v12.0.0` and `latest`  
+We are running tests against versions `v11.1.0`, `v12.0.0`, `v13.0.0` and `latest`  
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 

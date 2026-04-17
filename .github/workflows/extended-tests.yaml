@@ -25,7 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        version: [11.1.0, 12.0.0, 13.0.0, latest]
+        version: [11.1.0, 12.0.0, 13.0.1, latest]
 
     # Define service containers for integration tests
     services:

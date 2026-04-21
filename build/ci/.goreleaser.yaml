@@ -32,65 +32,28 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
-
-dockers:
-- image_templates:
-    - "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}-amd64"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}-amd64"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}-amd64"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:latest-amd64"
-  use: buildx
-  dockerfile: build/package/Dockerfile
-  build_flag_templates:
-  - "--platform=linux/amd64"
-  - --label=org.opencontainers.image.title={{ .ProjectName }}
-  - --label=org.opencontainers.image.description={{ .ProjectName }}
-  - --label=org.opencontainers.image.url=https://github.com/skuethe/grafana-oss-team-sync
-  - --label=org.opencontainers.image.source=https://github.com/skuethe/grafana-oss-team-sync
-  - --label=org.opencontainers.image.version={{ .Version }}
-  - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
-  - --label=org.opencontainers.image.revision={{ .FullCommit }}
-  - --label=org.opencontainers.image.licenses=GPL-3.0-or-later
-- image_templates:
-    - "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}-arm64v8"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}-arm64v8"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}-arm64v8"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:latest-arm64v8"
-  use: buildx
-  goarch: arm64
-  dockerfile: build/package/Dockerfile
-  build_flag_templates:
-  - "--platform=linux/arm64/v8"
-  - --label=org.opencontainers.image.title={{ .ProjectName }}
-  - --label=org.opencontainers.image.description={{ .ProjectName }}
-  - --label=org.opencontainers.image.url=https://github.com/skuethe/grafana-oss-team-sync
-  - --label=org.opencontainers.image.source=https://github.com/skuethe/grafana-oss-team-sync
-  - --label=org.opencontainers.image.version={{ .Version }}
-  - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
-  - --label=org.opencontainers.image.revision={{ .FullCommit }}
-  - --label=org.opencontainers.image.licenses=GPL-3.0-or-later
-
-
-docker_manifests:
-- name_template: "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}"
-  image_templates:
-    - "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}-amd64"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:{{ .Version }}-arm64v8"
-
-- name_template: "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}"
-  image_templates:
-    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}-amd64"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}-arm64v8"
-
-- name_template: "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}"
-  image_templates:
-    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}-amd64"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:v{{ .Major }}.{{ .Minor }}-arm64v8"
-
-- name_template: "ghcr.io/skuethe/grafana-oss-team-sync:latest"
-  image_templates:
-    - "ghcr.io/skuethe/grafana-oss-team-sync:latest-amd64"
-    - "ghcr.io/skuethe/grafana-oss-team-sync:latest-arm64v8"
+dockers_v2:
+  - images:
+      - "ghcr.io/skuethe/grafana-oss-team-sync"
+    tags:
+      - "{{ .Version }}"
+      - "v{{ .Major }}"
+      - "v{{ .Major }}.{{ .Minor }}"
+      - "latest"
+    labels:
+      "org.opencontainers.image.created": "{{ .Date }}"
+      "org.opencontainers.image.description": "{{ .ProjectName }}"
+      "org.opencontainers.image.licenses": "GPL-3.0-or-later"
+      "org.opencontainers.image.revision": "{{ .FullCommit }}"
+      "org.opencontainers.image.source": "https://github.com/skuethe/grafana-oss-team-sync"
+      "org.opencontainers.image.title": "{{ .ProjectName }}"
+      "org.opencontainers.image.url": "https://github.com/skuethe/grafana-oss-team-sync"
+      "org.opencontainers.image.version": "{{ .Version }}"
+    dockerfile: build/package/Dockerfile
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    sbom: true
 
 
 nfpms:

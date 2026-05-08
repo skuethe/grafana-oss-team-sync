@@ -4,7 +4,7 @@ go 1.26.2
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.13.1
-	github.com/go-openapi/strfmt v0.26.1
+	github.com/go-openapi/strfmt v0.26.2
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20260430175825-547a3b5a00a5
 	github.com/joho/godotenv v1.5.1
@@ -32,7 +32,7 @@ require (
 	github.com/go-openapi/jsonpointer v0.23.1 // indirect
 	github.com/go-openapi/jsonreference v0.21.5 // indirect
 	github.com/go-openapi/loads v0.23.3 // indirect
-	github.com/go-openapi/runtime v0.29.4 // indirect
+	github.com/go-openapi/runtime v0.29.5 // indirect
 	github.com/go-openapi/spec v0.22.4 // indirect
 	github.com/go-openapi/swag v0.26.0 // indirect
 	github.com/go-openapi/swag/cmdutils v0.26.0 // indirect

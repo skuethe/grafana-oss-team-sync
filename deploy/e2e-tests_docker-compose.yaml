@@ -13,7 +13,7 @@ services:
         condition: service_healthy
 
   devproxy:
-    image: ghcr.io/dotnet/dev-proxy:2.3.4@sha256:e7796cf2c049d31884ca513468ecb13d918bfeca148bd25d8d31c2bd27757ae4
+    image: ghcr.io/dotnet/dev-proxy:2.4.0@sha256:4f8e0da0a58c9bcd1c844a5c52f8742727322295e69ebe83aa2a1ab905e17c1b
     container_name: devproxy
     ports:
     - '8000:8000'

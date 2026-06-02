@@ -4,7 +4,7 @@ go 1.26.3
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.13.1
-	github.com/go-openapi/strfmt v0.26.2
+	github.com/go-openapi/strfmt v0.26.3
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20260430175825-547a3b5a00a5
 	github.com/joho/godotenv v1.5.1
@@ -27,14 +27,14 @@ require (
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-openapi/analysis v0.25.0 // indirect
+	github.com/go-openapi/analysis v0.25.1 // indirect
 	github.com/go-openapi/errors v0.22.7 // indirect
 	github.com/go-openapi/jsonpointer v0.23.1 // indirect
-	github.com/go-openapi/jsonreference v0.21.5 // indirect
+	github.com/go-openapi/jsonreference v0.21.6 // indirect
 	github.com/go-openapi/loads v0.23.3 // indirect
-	github.com/go-openapi/runtime v0.31.0 // indirect
-	github.com/go-openapi/runtime/server-middleware v0.31.0 // indirect
-	github.com/go-openapi/spec v0.22.4 // indirect
+	github.com/go-openapi/runtime v0.32.2 // indirect
+	github.com/go-openapi/runtime/server-middleware v0.32.2 // indirect
+	github.com/go-openapi/spec v0.22.5 // indirect
 	github.com/go-openapi/swag v0.26.0 // indirect
 	github.com/go-openapi/swag/cmdutils v0.26.0 // indirect
 	github.com/go-openapi/swag/conv v0.26.0 // indirect
@@ -47,7 +47,7 @@ require (
 	github.com/go-openapi/swag/stringutils v0.26.0 // indirect
 	github.com/go-openapi/swag/typeutils v0.26.0 // indirect
 	github.com/go-openapi/swag/yamlutils v0.26.0 // indirect
-	github.com/go-openapi/validate v0.25.2 // indirect
+	github.com/go-openapi/validate v0.25.3 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect

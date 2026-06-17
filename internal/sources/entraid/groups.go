@@ -91,6 +91,69 @@ func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, 
 	return &result, nil
 }
 
+func (g *groups) getInitialPrefixRequest() (*models.GroupCollectionResponseable, error) {
+
+	// Build an OData filter that matches any group whose displayName starts with
+	// one of the configured prefixes, e.g. "startswith(displayName, 'a') or startswith(displayName, 'b')"
+	prefixFilters := make([]string, len(config.Instance.TeamPrefixes))
+	for i, prefix := range config.Instance.TeamPrefixes {
+		prefixFilters[i] = "startswith(displayName, '" + prefix + "')"
+	}
+
+	requestCount := true
+	requestFilter := strings.Join(prefixFilters, " or ")
+	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
+		Filter: &requestFilter,
+		Select: []string{"id", "displayName", "mail"},
+		Count:  &requestCount,
+	}
+	configuration := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
+		Headers:         g.headers,
+		QueryParameters: requestParams,
+	}
+	result, err := g.client.Groups().Get(context.Background(), configuration)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+// resolveGroupPrefixes lists every EntraID group matching one of the configured
+// prefixes and merges their display names into config.Instance.Teams. The merge
+// is unique (case-insensitive) so groups already listed explicitly in "teams" -
+// or matched by multiple prefixes - are not synced twice.
+func (g *groups) resolveGroupPrefixes(groupsLog *slog.Logger) {
+	groupsLog.Info("resolving EntraID groups by prefix", "prefixes", strings.Join(config.Instance.TeamPrefixes, ","))
+
+	gr, err := g.getInitialPrefixRequest()
+	if err != nil {
+		groupsLog.Error("could not get initial group prefix result from EntraID")
+		panic(err)
+	}
+
+	for {
+		for _, group := range (*gr).GetValue() {
+			groupDisplayName := group.GetDisplayName()
+			if groupDisplayName != nil {
+				config.Instance.Teams = helpers.AppendUnique(config.Instance.Teams, *groupDisplayName)
+			}
+		}
+
+		nextPageUrl := (*gr).GetOdataNextLink()
+		if nextPageUrl != nil {
+			groupsLog.Debug("processing paginated group prefix result")
+			gr, err = g.handleGroupPagination(nextPageUrl)
+			if err != nil {
+				groupsLog.Error("could not get paged group prefix result from EntraID")
+				panic(err)
+			}
+		} else {
+			break
+		}
+	}
+}
+
 func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 	groupsLog := slog.With(slog.String("package", "entraid.groups"))
 	groupsLog.Info("processing EntraID groups")
@@ -102,6 +165,23 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 		client:       instance.EntraID,
 		headers:      headers,
 		grafanaTeams: &grafana.Teams{},
+	}
+
+	// Drop empty entries (e.g. introduced by default flag values) so we never
+	// build an empty source filter
+	config.Instance.Teams = helpers.RemoveEmptyStrings(config.Instance.Teams)
+	config.Instance.TeamPrefixes = helpers.RemoveEmptyStrings(config.Instance.TeamPrefixes)
+
+	// Resolve any configured prefixes into concrete group names and merge them
+	// (uniquely) into the list of teams to sync
+	if len(config.Instance.TeamPrefixes) > 0 {
+		g.resolveGroupPrefixes(groupsLog)
+	}
+
+	// Nothing to do if neither an explicit team nor a prefix match remains
+	if len(config.Instance.Teams) == 0 {
+		groupsLog.Warn("no teams left to process after resolving prefixes")
+		return g.grafanaTeams
 	}
 
 	gr, err := g.getInitialGroupRequest()

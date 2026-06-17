@@ -63,6 +63,9 @@ func Load() error {
 	// Add "teams" flag
 	Instance.String(configtypes.TeamsParameter, configtypes.TeamsDefault, configtypes.TeamsFlagHelp)
 
+	// Add "teamPrefixes" flag
+	Instance.String(configtypes.TeamPrefixesOptimized, configtypes.TeamPrefixesDefault, configtypes.TeamPrefixesFlagHelp)
+
 	// Add "loglevel" flag
 	Instance.IntP(configtypes.LogLevelParameter, configtypes.LogLevelFlagShort, configtypes.LogLevelDefault, configtypes.LogLevelFlagHelp)
 

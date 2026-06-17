@@ -149,6 +149,7 @@ The following hierarchy is used when merging different config sources, overridin
 | Feature: disable user sync        | **config.yaml**: `features.disableUserSync`<br>**argument**: `--disableusersync`<br>**env var**: `GOTS_DISABLEUSERSYNC`                | Control the user sync feature<br><br>**Type**: `bool`<br>**Default**: `false` |
 | Feature: add local admin to teams | **config.yaml**: `features.addLocalAdminToTeams`<br>**argument**: `--addlocaladmintoteams`<br>**env var**: `GOTS_ADDLOCALADMINTOTEAMS` | Control adding Grafana local admin to each team<br><br>**Type**: `bool`<br>**Default**: `true` |
 | Team sync                         | **config.yaml**: `teams`<br>**argument**: `--teams` or `-t`<br>**env var**: `GOTS_TEAMS`                                               | Define the list of teams to sync<br><br>**Type**: `[]string` |
+| Team prefix sync                  | **config.yaml**: `teamPrefixes`<br>**argument**: `--teamprefixes`<br>**env var**: `GOTS_TEAMPREFIXES`                                     | Define a list of name prefixes. Every source group whose name starts with one of these prefixes is synced and merged (uniquely) with `teams`<br><br>**Type**: `[]string` |
 | Folder sync                       | **config.yaml**: `folders`                                                                                                             | Define the list of folders to sync<br><br>**Type**: `[]interface` |
 
 <!-- CONFIGURATION - GRAFANA -->

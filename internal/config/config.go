@@ -102,6 +102,10 @@ func loadEnvironmentVariables(k *koanf.Koanf) error {
 			// "teams" - respect comma separated list
 			case configtypes.TeamsParameter:
 				return k, strings.Split(v, ",")
+
+			// "teamPrefixes" - return full parameter and respect comma separated list
+			case configtypes.TeamPrefixesOptimized:
+				return configtypes.TeamPrefixesParameter, strings.Split(v, ",")
 			}
 
 			return k, v
@@ -148,6 +152,10 @@ func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) error {
 		// "teams" - respect comma separated list
 		case configtypes.TeamsParameter:
 			return key, strings.Split(val.(string), ",")
+
+		// "teamPrefixes" - return full parameter and respect comma separated list
+		case configtypes.TeamPrefixesOptimized:
+			return configtypes.TeamPrefixesParameter, strings.Split(val.(string), ",")
 		}
 
 		return key, val
@@ -239,8 +247,8 @@ func Load() error {
 	}
 
 	// Give warning about empty team input
-	if len(Instance.Teams) == 0 {
-		configLog.Warn("your teams input is empty")
+	if len(Instance.Teams) == 0 && len(Instance.TeamPrefixes) == 0 {
+		configLog.Warn("your teams and teamPrefixes input is empty")
 	}
 
 	return nil

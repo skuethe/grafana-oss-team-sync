@@ -5,8 +5,15 @@ package configtypes
 
 type Teams []string
 
+type TeamPrefixes []string
+
 const (
 	TeamsDefault   string = ""
 	TeamsFlagHelp  string = "the comma-separated list of teams you want to sync"
 	TeamsParameter string = "teams"
+
+	TeamPrefixesDefault   string = ""
+	TeamPrefixesFlagHelp  string = "the comma-separated list of team name prefixes you want to sync"
+	TeamPrefixesParameter string = "teamPrefixes"
+	TeamPrefixesOptimized string = "teamprefixes"
 )

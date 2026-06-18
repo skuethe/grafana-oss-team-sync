@@ -7,6 +7,7 @@ type Features struct {
 	DisableFolders       bool `yaml:"disableFolders"`
 	DisableUserSync      bool `yaml:"disableUserSync"`
 	AddLocalAdminToTeams bool `yaml:"addLocalAdminToTeams"`
+	AddExistingUsersOnly bool `yaml:"addExistingUsersOnly"`
 }
 
 const (
@@ -24,4 +25,9 @@ const (
 	FeaturesDisableUsersFlagHelp  string = "feature: disable the user sync"
 	FeaturesDisableUsersParameter string = "features.disableUserSync"
 	FeaturesDisableUsersOptimized string = "disableusersync"
+
+	FeaturesAddExistingUsersOnlyDefault   bool   = false
+	FeaturesAddExistingUsersOnlyFlagHelp  string = "feature: only add users to teams if they already exist in Grafana, do not create missing users"
+	FeaturesAddExistingUsersOnlyParameter string = "features.addExistingUsersOnly"
+	FeaturesAddExistingUsersOnlyOptimized string = "addexistingusersonly"
 )

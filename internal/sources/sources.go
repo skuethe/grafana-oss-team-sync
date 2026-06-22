@@ -4,19 +4,24 @@
 package sources
 
 import (
+	"context"
 	"log/slog"
 
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources/entraid"
-	"github.com/skuethe/grafana-oss-team-sync/internal/sources/sourcetypes"
+	"github.com/skuethe/grafana-oss-team-sync/internal/sources/keycloak"
 )
 
-func CallPlugin() *grafana.Teams {
+type SourcerPlugin interface {
+	ProcessGroups(ctx context.Context) *grafana.Teams
+}
+
+func CallPlugin(ctx context.Context) *grafana.Teams {
 	pluginLog := slog.With(slog.String("package", "sources"))
 
-	var instance *sourcetypes.SourcePlugin
+	var instance SourcerPlugin
 	grafanaTeamList := &grafana.Teams{}
 
 	if len(config.Instance.Teams) == 0 {
@@ -30,9 +35,16 @@ func CallPlugin() *grafana.Teams {
 			// EntraID: create new msgraph client
 			instance = entraid.New()
 			// EntraID: search for all specified groups and users
-			grafanaTeamList = entraid.ProcessGroups(instance)
+		case configtypes.SourcePluginKeycloak:
+			var err error
+			instance, err = keycloak.New(ctx)
+			if err != nil {
+				pluginLog.Error("unable to create keycloak instance")
+			}
+		default:
+			pluginLog.Error("invalid source plugin defined")
 		}
-
+		grafanaTeamList = instance.ProcessGroups(ctx)
 		pluginLog.Info("finished processing source plugin")
 	}
 

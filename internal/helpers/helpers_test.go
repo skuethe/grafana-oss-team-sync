@@ -60,27 +60,3 @@ func TestAppendUnique(t *testing.T) {
 		})
 	}
 }
-
-func TestRemoveEmptyStrings(t *testing.T) {
-
-	type addTest struct {
-		name     string
-		input    []string
-		expected []string
-	}
-
-	var tests = []addTest{
-		{"single empty entry is removed", []string{""}, []string{}},
-		{"empty entries are removed", []string{"one", "", "two"}, []string{"one", "two"}},
-		{"slice without empty entries is unchanged", []string{"one", "two"}, []string{"one", "two"}},
-		{"empty slice", []string{}, []string{}},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			if output := RemoveEmptyStrings(test.input); !reflect.DeepEqual(output, test.expected) {
-				t.Errorf("got %q, wanted %q", output, test.expected)
-			}
-		})
-	}
-}

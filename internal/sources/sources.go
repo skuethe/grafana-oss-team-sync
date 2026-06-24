@@ -20,7 +20,7 @@ func CallPlugin() *grafana.Teams {
 	grafanaTeamList := &grafana.Teams{}
 
 	if len(config.Instance.Teams) == 0 && len(config.Instance.TeamPrefixes) == 0 {
-		pluginLog.Info("your team input is empty, skipping")
+		pluginLog.Info("your team and teamPrefixes inputs are empty, skipping")
 	} else {
 		pluginLog.Info("processing source plugin")
 

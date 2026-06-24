@@ -3,17 +3,25 @@
 
 package configtypes
 
-type Teams []string
+import (
+	"slices"
 
-type TeamPrefixes []string
+	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
+)
+
+type Teams []string
 
 const (
 	TeamsDefault   string = ""
 	TeamsFlagHelp  string = "the comma-separated list of teams you want to sync"
 	TeamsParameter string = "teams"
-
-	TeamPrefixesDefault   string = ""
-	TeamPrefixesFlagHelp  string = "the comma-separated list of team name prefixes you want to sync"
-	TeamPrefixesParameter string = "teamPrefixes"
-	TeamPrefixesOptimized string = "teamprefixes"
 )
+
+// SanitizeTeams drops empty entries from the configured teams. Empty entries can
+// be introduced by the default value of the comma-separated flag and would
+// otherwise produce invalid (empty) source filters.
+func (c *Config) SanitizeTeams() {
+	for slices.Contains(c.Teams, "") {
+		c.Teams = helpers.RemoveFromSlice(c.Teams, "", false)
+	}
+}

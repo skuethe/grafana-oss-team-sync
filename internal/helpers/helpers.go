@@ -33,16 +33,3 @@ func AppendUnique(appendHere []string, addThis string) []string {
 	}
 	return append(appendHere, addThis)
 }
-
-// RemoveEmptyStrings returns a copy of the slice without any empty string entries.
-// Empty entries can be introduced by the default value of comma-separated flags
-// and would otherwise produce invalid (empty) source filters.
-func RemoveEmptyStrings(slice []string) []string {
-	result := make([]string, 0, len(slice))
-	for _, v := range slice {
-		if v != "" {
-			result = append(result, v)
-		}
-	}
-	return result
-}

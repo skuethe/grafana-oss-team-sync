@@ -115,6 +115,19 @@ teams: []
 
 
 #
+# Team name prefixes you want to sync to Grafana (optional)
+#
+# Every source group whose name starts with one of the configured prefixes is
+# synced as a team. The result is merged (uniquely) with the "teams" list above,
+# so a group listed explicitly and matched by a prefix is only synced once.
+#
+
+teamPrefixes: []
+  # - myGroupPrefix-
+
+
+
+#
 # Folders you want to create in Grafana
 #
 

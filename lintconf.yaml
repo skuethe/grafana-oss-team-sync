@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+extends: default
+
+rules:
+  line-length:
+    max: 160  # 160 chars should be enough. Required to accomodate the REUSE compliance comments, but don't fail if a line is longer
+    level: warning
+  comments-indentation: disable

@@ -64,6 +64,8 @@ func (t *Teams) ProcessUsers() {
 
 	if config.Instance.Features.DisableUserSync {
 		usersLog.Info("usersync feature disabled, skipping")
+	} else if config.Instance.Features.AddExistingUsersOnly {
+		usersLog.Info("addExistingUsersOnly feature enabled, skipping user creation")
 	} else if len(*t) == 0 {
 		usersLog.Info("no teams and therefore users to process, skipping")
 	} else if config.Instance.Grafana.AuthType == configtypes.GrafanaAuthTypeToken {

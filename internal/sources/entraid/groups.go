@@ -16,7 +16,6 @@ import (
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
 	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
-	"github.com/skuethe/grafana-oss-team-sync/internal/sources/sourcetypes"
 )
 
 type groups struct {
@@ -71,7 +70,6 @@ func (g *groups) handleGroupPagination(nextLink *string) (*models.GroupCollectio
 }
 
 func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, error) {
-
 	requestCount := true
 	requestFilter := "displayName in ('" + strings.Join(config.Instance.Teams, "', '") + "')"
 	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
@@ -89,57 +87,4 @@ func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, 
 	}
 
 	return &result, nil
-}
-
-func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
-	groupsLog := slog.With(slog.String("package", "entraid.groups"))
-	groupsLog.Info("processing EntraID groups")
-
-	headers := abstractions.NewRequestHeaders()
-	headers.Add("ConsistencyLevel", "eventual")
-
-	g := groups{
-		client:       instance.EntraID,
-		headers:      headers,
-		grafanaTeams: &grafana.Teams{},
-	}
-
-	gr, err := g.getInitialGroupRequest()
-	if err != nil {
-		groupsLog.Error("could not get initial group result from EntraID")
-		panic(err)
-	}
-
-	countFound := (*gr).GetOdataCount()
-
-	for {
-		// Handle group result
-		g.processGroupResult(gr)
-
-		// Handle possible pagination
-		nextPageUrl := (*gr).GetOdataNextLink()
-		if nextPageUrl != nil {
-			groupsLog.Debug("processing paginated group result")
-			gr, err = g.handleGroupPagination(nextPageUrl)
-			if err != nil {
-				groupsLog.Error("could not get paged group result from EntraID")
-				panic(err)
-			}
-		} else {
-			break
-		}
-	}
-
-	if len(config.Instance.Teams) > 0 {
-		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Instance.Teams, ","))
-	}
-
-	groupsLog.Info("finished processing EntraID groups",
-		slog.Group("groups",
-			slog.Int64("found", *countFound),
-			slog.Int("skipped", len(config.Instance.Teams)),
-		),
-	)
-
-	return g.grafanaTeams
 }

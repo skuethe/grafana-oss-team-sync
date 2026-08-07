@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+charts:
+  - deploy/helm
+check-version-increment: false
+validate-chart-schema: true
+target-branch: main
+lint-conf: lintconf.yaml

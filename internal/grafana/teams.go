@@ -82,6 +82,18 @@ func (t *Team) addUsersToTeam() (*[]string, error) {
 			)
 			continue
 		}
+		// When addExistingUsersOnly is enabled, only add users that already exist
+		// in Grafana. This avoids failing the whole team membership update because
+		// of missing users (which are not created in this mode).
+		if config.Instance.Features.AddExistingUsersOnly && !user.doesUserExist() {
+			slog.Warn("skipping non-existing user (addExistingUsersOnly enabled)",
+				slog.Group("user",
+					slog.String("login", user.Login),
+					slog.String("email", user.Email),
+				),
+			)
+			continue
+		}
 		*teamMemberList = append(*teamMemberList, user.Email)
 	}
 

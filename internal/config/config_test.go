@@ -115,6 +115,8 @@ func TestLoadEnvironmentVariables(t *testing.T) {
 		// TODO: improve to actually check type here
 		{"load one team", "GOTS_TEAMS", "teamA", "teams", "[teamA]"},
 		{"load two teams", "GOTS_TEAMS", "teamA,teamB", "teams", "[teamA teamB]"},
+		{"load one teamprefix", "GOTS_TEAMPREFIXES", "prefixA", "teamPrefixes", "[prefixA]"},
+		{"load two teamprefixes", "GOTS_TEAMPREFIXES", "prefixA,prefixB", "teamPrefixes", "[prefixA prefixB]"},
 	}
 
 	for _, test := range tests {
@@ -160,6 +162,8 @@ func TestLoadCLIParameter(t *testing.T) {
 		// TODO: improve to actually check type here
 		{"load one team", "teams", "teamA", "teams", "[teamA]"},
 		{"load two teams", "teams", "teamA,teamB", "teams", "[teamA teamB]"},
+		{"load one teamprefix", "teamprefixes", "prefixA", "teamPrefixes", "[prefixA]"},
+		{"load two teamprefixes", "teamprefixes", "prefixA,prefixB", "teamPrefixes", "[prefixA prefixB]"},
 	}
 
 	for _, test := range tests {
@@ -321,8 +325,9 @@ func TestUnmarshalIntoStruct(t *testing.T) {
 						Retry:    configtypes.GrafanaConnectionRetryDefault,
 					},
 				},
-				Teams:   configtypes.Teams{""},
-				Folders: nil,
+				Teams:        configtypes.Teams{""},
+				TeamPrefixes: configtypes.TeamPrefixes{""},
+				Folders:      nil,
 			},
 		},
 		{
@@ -351,6 +356,7 @@ func TestUnmarshalIntoStruct(t *testing.T) {
 					"somegroup-1",
 					"somegroup-2",
 				},
+				TeamPrefixes: configtypes.TeamPrefixes{"some"},
 				Folders: configtypes.Folders{
 					"somefolder1": {
 						Title:       "somefolder-1",
@@ -442,8 +448,9 @@ func TestLoad(t *testing.T) {
 						Retry:    configtypes.GrafanaConnectionRetryDefault,
 					},
 				},
-				Teams:   configtypes.Teams{""},
-				Folders: nil,
+				Teams:        configtypes.Teams{},
+				TeamPrefixes: configtypes.TeamPrefixes{},
+				Folders:      nil,
 			},
 		},
 		{
@@ -472,6 +479,7 @@ func TestLoad(t *testing.T) {
 					"group-unit-1",
 					"group-unit-2",
 				},
+				TeamPrefixes: configtypes.TeamPrefixes{"group-"},
 				Folders: configtypes.Folders{
 					"folderunit1": {
 						Title:       "folder-unit-1",

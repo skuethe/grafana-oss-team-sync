@@ -15,7 +15,6 @@ import (
 	"github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
-	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources/sourcetypes"
 )
 
@@ -47,14 +46,21 @@ func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) 
 		// Process users
 		grafanaUserList := g.ProcessUsers(&groupId)
 
+		// Resolve the configured organization for this team, defaulting to the default org
+		var orgID int64
+		if team, ok := config.Instance.Teams.Find(*groupDisplayName); ok {
+			orgID = team.OrgID
+		}
+
 		*g.grafanaTeams = append(*g.grafanaTeams, grafana.Team{
 			Parameter: &grafana.TeamParameter{
 				Name:  groupDisplayName,
 				Email: mail,
 			},
 			Users: grafanaUserList,
+			OrgID: orgID,
 		})
-		config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, *groupDisplayName, false)
+		config.Instance.Teams = config.Instance.Teams.Remove(*groupDisplayName)
 	}
 }
 
@@ -73,7 +79,7 @@ func (g *groups) handleGroupPagination(nextLink *string) (*models.GroupCollectio
 func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, error) {
 
 	requestCount := true
-	requestFilter := "displayName in ('" + strings.Join(config.Instance.Teams, "', '") + "')"
+	requestFilter := "displayName in ('" + strings.Join(config.Instance.Teams.Names(), "', '") + "')"
 	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
 		Filter: &requestFilter,
 		Select: []string{"id", "displayName", "mail"},
@@ -131,7 +137,7 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 	}
 
 	if len(config.Instance.Teams) > 0 {
-		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Instance.Teams, ","))
+		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Instance.Teams.Names(), ","))
 	}
 
 	groupsLog.Info("finished processing EntraID groups",

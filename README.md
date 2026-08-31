@@ -148,7 +148,7 @@ The following hierarchy is used when merging different config sources, overridin
 | Feature: disable folder sync      | **config.yaml**: `features.disableFolders`<br>**argument**: `--disablefolders`<br>**env var**: `GOTS_DISABLEFOLDERS`                   | Control the folder sync feature<br><br>**Type**: `bool`<br>**Default**: `false` |
 | Feature: disable user sync        | **config.yaml**: `features.disableUserSync`<br>**argument**: `--disableusersync`<br>**env var**: `GOTS_DISABLEUSERSYNC`                | Control the user sync feature<br><br>**Type**: `bool`<br>**Default**: `false` |
 | Feature: add local admin to teams | **config.yaml**: `features.addLocalAdminToTeams`<br>**argument**: `--addlocaladmintoteams`<br>**env var**: `GOTS_ADDLOCALADMINTOTEAMS` | Control adding Grafana local admin to each team<br><br>**Type**: `bool`<br>**Default**: `true` |
-| Team sync                         | **config.yaml**: `teams`<br>**argument**: `--teams` or `-t`<br>**env var**: `GOTS_TEAMS`                                               | Define the list of teams to sync<br><br>**Type**: `[]string` |
+| Team sync                         | **config.yaml**: `teams`<br>**argument**: `--teams` or `-t`<br>**env var**: `GOTS_TEAMS`                                               | Define the list of teams to sync<br><br>**Type**: `[]string` or `[]{name, orgId}`, see [Multi-organization support](#multi-organization-support) |
 | Folder sync                       | **config.yaml**: `folders`                                                                                                             | Define the list of folders to sync<br><br>**Type**: `[]interface` |
 
 <!-- CONFIGURATION - GRAFANA -->
@@ -187,6 +187,38 @@ If you have [enabled EntraID OAuth][entraidoauth] for SSO authentication in Graf
 | Authentication          | Using Azure app via environment variables: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` |
 | Application permissions | Minimum: `User.ReadBasic.All`, `GroupMember.Read.All`<br>To list the members of a hidden membership group, the `Member.Read.Hidden` permission is required |
 
+
+<p align="right">( <a href="#top">Back to top</a> )</p>
+
+
+
+<!-- MULTI-ORGANIZATION SUPPORT -->
+## Multi-organization support
+
+By default, every configured team (and folder) is synced into whichever Grafana organization your configured credentials default to (usually the `Main Org.`, id `1`).
+
+If your Grafana instance has multiple organizations, you can sync individual teams (and folders) into a specific organization by using the object form instead of a plain string in your `teams` list, and by setting `orgId` on a folder:
+
+```yaml
+teams:
+  - myTeamInDefaultOrg          # plain string: uses the default organization
+  - name: myTeamInOrg2
+    orgId: 2
+
+folders:
+  myfolder:
+    title: "My Folder"
+    orgId: 2                    # optional, defaults to the default organization
+    permissions:
+      teams:
+        myTeamInOrg2: 2
+```
+
+Notes:
+- `orgId` is optional. If omitted (or `0`), the team/folder is synced into whichever organization your Grafana credentials default to - this preserves the previous single-organization behaviour.
+- Switching organizations per-request is only possible with `grafana.authtype: "basicauth"`, since a Grafana service account token/API key is always scoped to a single organization. Startup will fail with a clear error if you configure a non-default `orgId` while using `token` auth.
+- Folder permission `teams` entries are resolved against the **same organization as the folder**. If you want to grant a team in org `2` access to a folder, both the team and the folder need `orgId: 2`.
+- When syncing users into a non-default organization, this tool automatically adds them (and the local admin, if `features.addLocalAdminToTeams` is enabled) as members of that organization (with the `Viewer` org role) before adding them to the team, since new users are always created in the default organization by Grafana's admin API.
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
 

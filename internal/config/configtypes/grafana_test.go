@@ -88,3 +88,29 @@ func TestValdidateGrafanaScheme(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateOrgUsage(t *testing.T) {
+
+	type addTest struct {
+		name     string
+		input    Config
+		expected error
+	}
+
+	var tests = []addTest{
+		{"basicauth with default org team", Config{Grafana: Grafana{AuthType: GrafanaAuthTypeBasicAuth}, Teams: Teams{{Name: "team1"}}}, nil},
+		{"basicauth with non-default org team", Config{Grafana: Grafana{AuthType: GrafanaAuthTypeBasicAuth}, Teams: Teams{{Name: "team1", OrgID: 2}}}, nil},
+		{"token auth with default org team", Config{Grafana: Grafana{AuthType: GrafanaAuthTypeToken}, Teams: Teams{{Name: "team1"}}}, nil},
+		{"token auth with non-default org team", Config{Grafana: Grafana{AuthType: GrafanaAuthTypeToken}, Teams: Teams{{Name: "team1", OrgID: 2}}}, ErrMultiOrgRequiresBasicAuth},
+		{"token auth with default org folder", Config{Grafana: Grafana{AuthType: GrafanaAuthTypeToken}, Folders: Folders{"f1": {}}}, nil},
+		{"token auth with non-default org folder", Config{Grafana: Grafana{AuthType: GrafanaAuthTypeToken}, Folders: Folders{"f1": {OrgID: 2}}}, ErrMultiOrgRequiresBasicAuth},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if output := test.input.ValidateOrgUsage(); !errors.Is(output, test.expected) {
+				t.Errorf("got error: %v, wanted error: %v", output, test.expected)
+			}
+		})
+	}
+}

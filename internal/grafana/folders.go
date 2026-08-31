@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/folders"
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
 	"github.com/grafana/grafana-openapi-client-go/models"
@@ -15,11 +16,24 @@ import (
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 )
 
-type Folder models.CreateFolderCommand
+type Folder struct {
+	models.CreateFolderCommand
+	// OrgID is the Grafana organization this folder is created/managed in.
+	// 0 (unset) uses whichever org the configured Grafana credentials default to.
+	OrgID int64
+}
+
+// api returns the Grafana API client scoped to this folder's organization.
+func (f *Folder) api() *client.GrafanaHTTPAPI {
+	if f.OrgID == 0 {
+		return Instance.api
+	}
+	return Instance.api.WithOrgID(f.OrgID)
+}
 
 func (f *Folder) searchFolder() (*models.FolderSearchHit, error) {
 	// TODO: respect possible pagination
-	result, err := Instance.api.Folders.GetFolders(folders.NewGetFoldersParams())
+	result, err := f.api().Folders.GetFolders(folders.NewGetFoldersParams())
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +58,7 @@ func (f *Folder) doesFolderExist() (bool, error) {
 }
 
 func (f *Folder) createFolder() error {
-	_, err := Instance.api.Folders.CreateFolder(&models.CreateFolderCommand{
+	_, err := f.api().Folders.CreateFolder(&models.CreateFolderCommand{
 		Title:       f.Title,
 		Description: f.Description,
 		UID:         f.UID,
@@ -61,7 +75,7 @@ func (f *Folder) manageFolderPermissions(permissions configtypes.FolderPermissio
 	var permissionList []*models.DashboardACLUpdateItem
 
 	for teamName, teamPermission := range permissions.Teams {
-		team, err := Instance.api.Teams.SearchTeams(&teams.SearchTeamsParams{
+		team, err := f.api().Teams.SearchTeams(&teams.SearchTeamsParams{
 			Name: &teamName,
 		})
 		if err != nil {
@@ -95,7 +109,7 @@ func (f *Folder) manageFolderPermissions(permissions configtypes.FolderPermissio
 		})
 	}
 
-	_, err := Instance.api.Folders.UpdateFolderPermissions(f.UID, &models.UpdateDashboardACLCommand{
+	_, err := f.api().Folders.UpdateFolderPermissions(f.UID, &models.UpdateDashboardACLCommand{
 		Items: permissionList,
 	})
 	if err != nil {
@@ -120,15 +134,19 @@ func (g *GrafanaInstance) ProcessFolders() {
 		for folderUID, folder := range config.Instance.Folders {
 
 			f := Folder{
-				UID:         strings.ToLower(folderUID),
-				Title:       folder.Title,
-				Description: folder.Description,
+				CreateFolderCommand: models.CreateFolderCommand{
+					UID:         strings.ToLower(folderUID),
+					Title:       folder.Title,
+					Description: folder.Description,
+				},
+				OrgID: folder.OrgID,
 			}
 
 			folderLog := slog.With(
 				slog.Group("folder",
 					slog.String("uid", f.UID),
 					slog.String("title", f.Title),
+					slog.Int64("orgId", f.OrgID),
 				),
 			)
 

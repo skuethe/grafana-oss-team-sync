@@ -108,6 +108,20 @@ grafana:
 #
 # Teams you want to sync to Grafana
 #
+# Each entry can either be a plain string (synced into the default Grafana organization,
+# i.e. whichever org your configured credentials default to), or an object specifying
+# a specific organization to sync into via "orgId".
+#
+# WARNING: using a non-default "orgId" requires grafana.authtype to be set to "basicauth",
+# since a Grafana service account token/API key is always scoped to a single organization.
+#
+# Example:
+#
+# teams:
+#   - myGroupName
+#   - name: myOtherGroupName
+#     orgId: 2
+#
 
 teams: []
   # - myGroupName
@@ -126,12 +140,16 @@ teams: []
 # For each folder you can pass the following input:
 #   - title (required)
 #   - description (optional)
+#   - orgId (optional, defaults to whichever org your Grafana credentials default to)
 #   - permissions
 #
 # The permission block can reference teams and can be set to one of the following permission level:
 #   - view  (1)
 #   - edit  (2)
 #   - admin (4)
+#
+# Team names referenced in "permissions.teams" are looked up in the folder's own organization,
+# so both the folder and the team need to share the same "orgId".
 #
 #
 # Example:
@@ -140,6 +158,7 @@ teams: []
 #   folderid:
 #     title: "My Folder Title"
 #     description: "A folder to test things"
+#     orgId: 2
 #     permissions:
 #       teams:
 #         team1: 1

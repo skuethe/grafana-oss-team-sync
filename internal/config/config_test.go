@@ -321,7 +321,7 @@ func TestUnmarshalIntoStruct(t *testing.T) {
 						Retry:    configtypes.GrafanaConnectionRetryDefault,
 					},
 				},
-				Teams:   configtypes.Teams{""},
+				Teams:   configtypes.Teams{{Name: ""}},
 				Folders: nil,
 			},
 		},
@@ -348,8 +348,8 @@ func TestUnmarshalIntoStruct(t *testing.T) {
 					},
 				},
 				Teams: configtypes.Teams{
-					"somegroup-1",
-					"somegroup-2",
+					{Name: "somegroup-1"},
+					{Name: "somegroup-2"},
 				},
 				Folders: configtypes.Folders{
 					"somefolder1": {
@@ -411,6 +411,47 @@ func TestUnmarshalIntoStruct(t *testing.T) {
 	}
 }
 
+func TestLoadMultiOrgTeamsAndFolders(t *testing.T) {
+
+	os.Clearenv()
+	Instance = &configtypes.Config{}
+
+	if err := os.Setenv("GOTS_CONFIG", "../../test/data/unit-tests_config_multiorg.yaml"); err != nil {
+		t.Fatal(fmt.Errorf("%w (%v): %w", ErrCouldNotSetRequiredVariable, "GOTS_CONFIG", err))
+	}
+
+	if err := flags.Load(); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := Load(); err != nil {
+		t.Fatal(err)
+	}
+
+	expectedTeams := configtypes.Teams{
+		{Name: "group-unit-1"},
+		{Name: "group-unit-2", OrgID: 2},
+	}
+	if !cmp.Equal(Instance.Teams, expectedTeams) {
+		t.Errorf("difference: %+v", cmp.Diff(Instance.Teams, expectedTeams))
+	}
+
+	expectedFolders := configtypes.Folders{
+		"folderunit1": {
+			Title: "folder-unit-1",
+			OrgID: 2,
+			Permissions: configtypes.FolderPermissions{
+				Teams: map[string]configtypes.GrafanaPermission{
+					"group-unit-2": 2,
+				},
+			},
+		},
+	}
+	if !cmp.Equal(Instance.Folders, expectedFolders) {
+		t.Errorf("difference: %+v", cmp.Diff(Instance.Folders, expectedFolders))
+	}
+}
+
 func TestLoad(t *testing.T) {
 
 	type addTest struct {
@@ -442,7 +483,7 @@ func TestLoad(t *testing.T) {
 						Retry:    configtypes.GrafanaConnectionRetryDefault,
 					},
 				},
-				Teams:   configtypes.Teams{""},
+				Teams:   configtypes.Teams{{Name: ""}},
 				Folders: nil,
 			},
 		},
@@ -469,8 +510,8 @@ func TestLoad(t *testing.T) {
 					},
 				},
 				Teams: configtypes.Teams{
-					"group-unit-1",
-					"group-unit-2",
+					{Name: "group-unit-1"},
+					{Name: "group-unit-2"},
 				},
 				Folders: configtypes.Folders{
 					"folderunit1": {

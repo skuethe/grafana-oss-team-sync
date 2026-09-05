@@ -1,6 +1,6 @@
 module github.com/skuethe/grafana-oss-team-sync
 
-go 1.27.0
+go 1.27.1
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1
@@ -14,8 +14,8 @@ require (
 	github.com/knadh/koanf/providers/file v1.2.1
 	github.com/knadh/koanf/providers/posflag v1.0.2
 	github.com/knadh/koanf/v2 v2.3.6
-	github.com/microsoft/kiota-abstractions-go v1.10.0
-	github.com/microsoftgraph/msgraph-sdk-go v1.101.0
+	github.com/microsoft/kiota-abstractions-go v1.10.1
+	github.com/microsoftgraph/msgraph-sdk-go v1.102.0
 	github.com/spf13/pflag v1.0.10
 )
 

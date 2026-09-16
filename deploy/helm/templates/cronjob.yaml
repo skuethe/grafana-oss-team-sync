@@ -1,0 +1,114 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "grafana-oss-team-sync.fullname" . }}
+  labels:
+    {{- include "grafana-oss-team-sync.labels" . | nindent 4 }}
+spec:
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .Values.cronSettings.backoffLimit }}
+      template:
+        metadata:
+          {{- with .Values.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.podLabels }}
+          labels:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+              {{- with .Values.image }}
+            - image: {{ .registry }}/{{ .repository }}:{{ default $.Chart.AppVersion .tag }}
+              name: grafana-oss-team-sync
+              imagePullPolicy: {{ .pullPolicy }}
+              {{- end }}
+              volumeMounts:
+                - name: gots-config
+                  mountPath: "/config"
+                  readOnly: true
+              {{- with .Values.volumeMounts }}
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              env:
+                - name: GOTS_CONFIG
+                  value: "/config/config.yaml"
+                  {{- range $key, $val := .Values.extraEnvVars }}
+                - name: {{ $key }}
+                  value: {{ $val }}
+                  {{- end }}
+                  {{- range $key, $val := .Values.secrets }}
+                  {{- if $val }}
+                - name: {{ $key }}
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "grafana-oss-team-sync.fullname" $ }}-secret
+                      key: {{ $key }}
+                  {{- end }}
+                  {{- end }}
+              {{- if or .Values.extraEnvVarsConfigMap .Values.extraEnvVarsSecret }}
+              envFrom:
+              {{- range .Values.extraEnvVarsConfigMap }}
+                - configMapRef:
+                    name: {{ . }}
+              {{- end }}
+              {{- range .Values.existingSecrets }}
+                - secretRef:
+                    name: {{ . }}
+              {{- end }}
+              {{- end }}
+              {{- with .Values.securityContext }}
+              securityContext:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+          restartPolicy: Never
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.podSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumes:
+          - name: gots-config
+            configMap:
+              name: {{ include "grafana-oss-team-sync.fullname" . }}-config
+          {{- with .Values.volumes }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+  {{- with .Values.cronSettings }}
+  suspend: {{ .suspend }}
+  schedule: {{ default "0 23 * * 6" .schedule | quote }}
+  {{- if .timezone }}
+  timeZone: {{ .timezone }}
+  {{- end }}
+  concurrencyPolicy: {{ .concurrencyPolicy | quote }}
+  successfulJobsHistoryLimit: {{ .successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .failedJobsHistoryLimit }}
+  {{- if .startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ .startingDeadlineSeconds }}
+  {{- end }}
+  {{- end }}

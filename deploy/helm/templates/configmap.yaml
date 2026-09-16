@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2025 Sebastian Küthe and (other) contributors to project grafana-oss-team-sync <https://github.com/skuethe/grafana-oss-team-sync>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "grafana-oss-team-sync.fullname" . }}-config
+  labels:
+    {{- include "grafana-oss-team-sync.labels" . | nindent 4 }}
+data:
+  config.yaml: |-
+    {{- toYaml .Values.config | nindent 4 }}

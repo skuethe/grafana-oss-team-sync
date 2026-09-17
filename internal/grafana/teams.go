@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
+	"strings"
 
+	"github.com/grafana/grafana-openapi-client-go/client"
 	"github.com/grafana/grafana-openapi-client-go/client/teams"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
@@ -18,12 +20,47 @@ type TeamParameter models.CreateTeamCommand
 type Team struct {
 	Parameter *TeamParameter
 	Users     *Users
+	// OrgID is the Grafana organization to sync this team into.
+	// 0 (unset) uses whichever org the configured Grafana credentials default to.
+	OrgID int64
 }
 
 type Teams []Team
 
+// api returns the Grafana API client scoped to this team's organization.
+func (t *Team) api() *client.GrafanaHTTPAPI {
+	if t.OrgID == 0 {
+		return Instance.api
+	}
+	return Instance.api.WithOrgID(t.OrgID)
+}
+
+// ensureOrgMembership makes sure the given user/login is a member of this team's organization,
+// which is required before it can be added as a member of a team in that organization.
+func (t *Team) ensureOrgMembership(loginOrEmail string) error {
+	if t.OrgID == 0 {
+		return nil
+	}
+
+	orgUsers, err := Instance.api.Orgs.GetOrgUsers(t.OrgID)
+	if err != nil {
+		return err
+	}
+	for _, orgUser := range orgUsers.Payload {
+		if strings.EqualFold(orgUser.Login, loginOrEmail) || strings.EqualFold(orgUser.Email, loginOrEmail) {
+			return nil
+		}
+	}
+
+	_, err = Instance.api.Orgs.AddOrgUser(t.OrgID, &models.AddOrgUserCommand{
+		LoginOrEmail: loginOrEmail,
+		Role:         "Viewer",
+	})
+	return err
+}
+
 func (t *Team) searchTeam() (*teams.SearchTeamsOK, error) {
-	result, err := Instance.api.Teams.SearchTeams(&teams.SearchTeamsParams{
+	result, err := t.api().Teams.SearchTeams(&teams.SearchTeamsParams{
 		Name: t.Parameter.Name,
 	})
 	if err != nil {
@@ -49,7 +86,7 @@ func (t *Team) getTeamID() (*int64, error) {
 }
 
 func (t *Team) createTeam() error {
-	_, err := Instance.api.Teams.CreateTeam(&models.CreateTeamCommand{
+	_, err := t.api().Teams.CreateTeam(&models.CreateTeamCommand{
 		Name:  t.Parameter.Name,
 		Email: t.Parameter.Email,
 	})
@@ -69,7 +106,14 @@ func (t *Team) addUsersToTeam() (*[]string, error) {
 	teamMemberList := &[]string{}
 
 	if config.Instance.Features.AddLocalAdminToTeams {
-		*adminMemberList = append(*adminMemberList, "admin@localhost")
+		if err := t.ensureOrgMembership("admin@localhost"); err != nil {
+			slog.Warn("could not add local admin to organization",
+				slog.Int64("orgId", t.OrgID),
+				slog.Any("error", err),
+			)
+		} else {
+			*adminMemberList = append(*adminMemberList, "admin@localhost")
+		}
 	}
 
 	for _, user := range *t.Users {
@@ -82,10 +126,18 @@ func (t *Team) addUsersToTeam() (*[]string, error) {
 			)
 			continue
 		}
+		if err := t.ensureOrgMembership(user.Email); err != nil {
+			slog.Warn("could not add user to organization, skipping team membership",
+				slog.String("user", user.Email),
+				slog.Int64("orgId", t.OrgID),
+				slog.Any("error", err),
+			)
+			continue
+		}
 		*teamMemberList = append(*teamMemberList, user.Email)
 	}
 
-	if _, err := Instance.api.Teams.SetTeamMemberships(strconv.FormatInt(*teamID, 10), &models.SetTeamMembershipsCommand{
+	if _, err := t.api().Teams.SetTeamMemberships(strconv.FormatInt(*teamID, 10), &models.SetTeamMembershipsCommand{
 		Admins:  *adminMemberList,
 		Members: *teamMemberList,
 	}); err != nil {
@@ -111,6 +163,7 @@ func (t *Teams) ProcessTeams() {
 			teamLog := slog.With(
 				slog.Group("team",
 					slog.String("name", *team.Parameter.Name),
+					slog.Int64("orgId", team.OrgID),
 				),
 			)
 

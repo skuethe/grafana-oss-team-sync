@@ -43,23 +43,28 @@ func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) 
 		)
 		groupLog.Info("found EntraID group")
 
-		// Process users
-		grafanaUserList := g.ProcessUsers(&groupId)
-
-		// Resolve the configured organization for this team, defaulting to the default org
-		var orgID int64
-		if team, ok := config.Instance.Teams.Find(*groupDisplayName); ok {
-			orgID = team.OrgID
+		// A group can be configured multiple times to sync into several Grafana organizations
+		// (once per "orgId" entry), so resolve every matching configuration entry.
+		configuredTeams := config.Instance.Teams.FindAll(*groupDisplayName)
+		if len(configuredTeams) == 0 {
+			groupLog.Warn("EntraID group has no matching team configuration entry, skipping")
+			continue
 		}
 
-		*g.grafanaTeams = append(*g.grafanaTeams, grafana.Team{
-			Parameter: &grafana.TeamParameter{
-				Name:  groupDisplayName,
-				Email: mail,
-			},
-			Users: grafanaUserList,
-			OrgID: orgID,
-		})
+		// Process users once per EntraID group, the resulting list is reused for every
+		// organization this group is configured to sync into.
+		grafanaUserList := g.ProcessUsers(&groupId)
+
+		for _, team := range configuredTeams {
+			*g.grafanaTeams = append(*g.grafanaTeams, grafana.Team{
+				Parameter: &grafana.TeamParameter{
+					Name:  groupDisplayName,
+					Email: mail,
+				},
+				Users: grafanaUserList,
+				OrgID: team.OrgID,
+			})
+		}
 		config.Instance.Teams = config.Instance.Teams.Remove(*groupDisplayName)
 	}
 }

@@ -49,6 +49,19 @@ func (t Teams) Find(name string) (Team, bool) {
 	return Team{}, false
 }
 
+// FindAll returns every configured team entry matching the given name (case-insensitive).
+// The same source group/team name can be configured multiple times to sync into several
+// Grafana organizations, e.g. one plain entry plus one or more "orgId" entries.
+func (t Teams) FindAll(name string) Teams {
+	var result Teams
+	for _, team := range t {
+		if strings.EqualFold(team.Name, name) {
+			result = append(result, team)
+		}
+	}
+	return result
+}
+
 // Remove returns a copy of the teams list with the team matching the given name (case-insensitive) removed.
 func (t Teams) Remove(name string) Teams {
 	result := make(Teams, 0, len(t))

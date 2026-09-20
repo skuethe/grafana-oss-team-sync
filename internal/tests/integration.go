@@ -33,7 +33,7 @@ func IntegrationGrafana(teamList *grafana.Teams) error {
 	teamList.ProcessTeams()
 
 	// Run ProcessFolders
-	grafana.Instance.ProcessFolders()
+	grafana.Instance.ProcessFolders(teamList)
 
 	return nil
 }

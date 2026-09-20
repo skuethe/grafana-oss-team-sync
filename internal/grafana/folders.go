@@ -23,17 +23,21 @@ type Folder struct {
 	OrgID int64
 }
 
-// api returns the Grafana API client scoped to this folder's organization.
-func (f *Folder) api() *client.GrafanaHTTPAPI {
-	if f.OrgID == 0 {
-		return Instance.api
+// api switches the shared Grafana client into this folder's organization and returns it.
+func (f *Folder) api() (*client.GrafanaHTTPAPI, error) {
+	if err := Instance.EnsureOrgContext(f.OrgID); err != nil {
+		return nil, err
 	}
-	return Instance.api.WithOrgID(f.OrgID)
+	return Instance.api, nil
 }
 
 func (f *Folder) searchFolder() (*models.FolderSearchHit, error) {
+	api, err := f.api()
+	if err != nil {
+		return nil, err
+	}
 	// TODO: respect possible pagination
-	result, err := f.api().Folders.GetFolders(folders.NewGetFoldersParams())
+	result, err := api.Folders.GetFolders(folders.NewGetFoldersParams())
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +62,11 @@ func (f *Folder) doesFolderExist() (bool, error) {
 }
 
 func (f *Folder) createFolder() error {
-	_, err := f.api().Folders.CreateFolder(&models.CreateFolderCommand{
+	api, err := f.api()
+	if err != nil {
+		return err
+	}
+	_, err = api.Folders.CreateFolder(&models.CreateFolderCommand{
 		Title:       f.Title,
 		Description: f.Description,
 		UID:         f.UID,
@@ -70,12 +78,23 @@ func (f *Folder) createFolder() error {
 	return nil
 }
 
-func (f *Folder) manageFolderPermissions(permissions configtypes.FolderPermissions) error {
+func (f *Folder) manageFolderPermissions(permissions configtypes.FolderPermissions, syncedTeams *Teams) error {
+	api, err := f.api()
+	if err != nil {
+		return err
+	}
 
 	var permissionList []*models.DashboardACLUpdateItem
 
 	for teamName, teamPermission := range permissions.Teams {
-		team, err := f.api().Teams.SearchTeams(&teams.SearchTeamsParams{
+		if syncedTeams != nil && !syncedTeams.Contains(teamName, f.OrgID) {
+			slog.Info("team referenced in folder permissions was not synced from the source data for this organization, assuming it already exists in Grafana",
+				slog.String("team", teamName),
+				slog.Int64("orgId", f.OrgID),
+			)
+		}
+
+		team, err := api.Teams.SearchTeams(&teams.SearchTeamsParams{
 			Name: &teamName,
 		})
 		if err != nil {
@@ -109,7 +128,7 @@ func (f *Folder) manageFolderPermissions(permissions configtypes.FolderPermissio
 		})
 	}
 
-	_, err := f.api().Folders.UpdateFolderPermissions(f.UID, &models.UpdateDashboardACLCommand{
+	_, err = api.Folders.UpdateFolderPermissions(f.UID, &models.UpdateDashboardACLCommand{
 		Items: permissionList,
 	})
 	if err != nil {
@@ -118,7 +137,10 @@ func (f *Folder) manageFolderPermissions(permissions configtypes.FolderPermissio
 	return nil
 }
 
-func (g *GrafanaInstance) ProcessFolders() {
+// ProcessFolders creates/updates the configured Grafana folders and their permissions.
+// syncedTeams (the teams produced by the source plugin) is used purely for diagnostic
+// logging when a folder references a team that was not part of the synced data.
+func (g *GrafanaInstance) ProcessFolders(syncedTeams *Teams) {
 	foldersLog := slog.With(slog.String("package", "grafana.folders"))
 
 	if config.Instance.Features.DisableFolders {
@@ -173,7 +195,7 @@ func (g *GrafanaInstance) ProcessFolders() {
 				}
 			}
 
-			if err := f.manageFolderPermissions(folder.Permissions); err != nil {
+			if err := f.manageFolderPermissions(folder.Permissions, syncedTeams); err != nil {
 				folderLog.Error("could not update Grafana folder permissions",
 					slog.Any("error", err),
 				)

@@ -27,12 +27,22 @@ type Team struct {
 
 type Teams []Team
 
-// api returns the Grafana API client scoped to this team's organization.
-func (t *Team) api() *client.GrafanaHTTPAPI {
-	if t.OrgID == 0 {
-		return Instance.api
+// Contains reports whether the given team name was synced into orgID as part of this list.
+func (t Teams) Contains(name string, orgID int64) bool {
+	for _, team := range t {
+		if team.OrgID == orgID && team.Parameter != nil && team.Parameter.Name != nil && strings.EqualFold(*team.Parameter.Name, name) {
+			return true
+		}
 	}
-	return Instance.api.WithOrgID(t.OrgID)
+	return false
+}
+
+// api switches the shared Grafana client into this team's organization and returns it.
+func (t *Team) api() (*client.GrafanaHTTPAPI, error) {
+	if err := Instance.EnsureOrgContext(t.OrgID); err != nil {
+		return nil, err
+	}
+	return Instance.api, nil
 }
 
 // ensureOrgMembership makes sure the given user/login is a member of this team's organization,
@@ -60,7 +70,11 @@ func (t *Team) ensureOrgMembership(loginOrEmail string) error {
 }
 
 func (t *Team) searchTeam() (*teams.SearchTeamsOK, error) {
-	result, err := t.api().Teams.SearchTeams(&teams.SearchTeamsParams{
+	api, err := t.api()
+	if err != nil {
+		return nil, err
+	}
+	result, err := api.Teams.SearchTeams(&teams.SearchTeamsParams{
 		Name: t.Parameter.Name,
 	})
 	if err != nil {
@@ -86,7 +100,11 @@ func (t *Team) getTeamID() (*int64, error) {
 }
 
 func (t *Team) createTeam() error {
-	_, err := t.api().Teams.CreateTeam(&models.CreateTeamCommand{
+	api, err := t.api()
+	if err != nil {
+		return err
+	}
+	_, err = api.Teams.CreateTeam(&models.CreateTeamCommand{
 		Name:  t.Parameter.Name,
 		Email: t.Parameter.Email,
 	})
@@ -137,7 +155,11 @@ func (t *Team) addUsersToTeam() (*[]string, error) {
 		*teamMemberList = append(*teamMemberList, user.Email)
 	}
 
-	if _, err := t.api().Teams.SetTeamMemberships(strconv.FormatInt(*teamID, 10), &models.SetTeamMembershipsCommand{
+	api, err := t.api()
+	if err != nil {
+		return nil, err
+	}
+	if _, err := api.Teams.SetTeamMemberships(strconv.FormatInt(*teamID, 10), &models.SetTeamMembershipsCommand{
 		Admins:  *adminMemberList,
 		Members: *teamMemberList,
 	}); err != nil {

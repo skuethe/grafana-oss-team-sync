@@ -4,5 +4,5 @@
 FROM scratch
 ARG TARGETPLATFORM
 ENTRYPOINT ["/usr/bin/grafana-oss-team-sync"]
-COPY --from=docker.io/golang:alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=docker.io/golang:alpine@sha256:8a5910f31396cd4d89662f56c68b3ae31d374308270a1c3bd96672ee5ed43414 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY $TARGETPLATFORM/grafana-oss-team-sync /usr/bin/grafana-oss-team-sync

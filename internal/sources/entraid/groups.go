@@ -15,7 +15,6 @@ import (
 	"github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/grafana"
-	"github.com/skuethe/grafana-oss-team-sync/internal/helpers"
 	"github.com/skuethe/grafana-oss-team-sync/internal/sources/sourcetypes"
 )
 
@@ -44,17 +43,29 @@ func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) 
 		)
 		groupLog.Info("found EntraID group")
 
-		// Process users
+		// A group can be configured multiple times to sync into several Grafana organizations
+		// (once per "orgId" entry), so resolve every matching configuration entry.
+		configuredTeams := config.Instance.Teams.FindAll(*groupDisplayName)
+		if len(configuredTeams) == 0 {
+			groupLog.Warn("EntraID group has no matching team configuration entry, skipping")
+			continue
+		}
+
+		// Process users once per EntraID group, the resulting list is reused for every
+		// organization this group is configured to sync into.
 		grafanaUserList := g.ProcessUsers(&groupId)
 
-		*g.grafanaTeams = append(*g.grafanaTeams, grafana.Team{
-			Parameter: &grafana.TeamParameter{
-				Name:  groupDisplayName,
-				Email: mail,
-			},
-			Users: grafanaUserList,
-		})
-		config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, *groupDisplayName, false)
+		for _, team := range configuredTeams {
+			*g.grafanaTeams = append(*g.grafanaTeams, grafana.Team{
+				Parameter: &grafana.TeamParameter{
+					Name:  groupDisplayName,
+					Email: mail,
+				},
+				Users: grafanaUserList,
+				OrgID: team.OrgID,
+			})
+		}
+		config.Instance.Teams = config.Instance.Teams.Remove(*groupDisplayName)
 	}
 }
 
@@ -73,7 +84,7 @@ func (g *groups) handleGroupPagination(nextLink *string) (*models.GroupCollectio
 func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, error) {
 
 	requestCount := true
-	requestFilter := "displayName in ('" + strings.Join(config.Instance.Teams, "', '") + "')"
+	requestFilter := "displayName in ('" + strings.Join(config.Instance.Teams.Names(), "', '") + "')"
 	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
 		Filter: &requestFilter,
 		Select: []string{"id", "displayName", "mail"},
@@ -131,7 +142,7 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 	}
 
 	if len(config.Instance.Teams) > 0 {
-		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Instance.Teams, ","))
+		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Instance.Teams.Names(), ","))
 	}
 
 	groupsLog.Info("finished processing EntraID groups",

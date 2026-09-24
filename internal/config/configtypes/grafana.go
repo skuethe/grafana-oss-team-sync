@@ -83,9 +83,10 @@ const (
 )
 
 var (
-	ErrInvalidPermission       = errors.New("invalid permission defined")
-	ErrInvalidAuthType         = errors.New("invalid authtype defined")
-	ErrInvalidConnectionScheme = errors.New("invalid connection scheme defined")
+	ErrInvalidPermission         = errors.New("invalid permission defined")
+	ErrInvalidAuthType           = errors.New("invalid authtype defined")
+	ErrInvalidConnectionScheme   = errors.New("invalid connection scheme defined")
+	ErrMultiOrgRequiresBasicAuth = errors.New("using a non-default Grafana organization requires grafana.authtype to be set to basicauth")
 )
 
 func ValidateGrafanaPermission(in GrafanaPermission) error {
@@ -121,4 +122,22 @@ func (c *Config) ValdidateGrafanaScheme() error {
 	}
 
 	return fmt.Errorf("%w: %q", ErrInvalidConnectionScheme, c.Grafana.Connection.Scheme)
+}
+
+// ValidateOrgUsage makes sure a non-default organization is only referenced by teams or folders
+// when basicauth is used, since Grafana API tokens/service accounts are always scoped to a single org.
+func (c *Config) ValidateOrgUsage() error {
+	if c.Grafana.AuthType == GrafanaAuthTypeToken {
+		for _, team := range c.Teams {
+			if team.OrgID != TeamsDefaultOrgID {
+				return fmt.Errorf("%w (team %q, orgId %d)", ErrMultiOrgRequiresBasicAuth, team.Name, team.OrgID)
+			}
+		}
+		for uid, folder := range c.Folders {
+			if folder.OrgID != TeamsDefaultOrgID {
+				return fmt.Errorf("%w (folder %q, orgId %d)", ErrMultiOrgRequiresBasicAuth, uid, folder.OrgID)
+			}
+		}
+	}
+	return nil
 }

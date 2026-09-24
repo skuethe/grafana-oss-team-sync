@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 
 	"log/slog"
 
+	"github.com/go-viper/mapstructure/v2"
 	"github.com/joho/godotenv"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env/v2"
@@ -171,9 +173,25 @@ func loadOptionalAuthFile(k *koanf.Koanf) error {
 	return nil
 }
 
+// teamStringDecodeHook allows the "teams" list to contain either plain strings
+// (synced to the default Grafana organization) or {name, orgId} objects.
+func teamStringDecodeHook(from reflect.Type, to reflect.Type, data any) (any, error) {
+	if from.Kind() == reflect.String && to == reflect.TypeOf(configtypes.Team{}) {
+		return configtypes.Team{Name: data.(string)}, nil
+	}
+	return data, nil
+}
+
 func unmarshalIntoStruct(k *koanf.Koanf) error {
 	if err := k.UnmarshalWithConf("", &Instance, koanf.UnmarshalConf{
 		Tag: "yaml",
+		DecoderConfig: &mapstructure.DecoderConfig{
+			DecodeHook: mapstructure.ComposeDecodeHookFunc(
+				mapstructure.StringToTimeDurationHookFunc(),
+				teamStringDecodeHook,
+			),
+			WeaklyTypedInput: true,
+		},
 	}); err != nil {
 		return fmt.Errorf("%w: %w", ErrCouldNotUnmarshalConfig, err)
 	}
@@ -230,6 +248,11 @@ func Load() error {
 
 	// Validate Grafana connection scheme input
 	if err := Instance.ValdidateGrafanaScheme(); err != nil {
+		return err
+	}
+
+	// Validate that non-default organizations are only used with basicauth
+	if err := Instance.ValidateOrgUsage(); err != nil {
 		return err
 	}
 

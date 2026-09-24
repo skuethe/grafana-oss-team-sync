@@ -9,10 +9,12 @@ import (
 	"log/slog"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/go-openapi/strfmt"
 	"github.com/grafana/grafana-openapi-client-go/client"
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
 	"github.com/skuethe/grafana-oss-team-sync/internal/flags"
@@ -20,6 +22,13 @@ import (
 
 type GrafanaInstance struct {
 	api *client.GrafanaHTTPAPI
+	// defaultOrgID is the org the configured credentials authenticate into by default.
+	defaultOrgID int64
+	// currentOrgID tracks the org the sync user is currently switched into, to avoid redundant API calls.
+	currentOrgID int64
+	// syncUserLogin is the login of the authenticated (basic auth) sync user, used to grant it
+	// membership in other orgs so it can be switched into them. Empty for token auth.
+	syncUserLogin string
 }
 
 var (
@@ -32,6 +41,8 @@ var (
 	ErrAuthBasicUsernameMissing     = errors.New("basic auth specified, but username is missing")
 	ErrAuthBasicPasswordMissing     = errors.New("basic auth specified, but password is missing")
 	ErrAuthUnsupported              = errors.New("unsupported authentication type defined")
+	ErrCouldNotSwitchOrg            = errors.New("could not switch active organization")
+	ErrCouldNotEnsureOrgMembership  = errors.New("could not ensure sync user org membership")
 )
 
 // We are explicitly handling auth data here, because we do not want to add it to our global config.Instance
@@ -134,19 +145,83 @@ func New() error {
 	}
 
 	// Fetching current org here for additional information AND to fail fast on auth errors
-	if currentOrg, err := client.Org.GetCurrentOrg(); err != nil {
+	currentOrg, err := client.Org.GetCurrentOrg()
+	if err != nil {
 		return fmt.Errorf("%w: %w", ErrCouldNotFetchOrgDetails, err)
-	} else {
-		grafanaLog.Info("successfully authenticated against Grafana",
-			slog.Group("org",
-				slog.Int64("id", currentOrg.Payload.ID),
-				slog.String("name", currentOrg.Payload.Name),
-			),
-		)
 	}
+	grafanaLog.Info("successfully authenticated against Grafana",
+		slog.Group("org",
+			slog.Int64("id", currentOrg.Payload.ID),
+			slog.String("name", currentOrg.Payload.Name),
+		),
+	)
 
 	Instance = &GrafanaInstance{
-		api: client,
+		api:          client,
+		defaultOrgID: currentOrg.Payload.ID,
+		currentOrgID: currentOrg.Payload.ID,
 	}
+
+	// Only basic auth can switch orgs (API keys/service account tokens are pinned to one org).
+	if config.Instance.Grafana.AuthType == configtypes.GrafanaAuthTypeBasicAuth {
+		if signedInUser, err := client.SignedInUser.GetSignedInUser(); err != nil {
+			grafanaLog.Warn("could not fetch signed-in user, syncing teams/folders into other orgs will fail",
+				slog.Any("error", err),
+			)
+		} else {
+			Instance.syncUserLogin = signedInUser.Payload.Login
+		}
+	}
+
 	return nil
+}
+
+// EnsureOrgContext switches the Grafana API session to operate against orgID.
+//
+// Grafana's Team and Folder APIs always act on the caller's "current organization" and
+// provide no per-request orgId parameter. Grafana OSS does not honor an X-Grafana-Org-Id
+// header on Basic Auth requests, so the only way to target another org is to explicitly
+// switch the authenticated user's active org (which Grafana persists server-side) before
+// issuing further requests. orgID of 0 means "the default org the credentials log into".
+func (g *GrafanaInstance) EnsureOrgContext(orgID int64) error {
+	if orgID == 0 {
+		orgID = g.defaultOrgID
+	}
+	if orgID == g.currentOrgID {
+		return nil
+	}
+
+	if err := g.ensureSyncUserOrgMembership(orgID); err != nil {
+		return fmt.Errorf("%w (org %d): %w", ErrCouldNotEnsureOrgMembership, orgID, err)
+	}
+
+	if _, err := g.api.SignedInUser.UserSetUsingOrg(orgID); err != nil {
+		return fmt.Errorf("%w (org %d): %w", ErrCouldNotSwitchOrg, orgID, err)
+	}
+	g.currentOrgID = orgID
+	return nil
+}
+
+// ensureSyncUserOrgMembership makes sure the authenticated sync user is a member (with Admin
+// role) of orgID, which is required both to switch into that org and to manage its teams/folders.
+func (g *GrafanaInstance) ensureSyncUserOrgMembership(orgID int64) error {
+	if g.syncUserLogin == "" {
+		return nil
+	}
+
+	orgUsers, err := g.api.Orgs.GetOrgUsers(orgID)
+	if err != nil {
+		return err
+	}
+	for _, orgUser := range orgUsers.Payload {
+		if strings.EqualFold(orgUser.Login, g.syncUserLogin) {
+			return nil
+		}
+	}
+
+	_, err = g.api.Orgs.AddOrgUser(orgID, &models.AddOrgUserCommand{
+		LoginOrEmail: g.syncUserLogin,
+		Role:         "Admin",
+	})
+	return err
 }

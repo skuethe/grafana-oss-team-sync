@@ -37,7 +37,7 @@ func EndToEnd() error {
 	grafanaTeamList.ProcessTeams()
 
 	// Grafana: continue to process folders
-	grafana.Instance.ProcessFolders()
+	grafana.Instance.ProcessFolders(grafanaTeamList)
 
 	return nil
 }

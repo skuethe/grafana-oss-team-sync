@@ -76,7 +76,7 @@ func main() {
 	grafanaTeamList.ProcessTeams()
 
 	// Grafana: continue to process folders
-	grafana.Instance.ProcessFolders()
+	grafana.Instance.ProcessFolders(grafanaTeamList)
 
 	slog.Info("finished Grafana OSS Team Sync")
 }

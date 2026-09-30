@@ -34,6 +34,10 @@ teams:
   - somegroup-2
 
 
+teamPrefixes:
+  - some
+
+
 folders:
   somefolder1:
     title: "somefolder-1"

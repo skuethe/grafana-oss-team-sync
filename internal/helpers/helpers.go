@@ -22,3 +22,14 @@ func RemoveFromSlice(searchHere []string, removeThis string, caseSensitive bool)
 	}
 	return searchHere
 }
+
+// AppendUnique appends addThis to appendHere only if it is not already present.
+// The comparison is case-insensitive to avoid syncing the same group twice.
+func AppendUnique(appendHere []string, addThis string) []string {
+	for _, v := range appendHere {
+		if strings.EqualFold(v, addThis) {
+			return appendHere
+		}
+	}
+	return append(appendHere, addThis)
+}

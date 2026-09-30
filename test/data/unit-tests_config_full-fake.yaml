@@ -14,6 +14,7 @@ features:
   addLocalAdminToTeams: false
   disableFolders: true
   disableUserSync: true
+  addExistingUsersOnly: true
 
 
 grafana:

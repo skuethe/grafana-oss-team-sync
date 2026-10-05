@@ -58,6 +58,14 @@ features:
   #
   disableUserSync: false
 
+  #
+  # Grafana: only add users to teams if they already exist in Grafana.
+  # Missing users are skipped instead of being created.
+  # Use this if you want to manage team memberships without creating new users
+  # (e.g. when users are provisioned by another mechanism).
+  #
+  addExistingUsersOnly: false
+
 
 
 #

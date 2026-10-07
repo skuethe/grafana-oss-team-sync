@@ -58,6 +58,18 @@ features:
   #
   disableUserSync: false
 
+  #
+  # EntraID: use the tokenized $search instead of an exact $filter to find the "teams"
+  # false: every "teams" entry must match a group displayName exactly
+  # true:  every "teams" entry is a search term. Microsoft Graph splits both the group
+  #        displayName and the search term into words (on spaces, casing changes, symbols
+  #        like "-" / "_" / "." and numbers) and matches groups having words starting with
+  #        every word of the search term. No wildcards or regular expressions are supported.
+  #        Example: "dev" matches "dev-team", "Developers", "backend-dev", but not "mydevteam"
+  #        See the README and https://learn.microsoft.com/en-us/graph/search-query-parameter#use-search-on-directory-object-collections
+  #
+  entraIdUseSearchInsteadOfFilter: false
+
 
 
 #

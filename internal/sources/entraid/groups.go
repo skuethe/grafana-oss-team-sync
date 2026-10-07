@@ -54,7 +54,12 @@ func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) 
 			},
 			Users: grafanaUserList,
 		})
-		config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, *groupDisplayName, false)
+
+		// With $search the teams input holds search terms instead of group names,
+		// so there is nothing to tick off here
+		if !config.Instance.Features.EntraIdUseSearchInsteadOfFilter {
+			config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, *groupDisplayName, false)
+		}
 	}
 }
 
@@ -70,14 +75,39 @@ func (g *groups) handleGroupPagination(nextLink *string) (*models.GroupCollectio
 	return &result, nil
 }
 
+// buildGroupFilter creates an OData $filter that matches any group whose
+// displayName is exactly one of the given teams.
+func buildGroupFilter(teams []string) string {
+	return "displayName in ('" + strings.Join(teams, "', '") + "')"
+}
+
+// buildGroupSearch creates an OData $search that matches any group whose
+// displayName contains all tokens of one of the given teams, e.g.
+// "displayName:a" OR "displayName:b"
+// Double quotes and backslashes have to be escaped inside a $search clause.
+// See: https://learn.microsoft.com/en-us/graph/search-query-parameter#use-search-on-directory-object-collections
+func buildGroupSearch(teams []string) string {
+	escaper := strings.NewReplacer(`\`, `\\`, `"`, `\"`)
+	clauses := make([]string, len(teams))
+	for i, team := range teams {
+		clauses[i] = `"displayName:` + escaper.Replace(team) + `"`
+	}
+	return strings.Join(clauses, " OR ")
+}
+
 func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, error) {
 
 	requestCount := true
-	requestFilter := "displayName in ('" + strings.Join(config.Instance.Teams, "', '") + "')"
 	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
-		Filter: &requestFilter,
 		Select: []string{"id", "displayName", "mail"},
 		Count:  &requestCount,
+	}
+	if config.Instance.Features.EntraIdUseSearchInsteadOfFilter {
+		requestSearch := buildGroupSearch(config.Instance.Teams)
+		requestParams.Search = &requestSearch
+	} else {
+		requestFilter := buildGroupFilter(config.Instance.Teams)
+		requestParams.Filter = &requestFilter
 	}
 	configuration := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
 		Headers:         g.headers,
@@ -128,6 +158,22 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 		} else {
 			break
 		}
+	}
+
+	// With $search we cannot tell which search term matched which group, so we
+	// can only report whether anything was found at all
+	if config.Instance.Features.EntraIdUseSearchInsteadOfFilter {
+		if *countFound == 0 {
+			groupsLog.Warn("could not find any group in EntraID matching the search", "search", strings.Join(config.Instance.Teams, ","))
+		}
+
+		groupsLog.Info("finished processing EntraID groups",
+			slog.Group("groups",
+				slog.Int64("found", *countFound),
+			),
+		)
+
+		return g.grafanaTeams
 	}
 
 	if len(config.Instance.Teams) > 0 {

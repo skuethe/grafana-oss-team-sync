@@ -54,7 +54,12 @@ func (g *groups) processGroupResult(result *models.GroupCollectionResponseable) 
 			},
 			Users: grafanaUserList,
 		})
-		config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, *groupDisplayName, false)
+
+		// With $search the teams input holds search terms instead of group names,
+		// so there is nothing to tick off here
+		if !config.Instance.Features.EntraIdUseSearchInsteadOfFilter {
+			config.Instance.Teams = helpers.RemoveFromSlice(config.Instance.Teams, *groupDisplayName, false)
+		}
 	}
 }
 
@@ -70,31 +75,39 @@ func (g *groups) handleGroupPagination(nextLink *string) (*models.GroupCollectio
 	return &result, nil
 }
 
-// buildTeamsFilter creates an OData filter that matches any group whose
-// displayName is part of the configured "teams" list.
-func buildTeamsFilter() string {
-	return "displayName in ('" + strings.Join(config.Instance.Teams, "', '") + "')"
+// buildGroupFilter creates an OData $filter that matches any group whose
+// displayName is exactly one of the given teams.
+func buildGroupFilter(teams []string) string {
+	return "displayName in ('" + strings.Join(teams, "', '") + "')"
 }
 
-// buildPrefixesFilter creates an OData filter that matches any group whose
-// displayName starts with one of the configured prefixes, e.g.
-// "startswith(displayName, 'a') or startswith(displayName, 'b')"
-func buildPrefixesFilter() string {
-	prefixFilters := make([]string, len(config.Instance.TeamPrefixes))
-	for i, prefix := range config.Instance.TeamPrefixes {
-		prefixFilters[i] = "startswith(displayName, '" + prefix + "')"
+// buildGroupSearch creates an OData $search that matches any group whose
+// displayName contains all tokens of one of the given teams, e.g.
+// "displayName:a" OR "displayName:b"
+// Double quotes and backslashes have to be escaped inside a $search clause.
+// See: https://learn.microsoft.com/en-us/graph/search-query-parameter#use-search-on-directory-object-collections
+func buildGroupSearch(teams []string) string {
+	escaper := strings.NewReplacer(`\`, `\\`, `"`, `\"`)
+	clauses := make([]string, len(teams))
+	for i, team := range teams {
+		clauses[i] = `"displayName:` + escaper.Replace(team) + `"`
 	}
-	return strings.Join(prefixFilters, " or ")
+	return strings.Join(clauses, " OR ")
 }
 
-// getInitialGroupRequest runs the initial group request for the given OData
-// filter and returns the (first page of the) result.
-func (g *groups) getInitialGroupRequest(requestFilter string) (*models.GroupCollectionResponseable, error) {
+func (g *groups) getInitialGroupRequest() (*models.GroupCollectionResponseable, error) {
+
 	requestCount := true
 	requestParams := &graphgroups.GroupsRequestBuilderGetQueryParameters{
-		Filter: &requestFilter,
 		Select: []string{"id", "displayName", "mail"},
 		Count:  &requestCount,
+	}
+	if config.Instance.Features.EntraIdUseSearchInsteadOfFilter {
+		requestSearch := buildGroupSearch(config.Instance.Teams)
+		requestParams.Search = &requestSearch
+	} else {
+		requestFilter := buildGroupFilter(config.Instance.Teams)
+		requestParams.Filter = &requestFilter
 	}
 	configuration := &graphgroups.GroupsRequestBuilderGetRequestConfiguration{
 		Headers:         g.headers,
@@ -106,55 +119,6 @@ func (g *groups) getInitialGroupRequest(requestFilter string) (*models.GroupColl
 	}
 
 	return &result, nil
-}
-
-// walkGroupResult invokes handlePage for the given result and every subsequent
-// page, following the OData nextLink until the result set is exhausted.
-func (g *groups) walkGroupResult(result *models.GroupCollectionResponseable, paginationLog *slog.Logger, handlePage func(*models.GroupCollectionResponseable)) {
-	for {
-		handlePage(result)
-
-		nextPageUrl := (*result).GetOdataNextLink()
-		if nextPageUrl == nil {
-			break
-		}
-
-		paginationLog.Debug("processing paginated group result")
-		next, err := g.handleGroupPagination(nextPageUrl)
-		if err != nil {
-			paginationLog.Error("could not get paged group result from EntraID")
-			panic(err)
-		}
-		result = next
-	}
-}
-
-// resolveGroupPrefixes lists every EntraID group matching one of the configured
-// prefixes and merges their display names into config.Instance.Teams. The merge
-// is unique (case-insensitive) so groups already listed explicitly in "teams" -
-// or matched by multiple prefixes - are not synced twice.
-func (g *groups) resolveGroupPrefixes() {
-	prefixLog := slog.With(
-		slog.Group("groupPrefixes",
-			slog.String("prefixes", strings.Join(config.Instance.TeamPrefixes, ",")),
-		),
-	)
-	prefixLog.Info("resolving EntraID groups by prefix")
-
-	gr, err := g.getInitialGroupRequest(buildPrefixesFilter())
-	if err != nil {
-		prefixLog.Error("could not get initial group prefix result from EntraID")
-		panic(err)
-	}
-
-	g.walkGroupResult(gr, prefixLog, func(result *models.GroupCollectionResponseable) {
-		for _, group := range (*result).GetValue() {
-			groupDisplayName := group.GetDisplayName()
-			if groupDisplayName != nil {
-				config.Instance.Teams = helpers.AppendUnique(config.Instance.Teams, *groupDisplayName)
-			}
-		}
-	})
 }
 
 func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
@@ -170,19 +134,7 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 		grafanaTeams: &grafana.Teams{},
 	}
 
-	// Resolve any configured prefixes into concrete group names and merge them
-	// (uniquely) into the list of teams to sync
-	if len(config.Instance.TeamPrefixes) > 0 {
-		g.resolveGroupPrefixes()
-	}
-
-	// Nothing to do if neither an explicit team nor a prefix match remains
-	if len(config.Instance.Teams) == 0 {
-		groupsLog.Warn("no teams left to process after resolving prefixes")
-		return g.grafanaTeams
-	}
-
-	gr, err := g.getInitialGroupRequest(buildTeamsFilter())
+	gr, err := g.getInitialGroupRequest()
 	if err != nil {
 		groupsLog.Error("could not get initial group result from EntraID")
 		panic(err)
@@ -190,7 +142,39 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 
 	countFound := (*gr).GetOdataCount()
 
-	g.walkGroupResult(gr, groupsLog, g.processGroupResult)
+	for {
+		// Handle group result
+		g.processGroupResult(gr)
+
+		// Handle possible pagination
+		nextPageUrl := (*gr).GetOdataNextLink()
+		if nextPageUrl != nil {
+			groupsLog.Debug("processing paginated group result")
+			gr, err = g.handleGroupPagination(nextPageUrl)
+			if err != nil {
+				groupsLog.Error("could not get paged group result from EntraID")
+				panic(err)
+			}
+		} else {
+			break
+		}
+	}
+
+	// With $search we cannot tell which search term matched which group, so we
+	// can only report whether anything was found at all
+	if config.Instance.Features.EntraIdUseSearchInsteadOfFilter {
+		if *countFound == 0 {
+			groupsLog.Warn("could not find any group in EntraID matching the search", "search", strings.Join(config.Instance.Teams, ","))
+		}
+
+		groupsLog.Info("finished processing EntraID groups",
+			slog.Group("groups",
+				slog.Int64("found", *countFound),
+			),
+		)
+
+		return g.grafanaTeams
+	}
 
 	if len(config.Instance.Teams) > 0 {
 		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Instance.Teams, ","))

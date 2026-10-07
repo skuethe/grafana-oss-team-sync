@@ -56,15 +56,13 @@ func Load() error {
 	Instance.Bool(configtypes.FeaturesAddLocalAdminToTeamsOptimized, configtypes.FeaturesAddLocalAdminToTeamsDefault, configtypes.FeaturesAddLocalAdminToTeamsFlagHelp)
 	Instance.Bool(configtypes.FeaturesDisableFoldersOptimized, configtypes.FeaturesDisableFoldersDefault, configtypes.FeaturesDisableFoldersFlagHelp)
 	Instance.Bool(configtypes.FeaturesDisableUsersOptimized, configtypes.FeaturesDisableUsersDefault, configtypes.FeaturesDisableUsersFlagHelp)
+	Instance.Bool(configtypes.FeaturesEntraIdUseSearchInsteadOfFilterOptimized, configtypes.FeaturesEntraIdUseSearchInsteadOfFilterDefault, configtypes.FeaturesEntraIdUseSearchInsteadOfFilterFlagHelp)
 
 	// Add "source" flag
 	Instance.StringP(configtypes.SourceParameter, configtypes.SourceFlagShort, configtypes.SourceDefault, configtypes.SourceFlagHelp)
 
 	// Add "teams" flag
 	Instance.String(configtypes.TeamsParameter, configtypes.TeamsDefault, configtypes.TeamsFlagHelp)
-
-	// Add "teamPrefixes" flag
-	Instance.String(configtypes.TeamPrefixesOptimized, configtypes.TeamPrefixesDefault, configtypes.TeamPrefixesFlagHelp)
 
 	// Add "loglevel" flag
 	Instance.IntP(configtypes.LogLevelParameter, configtypes.LogLevelFlagShort, configtypes.LogLevelDefault, configtypes.LogLevelFlagHelp)

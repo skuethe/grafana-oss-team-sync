@@ -99,13 +99,12 @@ func loadEnvironmentVariables(k *koanf.Koanf) error {
 			case configtypes.FeaturesDisableUsersOptimized:
 				return configtypes.FeaturesDisableUsersParameter, v
 
+			case configtypes.FeaturesEntraIdUseSearchInsteadOfFilterOptimized:
+				return configtypes.FeaturesEntraIdUseSearchInsteadOfFilterParameter, v
+
 			// "teams" - respect comma separated list
 			case configtypes.TeamsParameter:
 				return k, strings.Split(v, ",")
-
-			// "teamPrefixes" - return full parameter and respect comma separated list
-			case configtypes.TeamPrefixesOptimized:
-				return configtypes.TeamPrefixesParameter, strings.Split(v, ",")
 			}
 
 			return k, v
@@ -149,13 +148,12 @@ func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) error {
 		case configtypes.FeaturesDisableUsersOptimized:
 			return configtypes.FeaturesDisableUsersParameter, val
 
+		case configtypes.FeaturesEntraIdUseSearchInsteadOfFilterOptimized:
+			return configtypes.FeaturesEntraIdUseSearchInsteadOfFilterParameter, val
+
 		// "teams" - respect comma separated list
 		case configtypes.TeamsParameter:
 			return key, strings.Split(val.(string), ",")
-
-		// "teamPrefixes" - return full parameter and respect comma separated list
-		case configtypes.TeamPrefixesOptimized:
-			return configtypes.TeamPrefixesParameter, strings.Split(val.(string), ",")
 		}
 
 		return key, val
@@ -225,15 +223,15 @@ func Load() error {
 	}
 
 	// Drop empty entries (e.g. introduced by default flag values) so we never
-	// build an empty source filter later on
+	// build an empty source filter / search later on
 	Instance.SanitizeTeams()
-	Instance.SanitizeTeamPrefixes()
 
 	// Output feature configuration if non-defaults set
 	configLog.Info("feature status",
 		slog.Bool(configtypes.FeaturesDisableFoldersOptimized, Instance.Features.DisableFolders),
 		slog.Bool(configtypes.FeaturesDisableUsersOptimized, Instance.Features.DisableUserSync),
 		slog.Bool(configtypes.FeaturesAddLocalAdminToTeamsOptimized, Instance.Features.AddLocalAdminToTeams),
+		slog.Bool(configtypes.FeaturesEntraIdUseSearchInsteadOfFilterOptimized, Instance.Features.EntraIdUseSearchInsteadOfFilter),
 	)
 
 	// Validate Grafana authtype input
@@ -252,8 +250,8 @@ func Load() error {
 	}
 
 	// Give warning about empty team input
-	if len(Instance.Teams) == 0 && len(Instance.TeamPrefixes) == 0 {
-		configLog.Warn("your teams and teamPrefixes input is empty")
+	if len(Instance.Teams) == 0 {
+		configLog.Warn("your teams input is empty")
 	}
 
 	return nil

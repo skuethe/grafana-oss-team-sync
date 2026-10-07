@@ -7,6 +7,8 @@ type Features struct {
 	DisableFolders       bool `yaml:"disableFolders"`
 	DisableUserSync      bool `yaml:"disableUserSync"`
 	AddLocalAdminToTeams bool `yaml:"addLocalAdminToTeams"`
+
+	EntraIdUseSearchInsteadOfFilter bool `yaml:"entraIdUseSearchInsteadOfFilter"`
 }
 
 const (
@@ -24,4 +26,9 @@ const (
 	FeaturesDisableUsersFlagHelp  string = "feature: disable the user sync"
 	FeaturesDisableUsersParameter string = "features.disableUserSync"
 	FeaturesDisableUsersOptimized string = "disableusersync"
+
+	FeaturesEntraIdUseSearchInsteadOfFilterDefault   bool   = false
+	FeaturesEntraIdUseSearchInsteadOfFilterFlagHelp  string = "feature: EntraID - use the tokenized $search instead of an exact $filter to find groups"
+	FeaturesEntraIdUseSearchInsteadOfFilterParameter string = "features.entraIdUseSearchInsteadOfFilter"
+	FeaturesEntraIdUseSearchInsteadOfFilterOptimized string = "entraidusesearchinsteadoffilter"
 )

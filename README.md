@@ -148,8 +148,8 @@ The following hierarchy is used when merging different config sources, overridin
 | Feature: disable folder sync      | **config.yaml**: `features.disableFolders`<br>**argument**: `--disablefolders`<br>**env var**: `GOTS_DISABLEFOLDERS`                   | Control the folder sync feature<br><br>**Type**: `bool`<br>**Default**: `false` |
 | Feature: disable user sync        | **config.yaml**: `features.disableUserSync`<br>**argument**: `--disableusersync`<br>**env var**: `GOTS_DISABLEUSERSYNC`                | Control the user sync feature<br><br>**Type**: `bool`<br>**Default**: `false` |
 | Feature: add local admin to teams | **config.yaml**: `features.addLocalAdminToTeams`<br>**argument**: `--addlocaladmintoteams`<br>**env var**: `GOTS_ADDLOCALADMINTOTEAMS` | Control adding Grafana local admin to each team<br><br>**Type**: `bool`<br>**Default**: `true` |
+| Feature: EntraID use search       | **config.yaml**: `features.entraIdUseSearchInsteadOfFilter`<br>**argument**: `--entraidusesearchinsteadoffilter`<br>**env var**: `GOTS_ENTRAIDUSESEARCHINSTEADOFFILTER` | Use the tokenized `$search` instead of an exact `$filter` to find the `teams` in EntraID. See [Group lookup: `$filter` vs `$search`](#group-lookup-filter-vs-search)<br><br>**Type**: `bool`<br>**Default**: `false` |
 | Team sync                         | **config.yaml**: `teams`<br>**argument**: `--teams` or `-t`<br>**env var**: `GOTS_TEAMS`                                               | Define the list of teams to sync<br><br>**Type**: `[]string` |
-| Team prefix sync                  | **config.yaml**: `teamPrefixes`<br>**argument**: `--teamprefixes`<br>**env var**: `GOTS_TEAMPREFIXES`                                   | Define a list of name prefixes. Every source group whose name starts with one of these prefixes is synced and merged (uniquely) with `teams`<br><br>**Type**: `[]string` |
 | Folder sync                       | **config.yaml**: `folders`                                                                                                             | Define the list of folders to sync<br><br>**Type**: `[]interface` |
 
 <!-- CONFIGURATION - GRAFANA -->
@@ -187,6 +187,48 @@ If you have [enabled EntraID OAuth][entraidoauth] for SSO authentication in Graf
 |-------------------------|-|
 | Authentication          | Using Azure app via environment variables: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` |
 | Application permissions | Minimum: `User.ReadBasic.All`, `GroupMember.Read.All`<br>To list the members of a hidden membership group, the `Member.Read.Hidden` permission is required |
+
+#### Group lookup: `$filter` vs `$search`
+
+By default, every entry of `teams` is matched **exactly** (case-insensitive) against the group `displayName`, using the msgraph [`$filter`][msgraphfilter] query parameter:
+
+```
+$filter=displayName in ('teamA', 'teamB')
+```
+
+When enabling `features.entraIdUseSearchInsteadOfFilter`, every entry of `teams` becomes a **search term** instead, using the msgraph [`$search`][msgraphsearch] query parameter:
+
+```
+$search="displayName:teamA" OR "displayName:teamB"
+```
+
+`$search` does **not** support wildcards, regular expressions (like `^dev` or `dev*`) or a "contains" logic. Instead, [Microsoft Graph tokenizes][msgraphsearchtokenization] both the group `displayName` and your search term into words, and then matches those words:
+
+- **Spaces** split words: `hello world` => `hello`, `world`
+- **Casing changes** (lowercase to uppercase only) split words: `HelloWorld` => `hello`, `world` - but `HELLOworld` stays a single word `helloworld`
+- **Symbols** (like `-`, `_`, `.`) split words, and the words around them are also combined: `hello-world` => `hello`, `-`, `world`, `helloworld`
+- **Numbers** split words: `hello123world` => `hello`, `123`, `world`
+
+A group matches, if **every** word of the search term is the **start of a word** in the group `displayName` - regardless of casing and order.
+This makes it possible to search for prefixes, suffixes or words in the middle of a group name, but it can also match more groups than you expect.
+
+The following examples assume these groups exist in EntraID:
+`dev`, `dev-team`, `Developers`, `backend-dev`, `team-devops`, `mydevteam`, `grafana-admins`, `GrafanaAdmins`, `Grafana Admins Europe`, `admins-grafana`
+
+| `teams` entry    | `$filter` (default) finds | `$search` finds                                                                 | `$search` does **not** find                       |
+|------------------|---------------------------|---------------------------------------------------------------------------------|---------------------------------------------------|
+| `dev`            | `dev`                     | `dev`, `dev-team`, `Developers`, `backend-dev`, `team-devops`                   | `mydevteam` (`dev` is not the start of a word)    |
+| `grafana`        | -                         | `grafana-admins`, `GrafanaAdmins`, `Grafana Admins Europe`, `admins-grafana`    | -                                                 |
+| `admins`         | -                         | `grafana-admins`, `GrafanaAdmins`, `Grafana Admins Europe`, `admins-grafana`    | -                                                 |
+| `grafana admins` | -                         | `grafana-admins`, `GrafanaAdmins`, `Grafana Admins Europe`, `admins-grafana`    | -                                                 |
+| `europe`         | -                         | `Grafana Admins Europe`                                                         | all other groups                                  |
+| `^dev` / `dev*`  | -                         | not supported: no wildcards or regular expressions                              | -                                                 |
+
+Please note:
+- `$search` requires the `ConsistencyLevel: eventual` header, which is always sent by this tool
+- With `$search`, the tool cannot tell which `teams` entry did not match any group. It only warns if the search did not find any group at all
+- There is a [known issue][msgraphsearchampersand] with `$search` for values containing an ampersand (`&`)
+- Test your search terms first, e.g. with the [Graph Explorer][graphexplorer]: `GET https://graph.microsoft.com/v1.0/groups?$search="displayName:dev"&$select=displayName` with the header `ConsistencyLevel: eventual`
 
 
 <p align="right">( <a href="#top">Back to top</a> )</p>
@@ -285,6 +327,11 @@ See [`LICENSE`](LICENSE.md) for more information.
 [setupssoauth]:         <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/> "Configure authentication"
 [entraidoauth]:         <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/azuread/> "Entra ID OAuth authentication"
 [entraidoauthconfig]:   <https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication/azuread/#configuration-options> "Entra ID OAuth - Configuration options"
+[msgraphfilter]:        <https://learn.microsoft.com/en-us/graph/filter-query-parameter> "Use the $filter query parameter"
+[msgraphsearch]:        <https://learn.microsoft.com/en-us/graph/search-query-parameter> "Use the $search query parameter"
+[msgraphsearchtokenization]: <https://learn.microsoft.com/en-us/graph/search-query-parameter#use-search-on-directory-object-collections> "Use $search on directory object collections"
+[msgraphsearchampersand]: <https://learn.microsoft.com/en-us/graph/known-issues#search-for-directory-objects-fails-for-encoded-ampersand-character> "Known issue: search for directory objects fails for encoded ampersand character"
+[graphexplorer]:        <https://developer.microsoft.com/graph/graph-explorer> "Graph Explorer"
 [semver]:               <https://semver.org/> "Semantic Versioning"
 [githubreleases]:       <https://github.com/skuethe/grafana-oss-team-sync/releases> "Releases"
 [spdxopenstandard]:     <https://spdx.dev> "The System Package Data Exchange™"

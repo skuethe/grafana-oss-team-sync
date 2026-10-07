@@ -14,6 +14,7 @@ features:
   addLocalAdminToTeams: false
   disableFolders: true
   disableUserSync: true
+  entraIdUseSearchInsteadOfFilter: true
 
 
 grafana:
@@ -32,10 +33,6 @@ grafana:
 teams:
   - group-unit-1
   - group-unit-2
-
-
-teamPrefixes:
-  - group-
 
 
 folders:

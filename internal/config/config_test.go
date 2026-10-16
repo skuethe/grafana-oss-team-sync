@@ -337,6 +337,7 @@ func TestUnmarshalIntoStruct(t *testing.T) {
 					DisableFolders:       true,
 					DisableUserSync:      true,
 					AddLocalAdminToTeams: false,
+					AddExistingUsersOnly: true,
 				},
 				Grafana: configtypes.Grafana{
 					AuthType: "someotherauthtype",
@@ -458,6 +459,7 @@ func TestLoad(t *testing.T) {
 					DisableFolders:       true,
 					DisableUserSync:      true,
 					AddLocalAdminToTeams: false,
+					AddExistingUsersOnly: true,
 				},
 				Grafana: configtypes.Grafana{
 					AuthType: "token",

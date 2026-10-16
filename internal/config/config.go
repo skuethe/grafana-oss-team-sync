@@ -99,6 +99,9 @@ func loadEnvironmentVariables(k *koanf.Koanf) error {
 			case configtypes.FeaturesDisableUsersOptimized:
 				return configtypes.FeaturesDisableUsersParameter, v
 
+			case configtypes.FeaturesAddExistingUsersOnlyOptimized:
+				return configtypes.FeaturesAddExistingUsersOnlyParameter, v
+
 			// "teams" - respect comma separated list
 			case configtypes.TeamsParameter:
 				return k, strings.Split(v, ",")
@@ -144,6 +147,9 @@ func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) error {
 
 		case configtypes.FeaturesDisableUsersOptimized:
 			return configtypes.FeaturesDisableUsersParameter, val
+
+		case configtypes.FeaturesAddExistingUsersOnlyOptimized:
+			return configtypes.FeaturesAddExistingUsersOnlyParameter, val
 
 		// "teams" - respect comma separated list
 		case configtypes.TeamsParameter:
@@ -221,6 +227,7 @@ func Load() error {
 		slog.Bool(configtypes.FeaturesDisableFoldersOptimized, Instance.Features.DisableFolders),
 		slog.Bool(configtypes.FeaturesDisableUsersOptimized, Instance.Features.DisableUserSync),
 		slog.Bool(configtypes.FeaturesAddLocalAdminToTeamsOptimized, Instance.Features.AddLocalAdminToTeams),
+		slog.Bool(configtypes.FeaturesAddExistingUsersOnlyOptimized, Instance.Features.AddExistingUsersOnly),
 	)
 
 	// Validate Grafana authtype input

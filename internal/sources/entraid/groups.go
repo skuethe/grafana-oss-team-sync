@@ -166,24 +166,20 @@ func ProcessGroups(instance *sourcetypes.SourcePlugin) *grafana.Teams {
 		if *countFound == 0 {
 			groupsLog.Warn("could not find any group in EntraID matching the search", "search", strings.Join(config.Instance.Teams, ","))
 		}
-
-		groupsLog.Info("finished processing EntraID groups",
-			slog.Group("groups",
-				slog.Int64("found", *countFound),
-			),
-		)
-
-		return g.grafanaTeams
-	}
-
-	if len(config.Instance.Teams) > 0 {
-		groupsLog.Warn("could not find the following groups in EntraID", "skipped", strings.Join(config.Instance.Teams, ","))
+	} else {
+		if len(config.Instance.Teams) > 0 {
+			groupsLog.Warn("could not find the following groups in EntraID",
+				slog.Group("skipped",
+					slog.Int("count", len(config.Instance.Teams)),
+					slog.String("list", strings.Join(config.Instance.Teams, ",")),
+				),
+			)
+		}
 	}
 
 	groupsLog.Info("finished processing EntraID groups",
 		slog.Group("groups",
 			slog.Int64("found", *countFound),
-			slog.Int("skipped", len(config.Instance.Teams)),
 		),
 	)
 

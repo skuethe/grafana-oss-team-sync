@@ -213,11 +213,11 @@ A group matches, if **every** word of the search term is the **start of a word**
 This makes it possible to search for prefixes, suffixes or words in the middle of a group name, but it can also match more groups than you expect.
 
 The following examples assume these groups exist in EntraID:
-`dev`, `dev-team`, `Developers`, `backend-dev`, `team-devops`, `mydevteam`, `grafana-admins`, `GrafanaAdmins`, `Grafana Admins Europe`, `admins-grafana`
+`dev`, `dev-team`, `Developers`, `backend-dev`, `team-devops`, `mydevteam`, `myDevteam`, `grafana-admins`, `GrafanaAdmins`, `Grafana Admins Europe`, `admins-grafana`
 
 | `teams` entry    | `$filter` (default) finds | `$search` finds                                                                 | `$search` does **not** find                       |
 |------------------|---------------------------|---------------------------------------------------------------------------------|---------------------------------------------------|
-| `dev`            | `dev`                     | `dev`, `dev-team`, `Developers`, `backend-dev`, `team-devops`                   | `mydevteam` (`dev` is not the start of a word)    |
+| `dev`            | `dev`                     | `dev`, `dev-team`, `Developers`, `backend-dev`, `team-devops`, `myDevteam`      | `mydevteam` (`dev` is not the start of a word)    |
 | `grafana`        | -                         | `grafana-admins`, `GrafanaAdmins`, `Grafana Admins Europe`, `admins-grafana`    | -                                                 |
 | `admins`         | -                         | `grafana-admins`, `GrafanaAdmins`, `Grafana Admins Europe`, `admins-grafana`    | -                                                 |
 | `grafana admins` | -                         | `grafana-admins`, `GrafanaAdmins`, `Grafana Admins Europe`, `admins-grafana`    | -                                                 |
@@ -330,7 +330,7 @@ See [`LICENSE`](LICENSE.md) for more information.
 [msgraphfilter]:        <https://learn.microsoft.com/en-us/graph/filter-query-parameter> "Use the $filter query parameter"
 [msgraphsearch]:        <https://learn.microsoft.com/en-us/graph/search-query-parameter> "Use the $search query parameter"
 [msgraphsearchtokenization]: <https://learn.microsoft.com/en-us/graph/search-query-parameter#use-search-on-directory-object-collections> "Use $search on directory object collections"
-[msgraphsearchampersand]: <https://learn.microsoft.com/en-us/graph/known-issues#search-for-directory-objects-fails-for-encoded-ampersand-character> "Known issue: search for directory objects fails for encoded ampersand character"
+[msgraphsearchampersand]: <https://learn.microsoft.com/en-us/graph/known-issues#search-for-directory-objects-fails-for-encoded-ampersand--character> "Known issue: search for directory objects fails for encoded ampersand character"
 [graphexplorer]:        <https://developer.microsoft.com/graph/graph-explorer> "Graph Explorer"
 [semver]:               <https://semver.org/> "Semantic Versioning"
 [githubreleases]:       <https://github.com/skuethe/grafana-oss-team-sync/releases> "Releases"

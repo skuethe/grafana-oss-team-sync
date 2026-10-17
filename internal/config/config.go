@@ -99,6 +99,9 @@ func loadEnvironmentVariables(k *koanf.Koanf) error {
 			case configtypes.FeaturesDisableUsersOptimized:
 				return configtypes.FeaturesDisableUsersParameter, v
 
+			case configtypes.FeaturesEntraIdUseSearchInsteadOfFilterOptimized:
+				return configtypes.FeaturesEntraIdUseSearchInsteadOfFilterParameter, v
+
 			// "teams" - respect comma separated list
 			case configtypes.TeamsParameter:
 				return k, strings.Split(v, ",")
@@ -144,6 +147,9 @@ func loadCLIParameter(k *koanf.Koanf, fs *pflag.FlagSet) error {
 
 		case configtypes.FeaturesDisableUsersOptimized:
 			return configtypes.FeaturesDisableUsersParameter, val
+
+		case configtypes.FeaturesEntraIdUseSearchInsteadOfFilterOptimized:
+			return configtypes.FeaturesEntraIdUseSearchInsteadOfFilterParameter, val
 
 		// "teams" - respect comma separated list
 		case configtypes.TeamsParameter:
@@ -216,11 +222,16 @@ func Load() error {
 		return err
 	}
 
+	// Drop empty entries (e.g. introduced by default flag values) so we never
+	// build an empty source filter / search later on
+	Instance.SanitizeTeams()
+
 	// Output feature configuration if non-defaults set
 	configLog.Info("feature status",
 		slog.Bool(configtypes.FeaturesDisableFoldersOptimized, Instance.Features.DisableFolders),
 		slog.Bool(configtypes.FeaturesDisableUsersOptimized, Instance.Features.DisableUserSync),
 		slog.Bool(configtypes.FeaturesAddLocalAdminToTeamsOptimized, Instance.Features.AddLocalAdminToTeams),
+		slog.Bool(configtypes.FeaturesEntraIdUseSearchInsteadOfFilterOptimized, Instance.Features.EntraIdUseSearchInsteadOfFilter),
 	)
 
 	// Validate Grafana authtype input

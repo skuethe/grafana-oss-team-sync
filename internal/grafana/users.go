@@ -9,6 +9,7 @@ import (
 	"math/big"
 	"slices"
 
+	"github.com/grafana/grafana-openapi-client-go/client/users"
 	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config"
 	"github.com/skuethe/grafana-oss-team-sync/internal/config/configtypes"
@@ -32,15 +33,19 @@ func generateSecurePassword() string {
 	return string(password)
 }
 
-// doesUserExist looks the user up by login, then by email, as the source login
+// searchUser looks the user up by login, then by email, as the source login
 // can differ from the Grafana one (e.g. an EntraID guest UPN with "#EXT#")
-func (u *User) doesUserExist() bool {
-	for _, loginOrEmail := range []string{u.Login, u.Email} {
-		if _, err := Instance.api.Users.GetUserByLoginOrEmail(loginOrEmail); err == nil {
-			return true
-		}
+func (u *User) searchUser() (*users.GetUserByLoginOrEmailOK, error) {
+	result, err := Instance.api.Users.GetUserByLoginOrEmail(u.Login)
+	if err != nil && u.Email != "" {
+		result, err = Instance.api.Users.GetUserByLoginOrEmail(u.Email)
 	}
-	return false
+	return result, err
+}
+
+func (u *User) doesUserExist() bool {
+	_, err := u.searchUser()
+	return err == nil
 }
 
 func (u *User) createUser() error {

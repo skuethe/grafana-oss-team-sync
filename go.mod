@@ -1,10 +1,10 @@
 module github.com/skuethe/grafana-oss-team-sync
 
-go 1.27.2
+go 1.27.3
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0
-	github.com/go-openapi/strfmt v0.27.3
+	github.com/go-openapi/strfmt v0.27.4
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20261015192556-fcf0a80b71e9
 	github.com/joho/godotenv v1.5.1
@@ -13,8 +13,8 @@ require (
 	github.com/knadh/koanf/providers/env/v2 v2.0.2
 	github.com/knadh/koanf/providers/file v1.2.1
 	github.com/knadh/koanf/providers/posflag v1.0.2
-	github.com/knadh/koanf/v2 v2.4.0
-	github.com/microsoft/kiota-abstractions-go v1.11.2
+	github.com/knadh/koanf/v2 v2.4.1
+	github.com/microsoft/kiota-abstractions-go v1.11.3
 	github.com/microsoftgraph/msgraph-sdk-go v1.104.0
 	github.com/spf13/pflag v1.0.10
 )
@@ -47,18 +47,18 @@ require (
 	github.com/go-openapi/swag/stringutils v0.29.2 // indirect
 	github.com/go-openapi/swag/typeutils v0.29.2 // indirect
 	github.com/go-openapi/swag/yamlutils v0.29.2 // indirect
-	github.com/go-openapi/validate v1.0.0 // indirect
+	github.com/go-openapi/validate v1.0.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/knadh/koanf/maps v0.1.3 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/microsoft/kiota-authentication-azure-go v1.3.1 // indirect
-	github.com/microsoft/kiota-http-go v1.5.8 // indirect
+	github.com/microsoft/kiota-http-go v1.5.9 // indirect
 	github.com/microsoft/kiota-serialization-form-go v1.1.4 // indirect
 	github.com/microsoft/kiota-serialization-json-go v1.1.5 // indirect
-	github.com/microsoft/kiota-serialization-multipart-go v1.1.2 // indirect
-	github.com/microsoft/kiota-serialization-text-go v1.1.4 // indirect
+	github.com/microsoft/kiota-serialization-multipart-go v1.1.3 // indirect
+	github.com/microsoft/kiota-serialization-text-go v1.1.5 // indirect
 	github.com/microsoftgraph/msgraph-sdk-go-core v1.4.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect

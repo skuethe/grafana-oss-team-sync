@@ -14,8 +14,8 @@ require (
 	github.com/knadh/koanf/providers/file v1.2.1
 	github.com/knadh/koanf/providers/posflag v1.0.2
 	github.com/knadh/koanf/v2 v2.4.1
-	github.com/microsoft/kiota-abstractions-go v1.11.3
-	github.com/microsoftgraph/msgraph-sdk-go v1.104.0
+	github.com/microsoft/kiota-abstractions-go v1.11.4
+	github.com/microsoftgraph/msgraph-sdk-go v1.105.0
 	github.com/spf13/pflag v1.0.10
 )
 
@@ -55,9 +55,9 @@ require (
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/microsoft/kiota-authentication-azure-go v1.3.1 // indirect
 	github.com/microsoft/kiota-http-go v1.5.9 // indirect
-	github.com/microsoft/kiota-serialization-form-go v1.1.4 // indirect
+	github.com/microsoft/kiota-serialization-form-go v1.1.5 // indirect
 	github.com/microsoft/kiota-serialization-json-go v1.1.5 // indirect
-	github.com/microsoft/kiota-serialization-multipart-go v1.1.3 // indirect
+	github.com/microsoft/kiota-serialization-multipart-go v1.1.4 // indirect
 	github.com/microsoft/kiota-serialization-text-go v1.1.5 // indirect
 	github.com/microsoftgraph/msgraph-sdk-go-core v1.4.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect

@@ -11,7 +11,7 @@ services:
 
 
   devproxy:
-    image: ghcr.io/dotnet/dev-proxy:2.3.4@sha256:e7796cf2c049d31884ca513468ecb13d918bfeca148bd25d8d31c2bd27757ae4
+    image: ghcr.io/dotnet/dev-proxy:4.0.0@sha256:93d1107b29548b41143f2be7c048607ae12ed1bf0e0fa06090c97c0f4e049145
     container_name: devproxy
     ports:
     - '8000:8000'

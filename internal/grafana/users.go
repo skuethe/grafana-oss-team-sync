@@ -33,12 +33,14 @@ func generateSecurePassword() string {
 	return string(password)
 }
 
+// searchUser looks the user up by login, then by email, as the source login
+// can differ from the Grafana one (e.g. an EntraID guest UPN with "#EXT#")
 func (u *User) searchUser() (*users.GetUserByLoginOrEmailOK, error) {
 	result, err := Instance.api.Users.GetUserByLoginOrEmail(u.Login)
-	if err != nil {
-		return nil, err
+	if err != nil && u.Email != "" {
+		result, err = Instance.api.Users.GetUserByLoginOrEmail(u.Email)
 	}
-	return result, nil
+	return result, err
 }
 
 func (u *User) doesUserExist() bool {

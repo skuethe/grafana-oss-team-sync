@@ -93,7 +93,7 @@ jobs:
 
       # Start latest Grafana stable, to run e2e tests against
       grafana:
-        image: docker.io/grafana/grafana:latest@sha256:0615ec4fbd4072004b7d86b46ded63013a74b7d6eb1119273dd89e8fa25c13cf
+        image: docker.io/grafana/grafana:latest@sha256:81556409ba48b2b922e0adb69a2511337d8ba7578f11962eefa6149a2d815101
         ports:
           - 3000:3000
         options: >-
